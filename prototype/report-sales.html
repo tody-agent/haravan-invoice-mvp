@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Báo cáo chi tiết bán hàng — Haravan Invoice</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <link rel="stylesheet" href="assets/css/design-system.css">
+  <script>window.HV_PAGE = { id: 'report-sales', title: 'Chi tiết bán hàng', breadcrumb: [{ label: 'Báo cáo', href: 'reports.html' }, { label: 'Chi tiết bán hàng' }] };</script>
+  <style>
+    .hv-content-max > * + * { margin-top: 20px; }
+    .report-filters {
+      display: flex;
+      align-items: flex-end;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+    .report-filter-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .report-filter-group .hv-label { margin-bottom: 0; }
+    .report-preview {
+      background: var(--hv-bg-surface);
+      border: 1px solid var(--hv-border);
+      border-radius: var(--hv-radius-md);
+      overflow: hidden;
+    }
+    .report-preview-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--hv-border);
+    }
+    .report-preview-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--hv-text-primary);
+    }
+    .report-preview-actions {
+      display: flex;
+      gap: 6px;
+    }
+    .report-summary {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .report-summary-item {
+      background: var(--hv-bg-surface);
+      border: 1px solid var(--hv-border);
+      border-radius: var(--hv-radius-md);
+      padding: 14px 18px;
+      flex: 1;
+      min-width: 140px;
+    }
+    .report-summary-label {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--hv-text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 4px;
+    }
+    .report-summary-value {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--hv-text-primary);
+    }
+  </style>
+</head>
+<body>
+  <a href="#main-content" class="hv-skip-link">Chuyển đến nội dung chính</a>
+
+  <aside class="hv-sidebar" aria-label="Điều hướng chính"></aside>
+  <header class="hv-topbar"></header>
+
+  <main id="main-content" class="hv-content">
+    <div class="hv-content-max">
+
+      <div class="hv-content-header">
+        <h1><i class="ti ti-shopping-cart" style="color:var(--hv-warning-hover);margin-right:8px"></i>Báo cáo chi tiết bán hàng</h1>
+        <a href="reports.html" class="hv-btn hv-btn-secondary hv-btn-sm"><i class="ti ti-arrow-left"></i> Quay lại</a>
+      </div>
+
+      <div class="report-filters">
+        <div class="report-filter-group">
+          <label class="hv-label" for="rs-month">Tháng</label>
+          <select class="hv-select" id="rs-month" style="width:120px">
+            <option>Tháng 1</option>
+            <option>Tháng 2</option>
+            <option>Tháng 3</option>
+            <option>Tháng 4</option>
+            <option selected>Tháng 5</option>
+            <option>Tháng 6</option>
+            <option>Tháng 7</option>
+            <option>Tháng 8</option>
+            <option>Tháng 9</option>
+            <option>Tháng 10</option>
+            <option>Tháng 11</option>
+            <option>Tháng 12</option>
+          </select>
+        </div>
+        <div class="report-filter-group">
+          <label class="hv-label" for="rs-year">Năm</label>
+          <select class="hv-select" id="rs-year" style="width:100px">
+            <option>2025</option>
+            <option selected>2026</option>
+          </select>
+        </div>
+        <button class="hv-btn hv-btn-primary hv-btn-sm">
+          <i class="ti ti-search"></i> Xem báo cáo
+        </button>
+      </div>
+
+      <div class="report-summary">
+        <div class="report-summary-item">
+          <div class="report-summary-label">Tổng sản phẩm</div>
+          <div class="report-summary-value">5</div>
+        </div>
+        <div class="report-summary-item">
+          <div class="report-summary-label">Tổng số lượng</div>
+          <div class="report-summary-value">13</div>
+        </div>
+        <div class="report-summary-item">
+          <div class="report-summary-label">Doanh thu trước thuế</div>
+          <div class="report-summary-value">1,095,000</div>
+        </div>
+        <div class="report-summary-item">
+          <div class="report-summary-label">Tổng thuế</div>
+          <div class="report-summary-value">109,500</div>
+        </div>
+        <div class="report-summary-item">
+          <div class="report-summary-label">Tổng cộng</div>
+          <div class="report-summary-value" style="color:var(--hv-primary)">1,204,500</div>
+        </div>
+      </div>
+
+      <div class="report-preview">
+        <div class="report-preview-header">
+          <span class="report-preview-title">Chi tiết bán hàng — Tháng 05/2026</span>
+          <div class="report-preview-actions">
+            <button class="hv-btn hv-btn-secondary hv-btn-sm"><i class="ti ti-printer"></i></button>
+            <button class="hv-btn hv-btn-secondary hv-btn-sm"><i class="ti ti-file-spreadsheet"></i></button>
+          </div>
+        </div>
+        <div class="hv-table-wrap">
+          <table class="hv-table">
+            <thead>
+              <tr>
+                <th>Tên sản phẩm</th>
+                <th>ĐVT</th>
+                <th class="num">SL</th>
+                <th class="num">Đơn giá</th>
+                <th class="num">Thành tiền</th>
+                <th class="num">Thuế suất</th>
+                <th class="num">Tiền thuế</th>
+                <th class="num">Tổng</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Cà phê Robusta Đắk Lắk 500g</td>
+                <td>Gói</td>
+                <td class="num">5</td>
+                <td class="num">120,000</td>
+                <td class="num">600,000</td>
+                <td class="num">10%</td>
+                <td class="num">60,000</td>
+                <td class="num" style="font-weight:600">660,000</td>
+              </tr>
+              <tr>
+                <td>Trà Sen Tây Hồ hộp 200g</td>
+                <td>Hộp</td>
+                <td class="num">3</td>
+                <td class="num">80,000</td>
+                <td class="num">240,000</td>
+                <td class="num">10%</td>
+                <td class="num">24,000</td>
+                <td class="num" style="font-weight:600">264,000</td>
+              </tr>
+              <tr>
+                <td>Bánh Bao Nhân Thịt (hộp 10)</td>
+                <td>Hộp</td>
+                <td class="num">2</td>
+                <td class="num">80,000</td>
+                <td class="num">160,000</td>
+                <td class="num">10%</td>
+                <td class="num">16,000</td>
+                <td class="num" style="font-weight:600">176,000</td>
+              </tr>
+              <tr>
+                <td>Cà phê sữa đá</td>
+                <td>Ly</td>
+                <td class="num">2</td>
+                <td class="num">35,000</td>
+                <td class="num">70,000</td>
+                <td class="num">10%</td>
+                <td class="num">7,000</td>
+                <td class="num" style="font-weight:600">77,000</td>
+              </tr>
+              <tr>
+                <td>Bánh mì thịt</td>
+                <td>Cái</td>
+                <td class="num">1</td>
+                <td class="num">25,000</td>
+                <td class="num">25,000</td>
+                <td class="num">10%</td>
+                <td class="num">2,500</td>
+                <td class="num" style="font-weight:600">27,500</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <script src="assets/js/app-shell.js"></script>
+</body>
+</html>

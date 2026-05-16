@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Phân tích — Haravan Invoice</title>
+  <link rel="stylesheet" href="assets/css/design-system.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script>window.HV_PAGE = { id: 'analytics', title: 'Phân tích' };</script>
+  <style>
+    .chart-container { position: relative; height: 280px; }
+    .chart-container canvas { width: 100% !important; height: 100% !important; }
+  </style>
+</head>
+<body>
+  <a href="#main" class="hv-skip-link">Bỏ qua đến nội dung</a>
+  <aside class="hv-sidebar" aria-label="Điều hướng chính"></aside>
+  <header class="hv-topbar" aria-label="Thanh công cụ"></header>
+
+  <main class="hv-content" id="main">
+    <div class="hv-content-max">
+
+      <div class="hv-content-header">
+        <div>
+          <h1>Phân tích hóa đơn</h1>
+          <p style="font-size:13px;color:var(--hv-text-secondary);margin-top:4px">Tổng quan xu hướng phát hành, tuân thủ và hiệu suất hệ thống</p>
+        </div>
+        <div class="hv-flex hv-gap-2">
+          <select class="hv-select" style="width:auto">
+            <option>30 ngày qua</option>
+            <option>7 ngày qua</option>
+            <option>90 ngày qua</option>
+            <option>Tùy chỉnh</option>
+          </select>
+          <button class="hv-btn hv-btn-secondary"><i class="ti ti-download"></i> Xuất PDF</button>
+        </div>
+      </div>
+
+      <!-- KPI Row -->
+      <div class="hv-grid-4" style="margin-bottom:20px">
+        <div class="hv-kpi">
+          <div class="hv-kpi-label">Tổng hóa đơn</div>
+          <div class="hv-kpi-value">1.247</div>
+          <div class="hv-kpi-change hv-kpi-change-up"><i class="ti ti-trending-up"></i> 12.3% so với kỳ trước</div>
+        </div>
+        <div class="hv-kpi">
+          <div class="hv-kpi-label">Tỷ lệ CQT chấp nhận</div>
+          <div class="hv-kpi-value">99.4%</div>
+          <div class="hv-kpi-change hv-kpi-change-down"><i class="ti ti-trending-down"></i> 0.2%</div>
+        </div>
+        <div class="hv-kpi">
+          <div class="hv-kpi-label">Thời gian phát hành TB</div>
+          <div class="hv-kpi-value">1.2s</div>
+          <div class="hv-kpi-change hv-kpi-change-up"><i class="ti ti-trending-up"></i> Nhanh hơn 15%</div>
+        </div>
+        <div class="hv-kpi">
+          <div class="hv-kpi-label">Hóa đơn lỗi</div>
+          <div class="hv-kpi-value">3</div>
+          <div class="hv-kpi-change" style="color:var(--hv-warning)"><i class="ti ti-alert-triangle"></i> Cần xử lý</div>
+        </div>
+      </div>
+
+      <!-- Charts Row -->
+      <div class="hv-grid-main-side" style="display:grid;gap:16px;margin-bottom:20px">
+        <!-- Time Series -->
+        <div class="hv-card">
+          <div class="hv-card-header">
+            <span class="hv-card-title">Xu hướng phát hành</span>
+            <div class="hv-flex hv-gap-2">
+              <span class="hv-tag hv-tag-active">Hóa đơn</span>
+              <span class="hv-tag">Doanh thu</span>
+            </div>
+          </div>
+          <div style="display:flex;gap:24px;margin-bottom:16px">
+            <div>
+              <div style="font-size:12px;color:var(--hv-text-muted)">Tổng hóa đơn</div>
+              <div style="font-size:20px;font-weight:700">1.247</div>
+            </div>
+            <div>
+              <div style="font-size:12px;color:var(--hv-text-muted)">Tổng doanh thu</div>
+              <div style="font-size:20px;font-weight:700;font-family:var(--hv-font-mono)">312.450.000đ</div>
+            </div>
+          </div>
+          <!-- SVG Chart -->
+          <svg viewBox="0 0 700 200" style="width:100%;height:200px">
+            <defs>
+              <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#0088ff" stop-opacity="0.2"/>
+                <stop offset="100%" stop-color="#0088ff" stop-opacity="0"/>
+              </linearGradient>
+            </defs>
+            <!-- Grid -->
+            <line x1="40" y1="20" x2="40" y2="170" stroke="#edeff3" stroke-width="1"/>
+            <line x1="40" y1="170" x2="680" y2="170" stroke="#edeff3" stroke-width="1"/>
+            <line x1="40" y1="120" x2="680" y2="120" stroke="#edeff3" stroke-width="0.5" stroke-dasharray="4"/>
+            <line x1="40" y1="70" x2="680" y2="70" stroke="#edeff3" stroke-width="0.5" stroke-dasharray="4"/>
+            <line x1="40" y1="20" x2="680" y2="20" stroke="#edeff3" stroke-width="0.5" stroke-dasharray="4"/>
+            <!-- Y labels -->
+            <text x="35" y="174" text-anchor="end" fill="#8a93a4" font-size="11">0</text>
+            <text x="35" y="124" text-anchor="end" fill="#8a93a4" font-size="11">25</text>
+            <text x="35" y="74" text-anchor="end" fill="#8a93a4" font-size="11">50</text>
+            <text x="35" y="24" text-anchor="end" fill="#8a93a4" font-size="11">75</text>
+            <!-- Area -->
+            <path d="M60,140 L100,120 L140,130 L180,100 L220,90 L260,95 L300,70 L340,60 L380,65 L420,45 L460,50 L500,35 L540,40 L580,30 L620,25 L660,20 L660,170 L60,170 Z" fill="url(#areaGrad)"/>
+            <!-- Line -->
+            <polyline points="60,140 100,120 140,130 180,100 220,90 260,95 300,70 340,60 380,65 420,45 460,50 500,35 540,40 580,30 620,25 660,20" fill="none" stroke="#0088ff" stroke-width="2.5" stroke-linejoin="round"/>
+            <!-- Dots -->
+            <circle cx="300" cy="70" r="4" fill="#0088ff" stroke="#fff" stroke-width="2"/>
+            <circle cx="420" cy="45" r="4" fill="#0088ff" stroke="#fff" stroke-width="2"/>
+            <circle cx="580" cy="30" r="4" fill="#0088ff" stroke="#fff" stroke-width="2"/>
+            <circle cx="660" cy="20" r="4" fill="#0088ff" stroke="#fff" stroke-width="2"/>
+            <!-- X labels -->
+            <text x="60" y="188" fill="#8a93a4" font-size="10" text-anchor="middle">01/05</text>
+            <text x="180" y="188" fill="#8a93a4" font-size="10" text-anchor="middle">05/05</text>
+            <text x="300" y="188" fill="#8a93a4" font-size="10" text-anchor="middle">10/05</text>
+            <text x="420" y="188" fill="#8a93a4" font-size="10" text-anchor="middle">15/05</text>
+            <text x="540" y="188" fill="#8a93a4" font-size="10" text-anchor="middle">20/05</text>
+            <text x="660" y="188" fill="#8a93a4" font-size="10" text-anchor="middle">25/05</text>
+          </svg>
+        </div>
+
+        <!-- Channel Breakdown -->
+        <div class="hv-card">
+          <div class="hv-card-header">
+            <span class="hv-card-title">Theo kênh bán hàng</span>
+          </div>
+          <!-- Donut -->
+          <div style="text-align:center;margin:16px 0">
+            <svg viewBox="0 0 120 120" style="width:140px;height:140px">
+              <circle cx="60" cy="60" r="50" fill="none" stroke="#e8f1ff" stroke-width="12"/>
+              <circle cx="60" cy="60" r="50" fill="none" stroke="#0088ff" stroke-width="12" stroke-dasharray="141 173" stroke-dashoffset="0" transform="rotate(-90 60 60)"/>
+              <circle cx="60" cy="60" r="50" fill="none" stroke="#1ba345" stroke-width="12" stroke-dasharray="94 220" stroke-dashoffset="-141" transform="rotate(-90 60 60)"/>
+              <circle cx="60" cy="60" r="50" fill="none" stroke="#f5a623" stroke-width="12" stroke-dasharray="47 267" stroke-dashoffset="-235" transform="rotate(-90 60 60)"/>
+              <circle cx="60" cy="60" r="50" fill="none" stroke="#7c3aed" stroke-width="12" stroke-dasharray="32 282" stroke-dashoffset="-282" transform="rotate(-90 60 60)"/>
+              <text x="60" y="56" text-anchor="middle" fill="#1c2237" font-size="18" font-weight="700">1.247</text>
+              <text x="60" y="72" text-anchor="middle" fill="#8a93a4" font-size="10">hóa đơn</text>
+            </svg>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <div style="display:flex;align-items:center;justify-content:space-between;font-size:13px">
+              <span style="display:flex;align-items:center;gap:8px"><span style="width:10px;height:10px;border-radius:50%;background:#0088ff;display:inline-block"></span> Web</span>
+              <span style="font-weight:600">562 <span style="color:var(--hv-text-muted);font-weight:400">(45%)</span></span>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;font-size:13px">
+              <span style="display:flex;align-items:center;gap:8px"><span style="width:10px;height:10px;border-radius:50%;background:#1ba345;display:inline-block"></span> POS</span>
+              <span style="font-weight:600">374 <span style="color:var(--hv-text-muted);font-weight:400">(30%)</span></span>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;font-size:13px">
+              <span style="display:flex;align-items:center;gap:8px"><span style="width:10px;height:10px;border-radius:50%;background:#f5a623;display:inline-block"></span> Shopee</span>
+              <span style="font-weight:600">187 <span style="color:var(--hv-text-muted);font-weight:400">(15%)</span></span>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;font-size:13px">
+              <span style="display:flex;align-items:center;gap:8px"><span style="width:10px;height:10px;border-radius:50%;background:#7c3aed;display:inline-block"></span> Lazada</span>
+              <span style="font-weight:600">124 <span style="color:var(--hv-text-muted);font-weight:400">(10%)</span></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom Row -->
+      <div class="hv-grid-2" style="gap:16px">
+        <!-- Top Customers -->
+        <div class="hv-card hv-card-flush">
+          <div class="hv-card-header" style="padding:16px 20px">
+            <span class="hv-card-title">Top 5 khách hàng</span>
+            <a href="customer-catalog.html" class="hv-btn-link" style="font-size:13px">Xem tất cả →</a>
+          </div>
+          <table class="hv-table">
+            <thead>
+              <tr>
+                <th>Khách hàng</th>
+                <th>MST</th>
+                <th class="num">Hóa đơn</th>
+                <th class="num">Tổng tiền</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="font-weight:500">Cty TNHH Cà phê Trung Nguyên Legend</td>
+                <td class="hv-mono" style="font-size:12px">0312345678</td>
+                <td class="num">412</td>
+                <td class="num hv-mono">52.450.000đ</td>
+              </tr>
+              <tr>
+                <td style="font-weight:500">CTCP Vàng bạc Đá quý DOJI</td>
+                <td class="hv-mono" style="font-size:12px">0100123456</td>
+                <td class="num">287</td>
+                <td class="num hv-mono">38.200.000đ</td>
+              </tr>
+              <tr>
+                <td style="font-weight:500">Công ty TNHH Samsung Electronics VN</td>
+                <td class="hv-mono" style="font-size:12px">0101234567</td>
+                <td class="num">198</td>
+                <td class="num hv-mono">32.100.000đ</td>
+              </tr>
+              <tr>
+                <td style="font-weight:500">CTCP Sách Việt Nam (FAHASA)</td>
+                <td class="hv-mono" style="font-size:12px">0301312749</td>
+                <td class="num">142</td>
+                <td class="num hv-mono">12.800.000đ</td>
+              </tr>
+              <tr>
+                <td style="font-weight:500">Công ty TNHH Grab Việt Nam</td>
+                <td class="hv-mono" style="font-size:12px">0312398745</td>
+                <td class="num">89</td>
+                <td class="num hv-mono">8.950.000đ</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Top Products -->
+        <div class="hv-card hv-card-flush">
+          <div class="hv-card-header" style="padding:16px 20px">
+            <span class="hv-card-title">Top 5 sản phẩm</span>
+            <a href="product-catalog.html" class="hv-btn-link" style="font-size:13px">Xem tất cả →</a>
+          </div>
+          <table class="hv-table">
+            <thead>
+              <tr>
+                <th>Sản phẩm</th>
+                <th class="num">SL bán</th>
+                <th class="num">Doanh thu</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="font-weight:500">Cà phê Robusta Đắk Lắk 500g</td>
+                <td class="num">1.245</td>
+                <td class="num hv-mono">149.400.000đ</td>
+              </tr>
+              <tr>
+                <td style="font-weight:500">Trà Sen Tây Hồ hộp 200g</td>
+                <td class="num">856</td>
+                <td class="num hv-mono">68.480.000đ</td>
+              </tr>
+              <tr>
+                <td style="font-weight:500">Samsung Galaxy S24 Ultra</td>
+                <td class="num">324</td>
+                <td class="num hv-mono">52.800.000đ</td>
+              </tr>
+              <tr>
+                <td style="font-weight:500">iPhone 15 Pro Max 256GB</td>
+                <td class="num">198</td>
+                <td class="num hv-mono">41.600.000đ</td>
+              </tr>
+              <tr>
+                <td style="font-weight:500">Nước mắm Phú Quốc 500ml</td>
+                <td class="num">1.520</td>
+                <td class="num hv-mono">68.400.000đ</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Compliance Score -->
+      <div class="hv-card" style="margin-top:20px">
+        <div class="hv-card-header">
+          <span class="hv-card-title">Điểm tuân thủ</span>
+          <span class="hv-badge hv-badge-success hv-badge-solid"><i class="ti ti-circle-check" style="font-size:12px"></i> 7/7 PASS</span>
+        </div>
+        <div class="hv-grid-compliance" style="display:grid;gap:12px">
+          <div style="text-align:center;padding:12px;background:var(--hv-success-soft);border-radius:var(--hv-radius-lg)">
+            <div style="font-size:20px;color:var(--hv-success);margin-bottom:4px"><i class="ti ti-circle-check-filled"></i></div>
+            <div style="font-size:11px;font-weight:600">MST hợp lệ</div>
+            <div style="font-size:10px;color:var(--hv-text-muted)">NĐ 123 §10</div>
+          </div>
+          <div style="text-align:center;padding:12px;background:var(--hv-success-soft);border-radius:var(--hv-radius-lg)">
+            <div style="font-size:20px;color:var(--hv-success);margin-bottom:4px"><i class="ti ti-circle-check-filled"></i></div>
+            <div style="font-size:11px;font-weight:600">Chữ ký số</div>
+            <div style="font-size:10px;color:var(--hv-text-muted)">NĐ 70 §5</div>
+          </div>
+          <div style="text-align:center;padding:12px;background:var(--hv-success-soft);border-radius:var(--hv-radius-lg)">
+            <div style="font-size:20px;color:var(--hv-success);margin-bottom:4px"><i class="ti ti-circle-check-filled"></i></div>
+            <div style="font-size:11px;font-weight:600">Không hủy HĐ</div>
+            <div style="font-size:10px;color:var(--hv-text-muted)">NĐ 70 §7</div>
+          </div>
+          <div style="text-align:center;padding:12px;background:var(--hv-success-soft);border-radius:var(--hv-radius-lg)">
+            <div style="font-size:20px;color:var(--hv-success);margin-bottom:4px"><i class="ti ti-circle-check-filled"></i></div>
+            <div style="font-size:11px;font-weight:600">Định dạng CQT</div>
+            <div style="font-size:10px;color:var(--hv-text-muted)">QĐ 1510</div>
+          </div>
+          <div style="text-align:center;padding:12px;background:var(--hv-success-soft);border-radius:var(--hv-radius-lg)">
+            <div style="font-size:20px;color:var(--hv-success);margin-bottom:4px"><i class="ti ti-circle-check-filled"></i></div>
+            <div style="font-size:11px;font-weight:600">Audit log</div>
+            <div style="font-size:10px;color:var(--hv-text-muted)">NĐ 123 §6.4</div>
+          </div>
+          <div style="text-align:center;padding:12px;background:var(--hv-success-soft);border-radius:var(--hv-radius-lg)">
+            <div style="font-size:20px;color:var(--hv-success);margin-bottom:4px"><i class="ti ti-circle-check-filled"></i></div>
+            <div style="font-size:11px;font-weight:600">Kỳ tính thuế</div>
+            <div style="font-size:10px;color:var(--hv-text-muted)">NĐ 123 §9</div>
+          </div>
+          <div style="text-align:center;padding:12px;background:var(--hv-success-soft);border-radius:var(--hv-radius-lg)">
+            <div style="font-size:20px;color:var(--hv-success);margin-bottom:4px"><i class="ti ti-circle-check-filled"></i></div>
+            <div style="font-size:11px;font-weight:600">Báo cáo định kỳ</div>
+            <div style="font-size:10px;color:var(--hv-text-muted)">TT 32 §8</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <script src="assets/js/app-shell.js"></script>
+</body>
+</html>

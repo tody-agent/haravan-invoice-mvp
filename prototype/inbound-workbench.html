@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hóa đơn đến — Haravan Invoice</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <link rel="stylesheet" href="assets/css/design-system.css">
+  <script>window.HV_PAGE = { id: 'inbound', title: 'Hóa đơn đến' };</script>
+  <style>
+    /* KPI grid */
+    .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+    @media (max-width: 1023px) { .kpi-grid { grid-template-columns: repeat(2, 1fr); } }
+
+    /* Filter bar */
+    .filter-bar {
+      display: flex; align-items: center; gap: 12px;
+      padding: 16px 0; flex-wrap: wrap;
+    }
+    .filter-bar .search-wrap {
+      position: relative; flex: 1; min-width: 220px; max-width: 320px;
+    }
+    .filter-bar .search-wrap .ti-search {
+      position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+      color: var(--hv-text-muted); font-size: 16px; pointer-events: none;
+    }
+    .filter-bar .search-wrap .hv-input { padding-left: 36px; }
+    .filter-bar .hv-select { min-width: 140px; }
+
+    /* Bulk action bar */
+    .bulk-bar {
+      display: none; align-items: center; gap: 12px;
+      padding: 10px 16px; background: var(--hv-primary-soft);
+      border: 1px solid var(--hv-primary); border-radius: var(--hv-radius-md);
+      margin-bottom: 16px; font-size: 14px;
+    }
+    .bulk-bar.visible { display: flex; }
+    .bulk-bar .count { font-weight: 600; color: var(--hv-primary); margin-right: 8px; }
+
+    /* Table enhancements */
+    .hv-table .col-check { width: 44px; text-align: center; }
+    .hv-table .col-id { min-width: 140px; }
+    .hv-table .col-supplier { min-width: 200px; }
+    .hv-table .col-mst { min-width: 110px; }
+    .hv-table .col-source { min-width: 100px; }
+    .hv-table .col-classify { min-width: 150px; }
+    .hv-table .col-po { min-width: 130px; }
+    .hv-table .col-amount { min-width: 130px; text-align: right; }
+    .hv-table .col-status { min-width: 120px; }
+    .hv-table .col-actions { width: 48px; text-align: center; }
+    .hv-table td, .hv-table th { vertical-align: middle; }
+    .hv-table .row-expand-trigger { cursor: pointer; }
+    .hv-table .row-expand-trigger:hover td { background: var(--hv-bg-surface-hover); }
+
+    /* AI classify cell */
+    .ai-classify { display: flex; align-items: center; gap: 6px; }
+    .ai-classify .confidence { font-size: 11px; color: var(--hv-text-muted); }
+    .ai-classify .low-conf { color: var(--hv-warning); }
+    .ai-classify .btn-edit {
+      background: none; border: none; color: var(--hv-text-link);
+      font-size: 12px; cursor: pointer; padding: 2px 6px; border-radius: 4px;
+      font-family: inherit; font-weight: 500;
+    }
+    .ai-classify .btn-edit:hover { background: var(--hv-primary-soft); }
+
+    /* Expanded row */
+    .expand-row td { padding: 0 !important; border-bottom: 1px solid var(--hv-border-table); }
+    .expand-content {
+      display: none; padding: 16px 24px 20px; background: var(--hv-bg-soft);
+    }
+    .expand-row.open .expand-content { display: block; }
+    .expand-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .expand-section h4 {
+      font-size: 12px; font-weight: 600; color: var(--hv-text-secondary);
+      text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 8px;
+    }
+    .expand-section .kv { display: flex; gap: 8px; margin-bottom: 6px; font-size: 13px; }
+    .expand-section .kv .k { color: var(--hv-text-muted); min-width: 110px; }
+    .expand-section .kv .v { font-weight: 500; }
+    .expand-line-items { width: 100%; font-size: 13px; border-collapse: collapse; margin-top: 8px; }
+    .expand-line-items th {
+      text-align: left; padding: 6px 10px; font-weight: 500;
+      color: var(--hv-text-secondary); border-bottom: 1px solid var(--hv-border);
+    }
+    .expand-line-items td { padding: 6px 10px; border-bottom: 1px solid var(--hv-border-table); }
+    @media (max-width: 767px) {
+      .hv-content { padding: 12px; }
+      .hv-content-header { flex-direction: column; align-items: flex-start; gap: 12px; }
+      .hv-content-header .hv-flex { width: 100%; }
+      .hv-content-header .hv-btn { flex: 1; }
+      .filter-bar { flex-direction: column; align-items: stretch; }
+      .filter-bar .search-wrap { max-width: unset; min-width: unset; }
+      .filter-bar .hv-select { min-width: unset; width: 100%; }
+      .filter-bar .hv-input { width: 100%; }
+      #invoiceTable { min-width: 1100px; }
+      .bulk-bar { flex-wrap: wrap; }
+      .expand-grid { grid-template-columns: 1fr; }
+      .hv-tabs { overflow-x: auto; flex-wrap: nowrap; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+      .hv-tabs::-webkit-scrollbar { display: none; }
+      .hv-tab { white-space: nowrap; flex-shrink: 0; }
+    }
+
+    @media (max-width: 480px) {
+      .kpi-grid { grid-template-columns: 1fr; }
+      .hv-content { padding: 10px; }
+    }
+
+    /* Empty & loading states */
+    .state-empty, .state-loading {
+      text-align: center; padding: 64px 24px;
+    }
+    .state-empty i, .state-loading i {
+      font-size: 48px; color: var(--hv-text-muted); margin-bottom: 16px;
+    }
+    .state-empty p, .state-loading p {
+      font-size: 14px; color: var(--hv-text-secondary); max-width: 360px; margin: 0 auto;
+    }
+    .state-loading .spinner {
+      display: inline-block; width: 32px; height: 32px;
+      border: 3px solid var(--hv-border); border-top-color: var(--hv-primary);
+      border-radius: 50%; animation: spin 0.8s linear infinite; margin-bottom: 16px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Checkbox */
+    .hv-checkbox {
+      width: 16px; height: 16px; accent-color: var(--hv-primary);
+      cursor: pointer; border-radius: 3px;
+    }
+
+    /* Amount formatting */
+    .amount { font-family: var(--hv-font-mono); font-weight: 500; }
+  </style>
+</head>
+<body>
+
+  <aside class="hv-sidebar" aria-label="Điều hướng chính"></aside>
+  <div class="hv-topbar" aria-label="Thanh công cụ"></div>
+
+  <div class="hv-content">
+    <div class="hv-content-max">
+
+      <!-- Header -->
+      <div class="hv-content-header">
+        <h1>Hóa đơn đến</h1>
+        <div class="hv-flex hv-gap-3">
+          <button class="hv-btn hv-btn-secondary"><i class="ti ti-upload"></i> Import PDF</button>
+          <button class="hv-btn hv-btn-primary"><i class="ti ti-refresh"></i> Đồng bộ mới</button>
+        </div>
+      </div>
+
+      <!-- KPI Cards -->
+      <div class="kpi-grid">
+        <div class="hv-kpi">
+          <div class="hv-kpi-label">Chờ phân loại</div>
+          <div class="hv-flex hv-items-center hv-gap-3">
+            <div class="hv-kpi-value">12</div>
+            <span class="hv-badge hv-badge-warning">Cần xử lý</span>
+          </div>
+        </div>
+        <div class="hv-kpi">
+          <div class="hv-kpi-label">Đã khớp PO</div>
+          <div class="hv-flex hv-items-center hv-gap-3">
+            <div class="hv-kpi-value">89</div>
+            <span class="hv-badge hv-badge-success">Tự động</span>
+          </div>
+        </div>
+        <div class="hv-kpi">
+          <div class="hv-kpi-label">Chờ duyệt</div>
+          <div class="hv-flex hv-items-center hv-gap-3">
+            <div class="hv-kpi-value">5</div>
+            <span class="hv-badge hv-badge-info">Kế toán</span>
+          </div>
+        </div>
+        <div class="hv-kpi">
+          <div class="hv-kpi-label">Tổng tháng này</div>
+          <div class="hv-flex hv-items-center hv-gap-3">
+            <div class="hv-kpi-value">234</div>
+            <span class="hv-badge hv-badge-neutral">Tháng 05/2026</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabs -->
+      <div class="hv-tabs" role="tablist">
+        <button class="hv-tab hv-tab-active" role="tab" aria-selected="true" data-tab="all">
+          Tất cả <span class="hv-tab-count">234</span>
+        </button>
+        <button class="hv-tab" role="tab" data-tab="pending">
+          Chờ phân loại <span class="hv-tab-count">12</span>
+        </button>
+        <button class="hv-tab" role="tab" data-tab="matched">
+          Đã khớp PO <span class="hv-tab-count">89</span>
+        </button>
+        <button class="hv-tab" role="tab" data-tab="approved">
+          Chờ duyệt <span class="hv-tab-count">5</span>
+        </button>
+        <button class="hv-tab" role="tab" data-tab="rejected">
+          Đã từ chối <span class="hv-tab-count">3</span>
+        </button>
+      </div>
+
+      <!-- Filter Bar -->
+      <div class="filter-bar">
+        <div class="search-wrap">
+          <i class="ti ti-search"></i>
+          <input type="text" class="hv-input" placeholder="Tìm theo số HĐ, tên NCC..." aria-label="Tìm kiếm hóa đơn">
+        </div>
+        <select class="hv-select" aria-label="Nguồn">
+          <option value="">Nguồn: Tất cả</option>
+          <option value="hilo">Hilo sync</option>
+          <option value="pdf">Import PDF</option>
+          <option value="ocr">OCR</option>
+        </select>
+        <select class="hv-select" aria-label="Phân loại">
+          <option value="">Phân loại: Tất cả</option>
+          <option value="hang-hoa">Hàng hóa</option>
+          <option value="dich-vu">Dịch vụ</option>
+          <option value="van-phong-pham">Văn phòng phẩm</option>
+          <option value="khac">Khác</option>
+        </select>
+        <input type="date" class="hv-input" style="width:150px" aria-label="Từ ngày" value="2026-05-01">
+        <span style="color:var(--hv-text-muted)">—</span>
+        <input type="date" class="hv-input" style="width:150px" aria-label="Đến ngày" value="2026-05-15">
+      </div>
+
+      <!-- Bulk Action Bar -->
+      <div class="bulk-bar" id="bulkBar" role="toolbar" aria-label="Thao tác hàng loạt">
+        <span class="count" id="bulkCount">0 đã chọn</span>
+        <button class="hv-btn hv-btn-sm hv-btn-secondary"><i class="ti ti-tags"></i> Phân loại hàng loạt</button>
+        <button class="hv-btn hv-btn-sm hv-btn-secondary"><i class="ti ti-link"></i> Khớp PO tự động</button>
+        <button class="hv-btn hv-btn-sm hv-btn-primary"><i class="ti ti-check"></i> Duyệt đã chọn</button>
+        <button class="hv-btn hv-btn-sm hv-btn-danger"><i class="ti ti-x"></i> Từ chối đã chọn</button>
+      </div>
+
+      <!-- Table: Default State -->
+      <div id="stateDefault">
+        <div class="hv-card" style="padding:0; overflow:hidden;">
+          <div style="overflow-x:auto">
+            <table class="hv-table" id="invoiceTable">
+              <thead>
+                <tr>
+                  <th class="col-check"><input type="checkbox" class="hv-checkbox" id="selectAll" aria-label="Chọn tất cả"></th>
+                  <th class="col-id">Số HĐ</th>
+                  <th class="col-supplier">Nhà cung cấp</th>
+                  <th class="col-mst">MST</th>
+                  <th class="col-source">Nguồn</th>
+                  <th class="col-classify">Phân loại AI</th>
+                  <th class="col-po">PO khớp</th>
+                  <th class="col-amount">Số tiền</th>
+                  <th class="col-status">Trạng thái</th>
+                  <th class="col-actions">Thao tác</th>
+                </tr>
+              </thead>
+              <tbody id="tableBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Pagination -->
+        <div class="hv-flex hv-items-center hv-justify-between" style="margin-top:16px;padding:0 4px">
+          <div style="font-size:13px;color:var(--hv-text-secondary)">Hiển thị 1–15 / 234 hóa đơn</div>
+          <div class="hv-flex hv-gap-2">
+            <button class="hv-btn hv-btn-sm hv-btn-secondary" disabled><i class="ti ti-chevron-left"></i></button>
+            <button class="hv-btn hv-btn-sm hv-btn-primary" style="min-width:28px">1</button>
+            <button class="hv-btn hv-btn-sm hv-btn-secondary" style="min-width:28px">2</button>
+            <button class="hv-btn hv-btn-sm hv-btn-secondary" style="min-width:28px">3</button>
+            <button class="hv-btn hv-btn-sm hv-btn-secondary"><i class="ti ti-chevron-right"></i></button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Table: Empty State -->
+      <div id="stateEmpty" class="hv-hidden">
+        <div class="hv-card">
+          <div class="state-empty">
+            <i class="ti ti-receipt-off" style="display:block"></i>
+            <p style="font-size:16px;font-weight:600;color:var(--hv-text-primary);margin-bottom:8px">Chưa có hóa đơn đến</p>
+            <p>Đồng bộ từ Hilo hoặc import PDF để bắt đầu.</p>
+            <div class="hv-flex hv-justify-between" style="justify-content:center;gap:12px;margin-top:24px">
+              <button class="hv-btn hv-btn-secondary"><i class="ti ti-upload"></i> Import PDF</button>
+              <button class="hv-btn hv-btn-primary"><i class="ti ti-refresh"></i> Đồng bộ Hilo</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Table: AI Processing State -->
+      <div id="stateLoading" class="hv-hidden">
+        <div class="hv-card">
+          <div class="state-loading">
+            <div class="spinner"></div>
+            <p style="font-size:16px;font-weight:600;color:var(--hv-text-primary);margin-bottom:8px">Đang phân loại bằng AI...</p>
+            <p>Hệ thống đang xử lý 12 hóa đơn. Quá trình này có thể mất vài phút.</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="assets/js/app-shell.js"></script>
+  <script>
+    // Mock data
+    const MOCK_DATA = [
+      { id: 'INV-2026-0567', supplier: 'Công ty TNHH Vật liệu xây dựng Hòa Phát', mst: '0100123456', source: 'Hilo sync', classify: 'Hàng hóa', classifyConf: 95, po: 'PO-2026-0123', poMatch: 92, total: 15750000, status: 'matched', date: '2026-05-14', lines: [
+        { name: 'Xi măng PCB40 bao 50kg', qty: 200, unit: 'Bao', price: 52500, amount: 10500000 },
+        { name: 'Cát vàng xây tô', qty: 30, unit: 'Khối', price: 175000, amount: 5250000 },
+      ]},
+      { id: 'INV-2026-0566', supplier: 'CTCP Văn phòng phẩm Hồng Hà', mst: '0100654321', source: 'OCR', classify: 'Văn phòng phẩm', classifyConf: 88, po: '—', poMatch: null, total: 2340000, status: 'pending', date: '2026-05-14', lines: [
+        { name: 'Giấy A4 Double A 80gsm', qty: 20, unit: 'Ram', price: 75000, amount: 1500000 },
+        { name: 'Bút bi Thiên Long TL-027', qty: 100, unit: 'Cây', price: 4500, amount: 450000 },
+        { name: 'Kẹp giấy lớn', qty: 50, unit: 'Hộp', price: 7800, amount: 390000 },
+      ]},
+      { id: 'INV-2026-0565', supplier: 'Công ty CP Dịch vụ IT FPT', mst: '0100111222', source: 'Hilo sync', classify: 'Dịch vụ', classifyConf: 97, po: 'PO-2026-0120', poMatch: 98, total: 45000000, status: 'approved', date: '2026-05-13', lines: [
+        { name: 'Dịch vụ bảo trì server Q2/2026', qty: 1, unit: 'Gói', price: 30000000, amount: 30000000 },
+        { name: 'License phần mềm diệt virus', qty: 50, unit: 'User', price: 300000, amount: 15000000 },
+      ]},
+      { id: 'INV-2026-0564', supplier: 'Công ty TNHH TM DV Phúc Lộc Thọ', mst: '0312345678', source: 'Import PDF', classify: 'Hàng hóa', classifyConf: 72, po: '—', poMatch: null, total: 8900000, status: 'pending', date: '2026-05-13', lines: [
+        { name: 'Nước rửa chén Sunlight 3.6L', qty: 50, unit: 'Chai', price: 48000, amount: 2400000 },
+        { name: 'Nước lau sàn Gift 3.5L', qty: 40, unit: 'Chai', price: 62500, amount: 2500000 },
+        { name: 'Khăn giấy Pulppy 3 lớp', qty: 100, unit: 'Gói', price: 40000, amount: 4000000 },
+      ]},
+      { id: 'INV-2026-0563', supplier: 'CTCP Logistics Giao Hàng Nhanh', mst: '0100888777', source: 'Hilo sync', classify: 'Dịch vụ', classifyConf: 99, po: 'PO-2026-0118', poMatch: 95, total: 12600000, status: 'matched', date: '2026-05-12', lines: [
+        { name: 'Phí vận chuyển nội thành T5/2026', qty: 1, unit: 'Tháng', price: 12600000, amount: 12600000 },
+      ]},
+      { id: 'INV-2026-0562', supplier: 'Công ty TNHH In ấn Bao bì Việt Nhật', mst: '0100555444', source: 'OCR', classify: 'Hàng hóa', classifyConf: 85, po: 'PO-2026-0115', poMatch: 88, total: 22500000, status: 'matched', date: '2026-05-12', lines: [
+        { name: 'Hộp carton 30x20x15cm', qty: 1000, unit: 'Cái', price: 8500, amount: 8500000 },
+        { name: 'Túi niêm phong 28x38cm', qty: 2000, unit: 'Cái', price: 3500, amount: 7000000 },
+        { name: 'Tem nhãn cuộn 1000 con', qty: 5, unit: 'Cuộn', price: 1400000, amount: 7000000 },
+      ]},
+      { id: 'INV-2026-0561', supplier: 'Công ty TNHH MTV Nước giải khát Tân Hiệp Phát', mst: '0100333222', source: 'Hilo sync', classify: 'Hàng hóa', classifyConf: 96, po: 'PO-2026-0112', poMatch: 100, total: 6750000, status: 'matched', date: '2026-05-11', lines: [
+        { name: 'Trà xanh Không Độ 350ml', qty: 10, unit: 'Thùng', price: 180000, amount: 1800000 },
+        { name: 'Number 1 330ml', qty: 15, unit: 'Thùng', price: 195000, amount: 2925000 },
+        { name: 'Dr.Thanh 350ml', qty: 10, unit: 'Thùng', price: 202500, amount: 2025000 },
+      ]},
+      { id: 'INV-2026-0560', supplier: 'CTCP Điện tử Samsung Việt Nam', mst: '0100999888', source: 'Hilo sync', classify: 'Hàng hóa', classifyConf: 94, po: '—', poMatch: null, total: 125000000, status: 'pending', date: '2026-05-11', lines: [
+        { name: 'Màn hình Samsung 27" LS27C', qty: 10, unit: 'Cái', price: 6500000, amount: 65000000 },
+        { name: 'Bàn phím Samsung Wireless', qty: 20, unit: 'Cái', price: 1250000, amount: 25000000 },
+        { name: 'Chuột Samsung Optical', qty: 20, unit: 'Cái', price: 750000, amount: 15000000 },
+        { name: 'Webcam Samsung 1080p', qty: 10, unit: 'Cái', price: 2000000, amount: 20000000 },
+      ]},
+      { id: 'INV-2026-0559', supplier: 'Công ty CP Sữa Việt Nam Vinamilk', mst: '0100222333', source: 'Import PDF', classify: 'Hàng hóa', classifyConf: 91, po: 'PO-2026-0108', poMatch: 94, total: 9800000, status: 'matched', date: '2026-05-10', lines: [
+        { name: 'Sữa tươi Vinamilk 1L', qty: 100, unit: 'Hộp', price: 32000, amount: 3200000 },
+        { name: 'Sữa chua Vinamilk 100g', qty: 200, unit: 'Hộp', price: 6500, amount: 1300000 },
+        { name: 'Sữa đặc Ngôi Sao Phương Nam', qty: 80, unit: 'Lon', price: 22000, amount: 1760000 },
+        { name: 'Sữa Ensure Gold 400g', qty: 20, unit: 'Hộp', price: 177000, amount: 3540000 },
+      ]},
+      { id: 'INV-2026-0558', supplier: 'Công ty TNHH DV Bảo vệ Securitas', mst: '0100777666', source: 'Hilo sync', classify: 'Dịch vụ', classifyConf: 98, po: 'PO-2026-0105', poMatch: 100, total: 35000000, status: 'approved', date: '2026-05-10', lines: [
+        { name: 'Dịch vụ bảo vệ T5/2026 (2 ca)', qty: 1, unit: 'Tháng', price: 35000000, amount: 35000000 },
+      ]},
+      { id: 'INV-2026-0557', supplier: 'CTCP Nhựa Bình Minh', mst: '0100444555', source: 'OCR', classify: 'Hàng hóa', classifyConf: 76, po: '—', poMatch: null, total: 4200000, status: 'pending', date: '2026-05-09', lines: [
+        { name: 'Ống PVC D21mm dài 4m', qty: 100, unit: 'Cây', price: 18000, amount: 1800000 },
+        { name: 'Ống PVC D34mm dài 4m', qty: 60, unit: 'Cây', price: 40000, amount: 2400000 },
+      ]},
+      { id: 'INV-2026-0556', supplier: 'Công ty TNHH Sơn Dulux', mst: '0100666555', source: 'Hilo sync', classify: 'Hàng hóa', classifyConf: 93, po: 'PO-2026-0102', poMatch: 96, total: 18500000, status: 'matched', date: '2026-05-09', lines: [
+        { name: 'Sơn nội thất Dulux 5L', qty: 20, unit: 'Thùng', price: 450000, amount: 9000000 },
+        { name: 'Sơn ngoại thất Dulux 5L', qty: 10, unit: 'Thùng', price: 550000, amount: 5500000 },
+        { name: 'Sơn lót Dulux 5L', qty: 10, unit: 'Thùng', price: 400000, amount: 4000000 },
+      ]},
+      { id: 'INV-2026-0555', supplier: 'CTCP Thiết bị điện Schneider', mst: '0100888999', source: 'Import PDF', classify: 'Hàng hóa', classifyConf: 89, po: 'PO-2026-0099', poMatch: 91, total: 32000000, status: 'matched', date: '2026-05-08', lines: [
+        { name: 'Aptomat 2P 40A', qty: 50, unit: 'Cái', price: 180000, amount: 9000000 },
+        { name: 'Contactor 25A LC1D25', qty: 30, unit: 'Cái', price: 350000, amount: 10500000 },
+        { name: 'Relay nhiệt LRD25', qty: 30, unit: 'Cái', price: 250000, amount: 7500000 },
+        { name: 'Cầu chì RT18-32', qty: 100, unit: 'Cái', price: 50000, amount: 5000000 },
+      ]},
+      { id: 'INV-2026-0554', supplier: 'Công ty TNHH TM&DV An Phước', mst: '0311223344', source: 'OCR', classify: 'Văn phòng phẩm', classifyConf: 68, po: '—', poMatch: null, total: 1850000, status: 'rejected', date: '2026-05-08', lines: [
+        { name: 'Sổ tay bìa da A5', qty: 20, unit: 'Quyển', price: 45000, amount: 900000 },
+        { name: 'Bút ký Parker', qty: 5, unit: 'Cây', price: 120000, amount: 600000 },
+        { name: 'Kệ để bàn inox', qty: 5, unit: 'Cái', price: 70000, amount: 350000 },
+      ]},
+      { id: 'INV-2026-0553', supplier: 'CTCP Thương mại Sao Thái Dương', mst: '0100999111', source: 'Hilo sync', classify: 'Hàng hóa', classifyConf: 82, po: '—', poMatch: null, total: 5600000, status: 'rejected', date: '2026-05-07', lines: [
+        { name: 'Dầu gội Head & Shoulders 650ml', qty: 50, unit: 'Chai', price: 85000, amount: 4250000 },
+        { name: 'Sữa tắm Lifebuoy 850ml', qty: 30, unit: 'Chai', price: 45000, amount: 1350000 },
+      ]},
+    ];
+
+    const STATUS_MAP = {
+      matched:  { label: 'Đã khớp PO',   cls: 'hv-badge-success' },
+      pending:  { label: 'Chờ phân loại', cls: 'hv-badge-warning' },
+      approved: { label: 'Chờ duyệt',    cls: 'hv-badge-info' },
+      rejected: { label: 'Đã từ chối',   cls: 'hv-badge-danger' },
+    };
+
+    const SOURCE_ICON = {
+      'Hilo sync':   'ti ti-cloud-download',
+      'Import PDF':  'ti ti-file-type-pdf',
+      'OCR':         'ti ti-scan',
+    };
+
+    // Render table rows
+    function renderTable(data) {
+      const tbody = document.getElementById('tableBody');
+      let html = '';
+      data.forEach((row, idx) => {
+        const st = STATUS_MAP[row.status];
+        const confClass = row.classifyConf < 80 ? ' low-conf' : '';
+        const confIcon = row.classifyConf < 80 ? '<i class="ti ti-alert-triangle" style="font-size:13px" title="Độ tin cậy thấp"></i>' : '';
+
+        html += `
+          <tr class="row-expand-trigger" data-idx="${idx}" aria-expanded="false">
+            <td class="col-check" onclick="event.stopPropagation()"><input type="checkbox" class="hv-checkbox row-check" aria-label="Chọn ${row.id}"></td>
+            <td class="col-id"><span class="text-mono">${row.id}</span></td>
+            <td class="col-supplier"><span class="hv-truncate" style="max-width:220px;display:block" title="${row.supplier}">${row.supplier}</span></td>
+            <td class="col-mst"><span class="text-caption">${row.mst}</span></td>
+            <td class="col-source"><span class="hv-flex hv-items-center hv-gap-1"><i class="${SOURCE_ICON[row.source] || 'ti ti-file'}" style="font-size:14px;color:var(--hv-text-muted)"></i> ${row.source}</span></td>
+            <td class="col-classify">
+              <div class="ai-classify">
+                <span class="hv-badge hv-badge-primary">${row.classify}</span>
+                <span class="confidence${confClass}">${confIcon} ${row.classifyConf}%</span>
+                <button class="btn-edit" onclick="event.stopPropagation()" title="Sửa phân loại">Sửa</button>
+              </div>
+            </td>
+            <td class="col-po">${row.po !== '—' ? '<span class="text-mono">' + row.po + '</span>' : '<span style="color:var(--hv-text-muted)">—</span>'}</td>
+            <td class="col-amount"><span class="amount">${HV.formatVND(row.total)}</span></td>
+            <td class="col-status"><span class="hv-badge ${st.cls}">${st.label}</span></td>
+            <td class="col-actions"><button class="hv-btn hv-btn-sm hv-btn-icon hv-btn-tertiary" onclick="event.stopPropagation()" aria-label="Thêm"><i class="ti ti-dots-vertical"></i></button></td>
+          </tr>
+          <tr class="expand-row" data-idx="${idx}">
+            <td colspan="10">
+              <div class="expand-content">
+                <div class="expand-grid">
+                  <div class="expand-section">
+                    <h4>Chi tiết hóa đơn</h4>
+                    <table class="expand-line-items">
+                      <thead><tr><th>Sản phẩm</th><th>SL</th><th>Đơn giá</th><th>Thành tiền</th></tr></thead>
+                      <tbody>
+                        ${row.lines.map(l => `<tr><td>${l.name}</td><td>${l.qty} ${l.unit}</td><td class="amount">${HV.formatVND(l.price)}</td><td class="amount">${HV.formatVND(l.amount)}</td></tr>`).join('')}
+                      </tbody>
+                    </table>
+                  </div>
+                  <div class="expand-section">
+                    <h4>AI &amp; Kế toán</h4>
+                    <div class="kv"><span class="k">AI phân loại:</span><span class="v">${row.classify} (${row.classifyConf}%)</span></div>
+                    <div class="kv"><span class="k">PO khớp:</span><span class="v">${row.po !== '—' ? row.po + ' (' + row.poMatch + '% match)' : 'Chưa khớp'}</span></div>
+                    <div class="kv"><span class="k">Ghi kế toán:</span><span class="v">Nợ TK 156 / Có TK 331</span></div>
+                    <div class="kv"><span class="k">Ngày HĐ:</span><span class="v">${HV.formatDate(row.date)}</span></div>
+                    <div class="kv"><span class="k">Tổng tiền:</span><span class="v amount">${HV.formatVND(row.total)}</span></div>
+                  </div>
+                </div>
+              </div>
+            </td>
+          </tr>`;
+      });
+      tbody.innerHTML = html;
+      attachRowListeners();
+    }
+
+    // Row expand/collapse
+    function attachRowListeners() {
+      document.querySelectorAll('.row-expand-trigger').forEach(tr => {
+        tr.addEventListener('click', () => {
+          const idx = tr.dataset.idx;
+          const expandRow = document.querySelector(`.expand-row[data-idx="${idx}"]`);
+          const isOpen = expandRow.classList.contains('open');
+          // Close all
+          document.querySelectorAll('.expand-row').forEach(r => r.classList.remove('open'));
+          document.querySelectorAll('.row-expand-trigger').forEach(r => r.setAttribute('aria-expanded', 'false'));
+          if (!isOpen) {
+            expandRow.classList.add('open');
+            tr.setAttribute('aria-expanded', 'true');
+          }
+        });
+      });
+    }
+
+    // Checkbox logic
+    function updateBulkBar() {
+      const checked = document.querySelectorAll('.row-check:checked');
+      const bar = document.getElementById('bulkBar');
+      const count = document.getElementById('bulkCount');
+      if (checked.length > 0) {
+        bar.classList.add('visible');
+        count.textContent = checked.length + ' đã chọn';
+      } else {
+        bar.classList.remove('visible');
+      }
+    }
+
+    document.addEventListener('change', (e) => {
+      if (e.target.id === 'selectAll') {
+        document.querySelectorAll('.row-check').forEach(cb => { cb.checked = e.target.checked; });
+        updateBulkBar();
+      }
+      if (e.target.classList.contains('row-check')) {
+        const total = document.querySelectorAll('.row-check').length;
+        const checked = document.querySelectorAll('.row-check:checked').length;
+        document.getElementById('selectAll').checked = total === checked;
+        updateBulkBar();
+      }
+    });
+
+    // Tab switching
+    document.querySelectorAll('.hv-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.hv-tab').forEach(t => { t.classList.remove('hv-tab-active'); t.setAttribute('aria-selected', 'false'); });
+        tab.classList.add('hv-tab-active');
+        tab.setAttribute('aria-selected', 'true');
+      });
+    });
+
+    // State management via URL param
+    function applyState(state) {
+      document.getElementById('stateDefault').classList.toggle('hv-hidden', state !== 'default');
+      document.getElementById('stateEmpty').classList.toggle('hv-hidden', state !== 'empty');
+      document.getElementById('stateLoading').classList.toggle('hv-hidden', state !== 'loading');
+    }
+
+    const urlState = new URLSearchParams(window.location.search).get('state') || 'default';
+    applyState(urlState);
+    if (urlState === 'default') renderTable(MOCK_DATA);
+
+    // Expose for state toggle buttons
+    window._inboundApplyState = applyState;
+    window._inboundRenderTable = renderTable;
+    window._inboundData = MOCK_DATA;
+
+    // Approve/Reject button handlers
+    document.addEventListener('click', (e) => {
+      const approveBtn = e.target.closest('.btn-approve');
+      if (approveBtn) {
+        e.stopPropagation();
+        HV.toast('Đã chấp nhận hóa đơn', 'success');
+        return;
+      }
+      const rejectBtn = e.target.closest('.btn-reject');
+      if (rejectBtn) {
+        e.stopPropagation();
+        HV.confirm('Bạn có chắc muốn từ chối hóa đơn này?', {
+          title: 'Từ chối hóa đơn',
+          confirmLabel: 'Từ chối',
+          type: 'danger'
+        }).then(ok => {
+          if (ok) HV.toast('Đã từ chối hóa đơn', 'warning');
+        });
+        return;
+      }
+      const editBtn = e.target.closest('.btn-edit');
+      if (editBtn) {
+        e.stopPropagation();
+        HV.toast('Đang mở chỉnh sửa phân loại...', 'info');
+        return;
+      }
+    });
+
+    // Bulk action buttons
+    document.addEventListener('click', (e) => {
+      const bulkApprove = e.target.closest('#bulkApprove');
+      if (bulkApprove) {
+        const count = document.querySelectorAll('.row-check:checked').length;
+        HV.toast(`Đã chấp nhận ${count} hóa đơn`, 'success');
+        return;
+      }
+      const bulkClassify = e.target.closest('#bulkClassify');
+      if (bulkClassify) {
+        HV.toast('Đang phân loại lại...', 'info');
+        return;
+      }
+      const bulkExport = e.target.closest('#bulkExport');
+      if (bulkExport) {
+        HV.toast('Đang xuất file...', 'info');
+        return;
+      }
+    });
+  </script>
+</body>
+</html>

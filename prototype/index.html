@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Haravan Invoice — Prototypes</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <link rel="stylesheet" href="assets/css/design-system.css">
+  <script>window.HV_PAGE = { id: 'dashboard', title: 'Showcase', breadcrumb: [{label:'Prototypes'}] };</script>
+  <style>
+    .hero {
+      background: linear-gradient(135deg, #f8faff 0%, #eef2f7 100%);
+      border: 1px solid var(--hv-border);
+      border-radius: var(--hv-radius-xl);
+      padding: 36px 32px;
+      margin-bottom: 28px;
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+    .hero-mark {
+      width: 64px;
+      height: 64px;
+      border-radius: 16px;
+      background: var(--hv-primary);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .hero-mark i { font-size: 32px; }
+    .hero h1 {
+      font-size: 26px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--hv-text-primary);
+      margin-bottom: 6px;
+    }
+    .hero p { color: var(--hv-text-secondary); font-size: 15px; }
+
+    .section-title {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--hv-text-muted);
+      margin: 24px 0 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .section-title::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--hv-border);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px;
+    }
+
+    .proto-card {
+      background: var(--hv-bg-surface);
+      border: 1px solid var(--hv-border);
+      border-radius: var(--hv-radius-lg);
+      padding: 18px;
+      text-decoration: none;
+      color: inherit;
+      transition: all 200ms ease;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      box-shadow: var(--hv-shadow-xs);
+    }
+    .proto-card:hover {
+      text-decoration: none;
+      border-color: var(--hv-primary);
+      box-shadow: var(--hv-shadow-md);
+      transform: translateY(-2px);
+    }
+    .proto-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .proto-icon i { font-size: 22px; }
+    .proto-icon.blue   { background: var(--hv-primary-soft); color: var(--hv-primary); }
+    .proto-icon.green  { background: var(--hv-success-soft); color: var(--hv-success); }
+    .proto-icon.orange { background: var(--hv-warning-soft); color: var(--hv-warning-hover); }
+    .proto-icon.purple { background: var(--hv-purple-soft); color: var(--hv-purple); }
+    .proto-icon.red    { background: var(--hv-danger-soft); color: var(--hv-danger); }
+    .proto-icon.cyan   { background: var(--hv-info-soft); color: var(--hv-info); }
+
+    .proto-card h3 {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--hv-text-primary);
+      margin: 0;
+    }
+    .proto-card p {
+      font-size: 13px;
+      color: var(--hv-text-secondary);
+      line-height: 1.5;
+      flex: 1;
+    }
+    .proto-meta {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--hv-text-muted);
+      padding-top: 8px;
+      border-top: 1px solid var(--hv-border);
+    }
+    .proto-meta .hv-badge { font-size: 11px; height: 20px; padding: 0 8px; }
+
+    @media (max-width: 767px) {
+      .hero { padding: 20px; flex-direction: column; align-items: flex-start; text-align: left; }
+      .hero h1 { font-size: 22px; }
+    }
+  </style>
+</head>
+<body>
+  <a href="#main" class="hv-skip-link">Bỏ qua đến nội dung</a>
+  <aside class="hv-sidebar" aria-label="Điều hướng chính"></aside>
+  <div class="hv-topbar" aria-label="Thanh công cụ"></div>
+
+  <main class="hv-content" id="main">
+    <div class="hv-content-max">
+
+      <div class="hero">
+        <div class="hero-mark"><i class="ti ti-receipt-2"></i></div>
+        <div>
+          <h1>Haravan Invoice — Prototype Showcase</h1>
+          <p>Bộ prototype cho sản phẩm Hóa đơn điện tử Haravan. Tuân thủ NĐ 70/2025 + TT 32/2025. Kết nối T-VAN Hilo.</p>
+        </div>
+      </div>
+
+      <!-- Tổng quan -->
+      <div class="section-title">Tổng quan</div>
+      <div class="grid">
+        <a class="proto-card" href="dashboard.html">
+          <div class="proto-icon blue"><i class="ti ti-layout-dashboard"></i></div>
+          <h3>Tổng quan</h3>
+          <p>Dashboard KPI doanh thu, biểu đồ theo kênh, top khách hàng, top sản phẩm, insight strip.</p>
+          <div class="proto-meta"><span class="hv-badge hv-badge-primary">Desktop</span><span>4 trạng thái</span></div>
+        </a>
+        <a class="proto-card" href="notification-center.html">
+          <div class="proto-icon red"><i class="ti ti-bell"></i></div>
+          <h3>Thông báo</h3>
+          <p>47 thông báo: quy định, CQT, tác vụ, phản hồi KH, rủi ro AI, gói dịch vụ, bảo mật.</p>
+          <div class="proto-meta"><span class="hv-badge hv-badge-danger">8 chưa đọc</span></div>
+        </a>
+        <a class="proto-card" href="analytics.html">
+          <div class="proto-icon purple"><i class="ti ti-chart-dots-2"></i></div>
+          <h3>Phân tích</h3>
+          <p>Xu hướng phát hành, biểu đồ kênh bán hàng, top KH/SP, điểm tuân thủ 7/7.</p>
+          <div class="proto-meta"><span class="hv-badge hv-badge-primary">Charts</span></div>
+        </a>
+      </div>
+
+      <!-- Hóa đơn -->
+      <div class="section-title">Hóa đơn</div>
+      <div class="grid">
+        <a class="proto-card" href="invoice-issue.html">
+          <div class="proto-icon green"><i class="ti ti-zap"></i></div>
+          <h3>Tạo hóa đơn</h3>
+          <p>Phát hành 1-click: pre-flight 9 rules + AI copilot + delivery preview + preview real-time.</p>
+          <div class="proto-meta"><span class="hv-badge hv-badge-success">RICE #1</span><span>68,400</span></div>
+        </a>
+        <a class="proto-card" href="correction-wizard.html">
+          <div class="proto-icon orange"><i class="ti ti-wand"></i></div>
+          <h3>Xử lý sai sót</h3>
+          <p>Wizard 5 bước theo NĐ 70/2025: Xác định lỗi → Nghiệp vụ → Nhập mới → Biên bản → Ký &amp; gửi CQT.</p>
+          <div class="proto-meta"><span class="hv-badge hv-badge-warning">NĐ 70/2025</span></div>
+        </a>
+        <a class="proto-card" href="daily-aggregation.html">
+          <div class="proto-icon purple"><i class="ti ti-stack-2"></i></div>
+          <h3>Gộp hóa đơn</h3>
+          <p>Gộp hóa đơn POS thành 1 hóa đơn tổng hàng ngày theo TT 32/2025.</p>
+          <div class="proto-meta"><span class="hv-badge hv-badge-primary">TT 32/2025</span></div>
+        </a>
+        <a class="proto-card" href="inbound-workbench.html">
+          <div class="proto-icon cyan"><i class="ti ti-package-import"></i></div>
+          <h3>Hóa đơn đầu vào</h3>
+          <p>Xử lý hóa đơn NCC: AI phân loại, PO matching, hạch toán kế toán.</p>
+          <div class="proto-meta"><span class="hv-badge hv-badge-info">AI</span></div>
+        </a>
+        <a class="proto-card" href="invoice-list.html">
+          <div class="proto-icon blue"><i class="ti ti-receipt"></i></div>
+          <h3>Danh sách hóa đơn</h3>
+          <p>Bảng dữ liệu: 6 tab, filter, search, bulk action, drawer detail, density toggle.</p>
+          <div class="proto-meta"><span class="hv-badge hv-badge-primary">Desktop</span><span>15 HĐ mẫu</span></div>
+        </a>
+        <a class="proto-card" href="invoice-detail.html">
+          <div class="proto-icon blue"><i class="ti ti-file-text"></i></div>
+          <h3>Chi tiết hóa đơn</h3>
+          <p>Layout 2 cột: bản xem trước + thông tin KH/CQT, audit timeline.</p>
+          <div class="proto-meta"><span class="hv-badge hv-badge-primary">Desktop</span></div>
+        </a>
+      </div>
+
+      <!-- Danh mục -->
+      <div class="section-title">Danh mục</div>
+      <div class="grid">
+        <a class="proto-card" href="customer-catalog.html">
+          <div class="proto-icon green"><i class="ti ti-users-group"></i></div>
+          <h3>Khách hàng</h3>
+          <p>CRUD, tra cứu MST từ CQT, import Excel, quản lý email.</p>
+          <div class="proto-meta"><span class="hv-badge hv-badge-success">Master Data</span></div>
+        </a>
+        <a class="proto-card" href="product-catalog.html">
+          <div class="proto-icon cyan"><i class="ti ti-package"></i></div>
+          <h3>Sản phẩm</h3>
+          <p>CRUD sản phẩm/dịch vụ, đơn giá, ĐVT, thuế suất, export Excel.</p>
+          <div class="proto-meta"><span class="hv-badge hv-badge-info">Master Data</span></div>
+        </a>
+        <a class="proto-card" href="reports.html">
+          <div class="proto-icon purple"><i class="ti ti-file-report"></i></div>
+          <h3>Báo cáo</h3>
+          <p>6 loại: theo quý, bảng kê tháng, bán hàng, xóa/sửa/thay thế. Export XLS/XML.</p>
+          <div class="proto-meta"><span class="hv-badge hv-badge-primary">6 loại</span></div>
+        </a>
+      </div>
+
+      <!-- Cấu hình -->
+      <div class="section-title">Cấu hình</div>
+      <div class="grid">
+        <a class="proto-card" href="settings-org-users.html">
+          <div class="proto-icon blue"><i class="ti ti-building-store"></i></div>
+          <h3>Thông tin</h3>
+          <p>Thông tin DN, người dùng &amp; phân quyền RBAC, bảo mật tài khoản.</p>
+          <div class="proto-meta"><span class="hv-badge hv-badge-primary">3 tab</span></div>
+        </a>
+        <a class="proto-card" href="tvan-connections.html">
+          <div class="proto-icon orange"><i class="ti ti-certificate"></i></div>
+          <h3>Chữ ký số</h3>
+          <p>Kết nối T-VAN Hilo, chứng thư số, automation, failover (Phase 4).</p>
+          <div class="proto-meta"><span class="hv-badge hv-badge-warning">T-VAN</span></div>
+        </a>
+        <a class="proto-card" href="settings-templates.html">
+          <div class="proto-icon blue"><i class="ti ti-file-description"></i></div>
+          <h3>Mẫu hóa đơn</h3>
+          <p>QĐĐD, thông báo phát hành, đăng ký mẫu số/ký hiệu/số lượng.</p>
+          <div class="proto-meta"><span class="hv-badge hv-badge-warning">Legal</span></div>
+        </a>
+        <a class="proto-card" href="automation-builder.html">
+          <div class="proto-icon purple"><i class="ti ti-bolt"></i></div>
+          <h3>Tự động hóa</h3>
+          <p>Kéo thả tạo luồng: trigger → condition → action. 6 template mẫu.</p>
+          <div class="proto-meta"><span class="hv-badge hv-badge-primary">No-Code</span></div>
+        </a>
+      </div>
+
+      <!-- Xác thực -->
+      <div class="section-title">Xác thực &amp; Trạng thái</div>
+      <div class="grid">
+        <a class="proto-card" href="auth-flow.html">
+          <div class="proto-icon purple"><i class="ti ti-login-2"></i></div>
+          <h3>Đăng nhập &amp; Onboarding</h3>
+          <p>Landing SSO, callback, wizard onboarding 3 bước, 4 trạng thái lỗi.</p>
+          <div class="proto-meta"><span class="hv-badge hv-badge-purple">Auth</span><span>7 states</span></div>
+        </a>
+        <a class="proto-card" href="customer-portal.html">
+          <div class="proto-icon green"><i class="ti ti-user-circle"></i></div>
+          <h3>Cổng khách hàng</h3>
+          <p>Tra cứu, tải PDF, ký OTP, FAQ. Mobile-first.</p>
+          <div class="proto-meta"><span class="hv-badge hv-badge-success">Public</span></div>
+        </a>
+        <a class="proto-card" href="pos-tablet.html">
+          <div class="proto-icon blue"><i class="ti ti-device-tablet"></i></div>
+          <h3>POS Tablet</h3>
+          <p>Giao diện tablet thu ngân, phát hành nhanh 1-click.</p>
+          <div class="proto-meta"><span class="hv-badge hv-badge-info">Tablet</span></div>
+        </a>
+        <a class="proto-card" href="mobile-owner.html">
+          <div class="proto-icon orange"><i class="ti ti-device-mobile"></i></div>
+          <h3>Owner Mobile</h3>
+          <p>KPI, quick actions, alerts, recent invoices cho chủ shop.</p>
+          <div class="proto-meta"><span class="hv-badge hv-badge-warning">Mobile</span></div>
+        </a>
+        <a class="proto-card" href="compliance-center.html">
+          <div class="proto-icon green"><i class="ti ti-shield-check"></i></div>
+          <h3>Tuân thủ thuế</h3>
+          <p>7 rule checklist, audit timeline, regulation alerts.</p>
+          <div class="proto-meta"><span class="hv-badge hv-badge-success">Compliance</span></div>
+        </a>
+        <a class="proto-card" href="states-library.html">
+          <div class="proto-icon cyan"><i class="ti ti-layout-grid"></i></div>
+          <h3>States Library</h3>
+          <p>Pattern library: loading, empty, error, success, skeleton, diff viewer.</p>
+          <div class="proto-meta"><span class="hv-badge hv-badge-neutral">Reference</span></div>
+        </a>
+      </div>
+
+    </div>
+  </main>
+
+  <script src="assets/js/app-shell.js"></script>
+</body>
+</html>

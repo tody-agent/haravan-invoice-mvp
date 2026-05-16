@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mẫu hóa đơn — Haravan Invoice</title>
+  <link rel="stylesheet" href="assets/css/design-system.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script>window.HV_PAGE = { id: 'settings-templates', title: 'Mẫu hóa đơn' };</script>
+  <style>
+    .hv-child-table { margin-top: 12px; }
+    .hv-child-table th { font-size: 11px; padding: 8px 10px; }
+    .hv-child-table td { padding: 8px 10px; font-size: 13px; }
+    .hv-child-table .hv-input,
+    .hv-child-table .hv-select { height: 30px; font-size: 13px; padding: 0 8px; }
+    .hv-child-table .hv-select { padding-right: 24px; }
+
+    .hv-decision-card {
+      border: 1px solid var(--hv-border);
+      border-radius: var(--hv-radius-lg);
+      padding: 16px 20px;
+      margin-bottom: 12px;
+      background: var(--hv-bg-surface);
+      transition: box-shadow 150ms;
+      cursor: pointer;
+    }
+    .hv-decision-card:hover { box-shadow: var(--hv-shadow-sm); }
+    .hv-decision-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+    .hv-decision-title { font-size: 14px; font-weight: 600; }
+    .hv-decision-meta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-size: 13px;
+      color: var(--hv-text-secondary);
+    }
+    .hv-decision-meta i { font-size: 14px; color: var(--hv-text-muted); }
+
+    .hv-tbph-card {
+      border: 1px solid var(--hv-border);
+      border-radius: var(--hv-radius-lg);
+      padding: 16px 20px;
+      margin-bottom: 12px;
+      background: var(--hv-bg-surface);
+    }
+    .hv-tbph-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+    .hv-tbph-title { font-size: 14px; font-weight: 600; }
+    .hv-tbph-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+    }
+    .hv-tbph-field { font-size: 13px; }
+    .hv-tbph-field-label { color: var(--hv-text-muted); font-size: 12px; margin-bottom: 2px; }
+    .hv-tbph-field-value { font-weight: 500; }
+
+    .hv-form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    .hv-form-grid .hv-form-full { grid-column: 1 / -1; }
+
+    .hv-modal .hv-form-grid { gap: 12px; }
+    .hv-modal .hv-label { margin-bottom: 4px; }
+
+    .hv-info-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      background: var(--hv-bg-soft);
+      border-radius: var(--hv-radius-md);
+      font-size: 13px;
+      color: var(--hv-text-secondary);
+      margin-bottom: 16px;
+    }
+    .hv-info-row i { font-size: 16px; color: var(--hv-info); flex-shrink: 0; }
+
+    .hv-readonly-input {
+      background: var(--hv-bg-soft) !important;
+      color: var(--hv-text-muted) !important;
+      cursor: not-allowed;
+    }
+
+    .hv-tbph-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="hv-skip-link"><a href="#main-content">Chuyển đến nội dung</a></div>
+  <aside class="hv-sidebar" aria-label="Điều hướng chính"></aside>
+  <header class="hv-topbar" aria-label="Thanh công cụ"></header>
+  <main class="hv-content" id="main-content">
+    <div class="hv-content-max">
+
+      <!-- HEADER -->
+      <div class="hv-content-header">
+        <div>
+          <nav class="hv-breadcrumb" style="margin-bottom:4px">
+            <a href="dashboard.html" style="color:var(--hv-text-secondary)">Cài đặt</a>
+            <i class="ti ti-chevron-right" style="color:var(--hv-text-muted);font-size:12px"></i>
+            <span style="color:var(--hv-text-primary);font-weight:500">Mẫu hóa đơn</span>
+          </nav>
+          <h1>Mẫu hóa đơn</h1>
+        </div>
+      </div>
+
+      <!-- TABS -->
+      <div class="hv-tabs" style="margin-bottom:20px">
+        <button class="hv-tab hv-tab-active" data-tab="templates" onclick="switchTab(this,'templates')">Mẫu hóa đơn đăng ký</button>
+        <button class="hv-tab" data-tab="decisions" onclick="switchTab(this,'decisions')">Quyết định áp dụng</button>
+        <button class="hv-tab" data-tab="publishing" onclick="switchTab(this,'publishing')">Thông báo phát hành</button>
+      </div>
+
+      <!-- ====== TAB 1: MẪU HÓA ĐƠN ĐĂNG KÝ ====== -->
+      <div id="tab-templates" class="hv-tab-panel">
+        <div class="hv-state-default">
+          <div class="hv-card hv-card-flush">
+            <div class="hv-card-header" style="padding:16px 20px">
+              <span class="hv-card-title">Danh sách mẫu hóa đơn đăng ký</span>
+              <button class="hv-btn hv-btn-primary hv-btn-sm" onclick="showAddTemplateModal()"><i class="ti ti-plus"></i> Thêm mẫu</button>
+            </div>
+            <div class="hv-table-wrap">
+              <table class="hv-table" id="tbl-templates">
+                <thead>
+                  <tr>
+                    <th>Mẫu số</th>
+                    <th>Loại hóa đơn</th>
+                    <th>Ký hiệu</th>
+                    <th>Mục đích sử dụng</th>
+                    <th>Trạng thái</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="cell-id hv-mono">01GTKT0/001</td>
+                    <td>Hóa đơn GTGT</td>
+                    <td class="hv-mono">AA/200E</td>
+                    <td>Hàng hóa dịch vụ</td>
+                    <td><span class="hv-badge hv-badge-success"><i class="ti ti-circle-check" style="font-size:12px"></i> Đang sử dụng</span></td>
+                    <td><button class="hv-btn hv-btn-sm hv-btn-tertiary"><i class="ti ti-dots-vertical"></i></button></td>
+                  </tr>
+                  <tr>
+                    <td class="cell-id hv-mono">02GTKT0/001</td>
+                    <td>Hóa đơn bán hàng</td>
+                    <td class="hv-mono">AB/200E</td>
+                    <td>Hàng hóa dịch vụ</td>
+                    <td><span class="hv-badge hv-badge-success"><i class="ti ti-circle-check" style="font-size:12px"></i> Đang sử dụng</span></td>
+                    <td><button class="hv-btn hv-btn-sm hv-btn-tertiary"><i class="ti ti-dots-vertical"></i></button></td>
+                  </tr>
+                  <tr>
+                    <td class="cell-id hv-mono">01GTKT0/001</td>
+                    <td>Hóa đơn GTGT</td>
+                    <td class="hv-mono">AC/200E</td>
+                    <td>Hàng hóa dịch vụ</td>
+                    <td><span class="hv-badge hv-badge-neutral"><i class="ti ti-circle-dashed" style="font-size:12px"></i> Chưa sử dụng</span></td>
+                    <td><button class="hv-btn hv-btn-sm hv-btn-tertiary"><i class="ti ti-dots-vertical"></i></button></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Empty state -->
+        <div class="hv-state-empty" style="display:none">
+          <div class="hv-card">
+            <div class="hv-empty">
+              <div class="hv-empty-icon"><i class="ti ti-file-invoice"></i></div>
+              <div class="hv-empty-title">Chưa có mẫu hóa đơn nào</div>
+              <div class="hv-empty-desc">Thêm mẫu hóa đơn đăng ký để bắt đầu phát hành hóa đơn điện tử.</div>
+              <button class="hv-btn hv-btn-primary" onclick="showAddTemplateModal()"><i class="ti ti-plus"></i> Thêm mẫu hóa đơn</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Loading state -->
+        <div class="hv-state-loading" style="display:none">
+          <div class="hv-card">
+            <div style="padding:24px 0">
+              <div class="hv-skeleton hv-skeleton-row" style="width:100%"></div>
+              <div class="hv-skeleton hv-skeleton-row" style="width:100%;margin-top:8px"></div>
+              <div class="hv-skeleton hv-skeleton-row" style="width:100%;margin-top:8px"></div>
+              <div class="hv-skeleton hv-skeleton-row" style="width:80%;margin-top:8px"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ====== TAB 2: QUYẾT ĐỊNH ÁP DỤNG ====== -->
+      <div id="tab-decisions" class="hv-tab-panel" style="display:none">
+        <div class="hv-state-default">
+          <div class="hv-card" style="margin-bottom:16px">
+            <div class="hv-card-header">
+              <span class="hv-card-title">Tạo quyết định áp dụng mới</span>
+            </div>
+            <div class="hv-form-grid">
+              <div>
+                <label class="hv-label">Tên đơn vị quản lý</label>
+                <input class="hv-input" id="inp-org-name" value="Công ty TNHH Cà phê Trung Nguyên Legend" placeholder="Tên đơn vị">
+              </div>
+              <div>
+                <label class="hv-label">Số quyết định</label>
+                <input class="hv-input" id="inp-decision-no" placeholder="VD: QĐ 03/2026">
+              </div>
+              <div>
+                <label class="hv-label">Người đề xuất</label>
+                <input class="hv-input" id="inp-proposer" value="Lê Tody" placeholder="Họ tên người đề xuất">
+              </div>
+              <div>
+                <label class="hv-label">Ngày quyết định</label>
+                <input class="hv-input" id="inp-decision-date" type="date" value="2026-05-16">
+              </div>
+              <div class="hv-form-full">
+                <label class="hv-label">Danh sách mẫu hóa đơn áp dụng</label>
+                <div class="hv-child-table">
+                  <table class="hv-table" id="tbl-decision-items">
+                    <thead>
+                      <tr>
+                        <th style="width:30px">#</th>
+                        <th>Mẫu số</th>
+                        <th>Ký hiệu</th>
+                        <th>Loại hóa đơn</th>
+                        <th style="width:60px"></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td style="color:var(--hv-text-muted)">1</td>
+                        <td>
+                          <select class="hv-select">
+                            <option>01GTKT0/001</option>
+                            <option>02GTKT0/001</option>
+                          </select>
+                        </td>
+                        <td>
+                          <select class="hv-select">
+                            <option>AA/200E</option>
+                            <option>AB/200E</option>
+                            <option>AC/200E</option>
+                          </select>
+                        </td>
+                        <td>
+                          <select class="hv-select">
+                            <option>Hóa đơn GTGT</option>
+                            <option>Hóa đơn bán hàng</option>
+                          </select>
+                        </td>
+                        <td><button class="hv-btn hv-btn-sm hv-btn-tertiary" onclick="this.closest('tr').remove()"><i class="ti ti-trash" style="color:var(--hv-danger)"></i></button></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <button class="hv-btn hv-btn-secondary hv-btn-sm" style="margin-top:8px" onclick="addDecisionItemRow()"><i class="ti ti-plus"></i> Thêm mẫu</button>
+              </div>
+            </div>
+            <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:16px;padding-top:16px;border-top:1px solid var(--hv-border)">
+              <button class="hv-btn hv-btn-secondary">Hủy</button>
+              <button class="hv-btn hv-btn-primary" onclick="HV.toast('Đã tạo quyết định áp dụng mới','success')"><i class="ti ti-check"></i> Tạo quyết định</button>
+            </div>
+          </div>
+
+          <!-- Decision List -->
+          <div class="hv-card">
+            <div class="hv-card-header">
+              <span class="hv-card-title">Danh sách quyết định</span>
+            </div>
+            <div class="hv-decision-card" onclick="showDecisionDetail(0)">
+              <div class="hv-decision-header">
+                <div class="hv-decision-title"><i class="ti ti-file-check" style="color:var(--hv-success);margin-right:6px"></i>QĐ 01/2026</div>
+                <span class="hv-badge hv-badge-success"><i class="ti ti-circle-check" style="font-size:12px"></i> Đã chấp nhận</span>
+              </div>
+              <div class="hv-decision-meta">
+                <span><i class="ti ti-calendar"></i> 15/01/2026</span>
+                <span><i class="ti ti-user"></i> Lê Tody</span>
+                <span><i class="ti ti-file-invoice"></i> 2 mẫu hóa đơn</span>
+              </div>
+            </div>
+            <div class="hv-decision-card" onclick="showDecisionDetail(1)">
+              <div class="hv-decision-header">
+                <div class="hv-decision-title"><i class="ti ti-send" style="color:var(--hv-warning);margin-right:6px"></i>QĐ 02/2026</div>
+                <span class="hv-badge hv-badge-warning"><i class="ti ti-clock" style="font-size:12px"></i> Đã gửi CQT</span>
+              </div>
+              <div class="hv-decision-meta">
+                <span><i class="ti ti-calendar"></i> 01/03/2026</span>
+                <span><i class="ti ti-user"></i> Lê Tody</span>
+                <span><i class="ti ti-file-invoice"></i> 1 mẫu hóa đơn</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Empty state -->
+        <div class="hv-state-empty" style="display:none">
+          <div class="hv-card">
+            <div class="hv-empty">
+              <div class="hv-empty-icon"><i class="ti ti-file-check"></i></div>
+              <div class="hv-empty-title">Chưa có quyết định áp dụng</div>
+              <div class="hv-empty-desc">Tạo quyết định áp dụng mẫu hóa đơn để đăng ký với cơ quan thuế.</div>
+              <button class="hv-btn hv-btn-primary"><i class="ti ti-plus"></i> Tạo quyết định</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Loading state -->
+        <div class="hv-state-loading" style="display:none">
+          <div class="hv-card">
+            <div style="padding:24px 0">
+              <div class="hv-skeleton hv-skeleton-card" style="height:80px;margin-bottom:12px"></div>
+              <div class="hv-skeleton hv-skeleton-card" style="height:80px"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ====== TAB 3: THÔNG BÁO PHÁT HÀNH ====== -->
+      <div id="tab-publishing" class="hv-tab-panel" style="display:none">
+        <div class="hv-state-default">
+          <!-- Organization Info Card -->
+          <div class="hv-card" style="margin-bottom:16px">
+            <div class="hv-card-header">
+              <span class="hv-card-title">Thông tin đơn vị phát hành</span>
+            </div>
+            <div class="hv-info-row">
+              <i class="ti ti-info-circle"></i>
+              <span>Thông tin này được sử dụng cho tất cả thông báo phát hành. Thay đổi tại <a href="settings-org-users.html">Thông tin doanh nghiệp</a>.</span>
+            </div>
+            <div class="hv-form-grid">
+              <div>
+                <label class="hv-label">Đơn vị khởi tạo</label>
+                <input class="hv-input" value="Công ty TNHH Cà phê Trung Nguyên Legend" readonly style="background:var(--hv-bg-soft)">
+              </div>
+              <div>
+                <label class="hv-label">Mã số thuế</label>
+                <input class="hv-input hv-mono" value="0312345678" readonly style="background:var(--hv-bg-soft)">
+              </div>
+              <div>
+                <label class="hv-label">Địa chỉ</label>
+                <input class="hv-input" value="12 Nguyễn Văn Trí, Phường 7, Quận Phú Nhuận, TP. Hồ Chí Minh" readonly style="background:var(--hv-bg-soft)">
+              </div>
+              <div>
+                <label class="hv-label">Điện thoại</label>
+                <input class="hv-input" value="028 3999 8888" readonly style="background:var(--hv-bg-soft)">
+              </div>
+              <div>
+                <label class="hv-label">Người đại diện</label>
+                <input class="hv-input" value="Lê Tody" readonly style="background:var(--hv-bg-soft)">
+              </div>
+              <div>
+                <label class="hv-label">Cơ quan thuế nhận</label>
+                <input class="hv-input" value="Cục Thuế TP. Hồ Chí Minh" readonly style="background:var(--hv-bg-soft)">
+              </div>
+              <div>
+                <label class="hv-label">Tỉnh/TP</label>
+                <input class="hv-input" value="TP. Hồ Chí Minh" readonly style="background:var(--hv-bg-soft)">
+              </div>
+            </div>
+          </div>
+
+          <!-- Publishing Notification List -->
+          <div class="hv-card">
+            <div class="hv-card-header">
+              <span class="hv-card-title">Danh sách thông báo phát hành</span>
+              <button class="hv-btn hv-btn-primary hv-btn-sm" onclick="showPublishingModal()"><i class="ti ti-plus"></i> Tạo thông báo</button>
+            </div>
+
+            <!-- TBPH 01 -->
+            <div class="hv-tbph-card">
+              <div class="hv-tbph-header">
+                <div class="hv-tbph-title"><i class="ti ti-speakerphone" style="color:var(--hv-primary);margin-right:6px"></i>TBPH 01/2026</div>
+                <div class="hv-tbph-actions">
+                  <span class="hv-badge hv-badge-success"><i class="ti ti-circle-check" style="font-size:12px"></i> Đã gửi</span>
+                  <button class="hv-btn hv-btn-sm hv-btn-tertiary" onclick="HV.toast('Chỉ có thể chỉnh sửa khi trạng thái là Tạo mới','warning')"><i class="ti ti-pencil" style="font-size:14px"></i></button>
+                  <button class="hv-btn hv-btn-sm hv-btn-tertiary" onclick="HV.toast('Chỉ có thể xóa khi trạng thái là Tạo mới','warning')"><i class="ti ti-trash" style="font-size:14px;color:var(--hv-text-muted)"></i></button>
+                </div>
+              </div>
+              <div class="hv-tbph-grid">
+                <div class="hv-tbph-field">
+                  <div class="hv-tbph-field-label">Mẫu số</div>
+                  <div class="hv-tbph-field-value hv-mono">01GTKT0/001</div>
+                </div>
+                <div class="hv-tbph-field">
+                  <div class="hv-tbph-field-label">Ký hiệu</div>
+                  <div class="hv-tbph-field-value hv-mono">AA/200E</div>
+                </div>
+                <div class="hv-tbph-field">
+                  <div class="hv-tbph-field-label">Số lượng</div>
+                  <div class="hv-tbph-field-value">500</div>
+                </div>
+                <div class="hv-tbph-field">
+                  <div class="hv-tbph-field-label">Từ số</div>
+                  <div class="hv-tbph-field-value hv-mono">0000001</div>
+                </div>
+                <div class="hv-tbph-field">
+                  <div class="hv-tbph-field-label">Đến số</div>
+                  <div class="hv-tbph-field-value hv-mono">0000500</div>
+                </div>
+                <div class="hv-tbph-field">
+                  <div class="hv-tbph-field-label">Ngày bắt đầu sử dụng</div>
+                  <div class="hv-tbph-field-value">01/02/2026</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- TBPH 02 -->
+            <div class="hv-tbph-card">
+              <div class="hv-tbph-header">
+                <div class="hv-tbph-title"><i class="ti ti-speakerphone" style="color:var(--hv-primary);margin-right:6px"></i>TBPH 02/2026</div>
+                <div class="hv-tbph-actions">
+                  <span class="hv-badge hv-badge-success"><i class="ti ti-circle-check" style="font-size:12px"></i> Đã gửi</span>
+                  <button class="hv-btn hv-btn-sm hv-btn-tertiary" onclick="HV.toast('Chỉ có thể chỉnh sửa khi trạng thái là Tạo mới','warning')"><i class="ti ti-pencil" style="font-size:14px"></i></button>
+                  <button class="hv-btn hv-btn-sm hv-btn-tertiary" onclick="HV.toast('Chỉ có thể xóa khi trạng thái là Tạo mới','warning')"><i class="ti ti-trash" style="font-size:14px;color:var(--hv-text-muted)"></i></button>
+                </div>
+              </div>
+              <div class="hv-tbph-grid">
+                <div class="hv-tbph-field">
+                  <div class="hv-tbph-field-label">Mẫu số</div>
+                  <div class="hv-tbph-field-value hv-mono">02GTKT0/001</div>
+                </div>
+                <div class="hv-tbph-field">
+                  <div class="hv-tbph-field-label">Ký hiệu</div>
+                  <div class="hv-tbph-field-value hv-mono">AB/200E</div>
+                </div>
+                <div class="hv-tbph-field">
+                  <div class="hv-tbph-field-label">Số lượng</div>
+                  <div class="hv-tbph-field-value">200</div>
+                </div>
+                <div class="hv-tbph-field">
+                  <div class="hv-tbph-field-label">Từ số</div>
+                  <div class="hv-tbph-field-value hv-mono">0000001</div>
+                </div>
+                <div class="hv-tbph-field">
+                  <div class="hv-tbph-field-label">Đến số</div>
+                  <div class="hv-tbph-field-value hv-mono">0000200</div>
+                </div>
+                <div class="hv-tbph-field">
+                  <div class="hv-tbph-field-label">Ngày bắt đầu sử dụng</div>
+                  <div class="hv-tbph-field-value">01/04/2026</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Empty state -->
+        <div class="hv-state-empty" style="display:none">
+          <div class="hv-card">
+            <div class="hv-empty">
+              <div class="hv-empty-icon"><i class="ti ti-speakerphone"></i></div>
+              <div class="hv-empty-title">Chưa có thông báo phát hành</div>
+              <div class="hv-empty-desc">Tạo thông báo phát hành để đăng ký phạm vi số hóa đơn với cơ quan thuế.</div>
+              <button class="hv-btn hv-btn-primary" onclick="showPublishingModal()"><i class="ti ti-plus"></i> Tạo thông báo</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Loading state -->
+        <div class="hv-state-loading" style="display:none">
+          <div class="hv-card">
+            <div style="padding:24px 0">
+              <div class="hv-skeleton hv-skeleton-card" style="height:120px;margin-bottom:12px"></div>
+              <div class="hv-skeleton hv-skeleton-card" style="height:120px"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <script src="assets/js/app-shell.js"></script>
+  <script>
+    /* === Tab Switching === */
+    function switchTab(btn, tabId) {
+      document.querySelectorAll('.hv-tab').forEach(t => t.classList.remove('hv-tab-active'));
+      btn.classList.add('hv-tab-active');
+      document.querySelectorAll('.hv-tab-panel').forEach(p => p.style.display = 'none');
+      document.getElementById('tab-' + tabId).style.display = '';
+    }
+
+    /* === Tab 1: Add Template Modal === */
+    function showAddTemplateModal() {
+      HV.modal({
+        title: 'Thêm mẫu hóa đơn đăng ký',
+        body: `
+          <div style="display:flex;flex-direction:column;gap:12px">
+            <div>
+              <label class="hv-label">Mẫu số</label>
+              <select class="hv-select">
+                <option>01GTKT0/001</option>
+                <option>02GTKT0/001</option>
+                <option>01GTKT0/002</option>
+              </select>
+            </div>
+            <div>
+              <label class="hv-label">Loại hóa đơn</label>
+              <select class="hv-select">
+                <option>Hóa đơn GTGT</option>
+                <option>Hóa đơn bán hàng</option>
+                <option>Hóa đơn khác</option>
+              </select>
+            </div>
+            <div>
+              <label class="hv-label">Ký hiệu</label>
+              <input class="hv-input" placeholder="VD: AA/200E">
+            </div>
+            <div>
+              <label class="hv-label">Mục đích sử dụng</label>
+              <select class="hv-select">
+                <option>Hàng hóa dịch vụ</option>
+                <option>Hóa đơn xuất khẩu</option>
+                <option>Hóa đơn bán hàng</option>
+              </select>
+            </div>
+          </div>
+        `,
+        actions: [
+          { id: 'cancel', label: 'Hủy' },
+          { id: 'save', label: 'Thêm mẫu', primary: true, onClick: function(bd) { HV.closeModal(bd); HV.toast('Đã thêm mẫu hóa đơn mới', 'success'); } }
+        ]
+      });
+    }
+
+    /* === Tab 2: Decision child table === */
+    var decisionRowCount = 1;
+    function addDecisionItemRow() {
+      decisionRowCount++;
+      var tbody = document.querySelector('#tbl-decision-items tbody');
+      var tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td style="color:var(--hv-text-muted)">${decisionRowCount}</td>
+        <td>
+          <select class="hv-select">
+            <option>01GTKT0/001</option>
+            <option>02GTKT0/001</option>
+          </select>
+        </td>
+        <td>
+          <select class="hv-select">
+            <option>AA/200E</option>
+            <option>AB/200E</option>
+            <option>AC/200E</option>
+          </select>
+        </td>
+        <td>
+          <select class="hv-select">
+            <option>Hóa đơn GTGT</option>
+            <option>Hóa đơn bán hàng</option>
+          </select>
+        </td>
+        <td><button class="hv-btn hv-btn-sm hv-btn-tertiary" onclick="this.closest('tr').remove()"><i class="ti ti-trash" style="color:var(--hv-danger)"></i></button></td>
+      `;
+      tbody.appendChild(tr);
+    }
+
+    /* === Tab 2: Decision Detail === */
+    function showDecisionDetail(idx) {
+      var decisions = [
+        {
+          title: 'QĐ 01/2026',
+          status: 'Đã chấp nhận',
+          statusCls: 'hv-badge-success',
+          statusIcon: 'ti ti-circle-check',
+          date: '15/01/2026',
+          proposer: 'Lê Tody',
+          org: 'Công ty TNHH Cà phê Trung Nguyên Legend',
+          items: [
+            { model: '01GTKT0/001', symbol: 'AA/200E', type: 'Hóa đơn GTGT' },
+            { model: '02GTKT0/001', symbol: 'AB/200E', type: 'Hóa đơn bán hàng' }
+          ]
+        },
+        {
+          title: 'QĐ 02/2026',
+          status: 'Đã gửi CQT',
+          statusCls: 'hv-badge-warning',
+          statusIcon: 'ti ti-clock',
+          date: '01/03/2026',
+          proposer: 'Lê Tody',
+          org: 'Công ty TNHH Cà phê Trung Nguyên Legend',
+          items: [
+            { model: '01GTKT0/001', symbol: 'AC/200E', type: 'Hóa đơn GTGT' }
+          ]
+        }
+      ];
+      var d = decisions[idx];
+      var itemsHtml = d.items.map(function(item, i) {
+        return '<tr><td>' + (i+1) + '</td><td class="hv-mono">' + item.model + '</td><td class="hv-mono">' + item.symbol + '</td><td>' + item.type + '</td></tr>';
+      }).join('');
+
+      HV.modal({
+        title: 'Chi tiết ' + d.title,
+        body: `
+          <div style="display:flex;flex-direction:column;gap:12px">
+            <div style="display:flex;align-items:center;justify-content:space-between">
+              <span style="font-weight:600;font-size:16px">${d.title}</span>
+              <span class="hv-badge ${d.statusCls}"><i class="${d.statusIcon}" style="font-size:12px"></i> ${d.status}</span>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+              <div><span style="font-size:12px;color:var(--hv-text-muted)">Đơn vị quản lý</span><div style="font-weight:500">${d.org}</div></div>
+              <div><span style="font-size:12px;color:var(--hv-text-muted)">Ngày quyết định</span><div style="font-weight:500">${d.date}</div></div>
+              <div><span style="font-size:12px;color:var(--hv-text-muted)">Người đề xuất</span><div style="font-weight:500">${d.proposer}</div></div>
+            </div>
+            <div style="margin-top:8px">
+              <span style="font-size:12px;color:var(--hv-text-muted);font-weight:600;text-transform:uppercase;letter-spacing:0.04em">Mẫu hóa đơn áp dụng</span>
+              <table class="hv-table" style="margin-top:8px">
+                <thead><tr><th>#</th><th>Mẫu số</th><th>Ký hiệu</th><th>Loại hóa đơn</th></tr></thead>
+                <tbody>${itemsHtml}</tbody>
+              </table>
+            </div>
+          </div>
+        `,
+        actions: [
+          { id: 'close', label: 'Đóng' },
+        ],
+        size: 'lg'
+      });
+    }
+
+    /* === Tab 3: Publishing Modal === */
+    function showPublishingModal() {
+      HV.modal({
+        title: 'Tạo thông báo phát hành',
+        body: `
+          <div class="hv-info-row" style="margin-bottom:16px">
+            <i class="ti ti-calculator"></i>
+            <span><strong>Đến số</strong> = Từ số + Số lượng - 1. <strong>Từ số</strong> được tính tự động từ lịch sử phát hành.</span>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:12px">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+              <div>
+                <label class="hv-label">Mẫu số <span style="color:var(--hv-danger)">*</span></label>
+                <select class="hv-select" id="modal-model" onchange="onModelChange()">
+                  <option value="">-- Chọn mẫu số --</option>
+                  <option value="01GTKT0/001">01GTKT0/001</option>
+                  <option value="02GTKT0/001">02GTKT0/001</option>
+                </select>
+              </div>
+              <div>
+                <label class="hv-label">Ký hiệu <span style="color:var(--hv-danger)">*</span></label>
+                <select class="hv-select" id="modal-symbol">
+                  <option value="">-- Chọn ký hiệu --</option>
+                  <option value="AA/200E">AA/200E</option>
+                  <option value="AB/200E">AB/200E</option>
+                  <option value="AC/200E">AC/200E</option>
+                </select>
+              </div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">
+              <div>
+                <label class="hv-label">Số lượng <span style="color:var(--hv-danger)">*</span></label>
+                <input class="hv-input" id="modal-qty" type="number" min="1" placeholder="VD: 500" oninput="calcToNumber()">
+              </div>
+              <div>
+                <label class="hv-label">Từ số</label>
+                <input class="hv-input hv-readonly-input hv-mono" id="modal-from" value="0000001" readonly title="Tự tính từ lịch sử phát hành">
+                <div class="hv-help-text">Tự động tính từ lịch sử</div>
+              </div>
+              <div>
+                <label class="hv-label">Đến số</label>
+                <input class="hv-input hv-mono" id="modal-to" placeholder="—" oninput="calcQtyFromTo()">
+              </div>
+            </div>
+            <div>
+              <label class="hv-label">Ngày bắt đầu sử dụng <span style="color:var(--hv-danger)">*</span></label>
+              <input class="hv-input" id="modal-start-date" type="date">
+              <div class="hv-help-text">Phải lớn hơn hoặc bằng ngày hiện tại</div>
+            </div>
+          </div>
+        `,
+        actions: [
+          { id: 'cancel', label: 'Hủy' },
+          { id: 'save', label: 'Tạo thông báo', primary: true, onClick: function(bd) {
+            var model = document.getElementById('modal-model').value;
+            var symbol = document.getElementById('modal-symbol').value;
+            var qty = document.getElementById('modal-qty').value;
+            var startDate = document.getElementById('modal-start-date').value;
+            if (!model || !symbol || !qty || !startDate) {
+              HV.toast('Vui lòng điền đầy đủ thông tin bắt buộc', 'danger');
+              return;
+            }
+            var today = new Date().toISOString().split('T')[0];
+            if (startDate < today) {
+              HV.toast('Ngày bắt đầu sử dụng phải lớn hơn hoặc bằng ngày hiện tại', 'danger');
+              return;
+            }
+            HV.closeModal(bd);
+            HV.toast('Đã tạo thông báo phát hành mới', 'success');
+          }}
+        ],
+        size: 'lg'
+      });
+
+      // Set min date for start date
+      setTimeout(function() {
+        var dateInput = document.getElementById('modal-start-date');
+        if (dateInput) {
+          var today = new Date().toISOString().split('T')[0];
+          dateInput.min = today;
+        }
+      }, 100);
+    }
+
+    /* === Modal Business Logic === */
+    // Issuance history: model+symbol -> last issued number
+    var issuanceHistory = {
+      '01GTKT0/001|AA/200E': 500,
+      '02GTKT0/001|AB/200E': 200,
+      '01GTKT0/001|AC/200E': 0
+    };
+
+    function onModelChange() {
+      var model = document.getElementById('modal-model').value;
+      var symbolSel = document.getElementById('modal-symbol');
+      // Auto-select matching symbol
+      if (model === '01GTKT0/001') {
+        symbolSel.value = 'AA/200E';
+      } else if (model === '02GTKT0/001') {
+        symbolSel.value = 'AB/200E';
+      }
+      updateFromNumber();
+    }
+
+    function updateFromNumber() {
+      var model = document.getElementById('modal-model').value;
+      var symbol = document.getElementById('modal-symbol').value;
+      var fromInput = document.getElementById('modal-from');
+      var key = model + '|' + symbol;
+      var lastNum = issuanceHistory[key] || 0;
+      var nextNum = lastNum + 1;
+      fromInput.value = padNumber(nextNum, 7);
+      calcToNumber();
+    }
+
+    function calcToNumber() {
+      var fromVal = parseInt(document.getElementById('modal-from').value, 10) || 0;
+      var qty = parseInt(document.getElementById('modal-qty').value, 10) || 0;
+      var toInput = document.getElementById('modal-to');
+      if (qty > 0) {
+        toInput.value = padNumber(fromVal + qty - 1, 7);
+      } else {
+        toInput.value = '';
+      }
+    }
+
+    function calcQtyFromTo() {
+      var fromVal = parseInt(document.getElementById('modal-from').value, 10) || 0;
+      var toVal = parseInt(document.getElementById('modal-to').value, 10) || 0;
+      var qtyInput = document.getElementById('modal-qty');
+      if (toVal >= fromVal) {
+        qtyInput.value = toVal - fromVal + 1;
+      }
+    }
+
+    function padNumber(num, len) {
+      var s = String(num);
+      while (s.length < len) s = '0' + s;
+      return s;
+    }
+
+    // Listen for symbol changes to update from number
+    document.addEventListener('change', function(e) {
+      if (e.target && e.target.id === 'modal-symbol') {
+        updateFromNumber();
+      }
+    });
+  </script>
+</body>
+</html>

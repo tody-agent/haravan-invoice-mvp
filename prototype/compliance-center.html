@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Compliance Center — Haravan Invoice</title>
+  <link rel="stylesheet" href="assets/css/design-system.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script>window.HV_PAGE = { id: 'compliance', title: 'Compliance Center' };</script>
+  <style>
+    /* Compliance Center — page-specific styles */
+    .hv-alert-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--hv-border-table);
+    }
+    .hv-alert-row:last-child { border-bottom: none; }
+    .hv-alert-icon {
+      flex-shrink: 0;
+      width: 32px;
+      height: 32px;
+      border-radius: var(--hv-radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+    }
+    .hv-alert-icon-warn { background: var(--hv-warning-soft); color: var(--hv-warning-hover); }
+    .hv-alert-icon-info { background: var(--hv-info-soft); color: var(--hv-info); }
+    .hv-alert-icon-danger { background: var(--hv-danger-soft); color: var(--hv-danger); }
+    .hv-alert-body { flex: 1; min-width: 0; }
+    .hv-alert-title { font-size: 14px; font-weight: 500; color: var(--hv-text-primary); }
+    .hv-alert-desc { font-size: 13px; color: var(--hv-text-secondary); margin-top: 2px; line-height: 1.5; }
+    .hv-alert-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+
+    .hv-filter-bar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+    .hv-filter-bar .hv-select,
+    .hv-filter-bar .hv-input { width: auto; min-width: 160px; }
+
+    .hv-export-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .hv-export-options {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 16px;
+    }
+    .hv-checkbox-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      color: var(--hv-text-primary);
+      cursor: pointer;
+    }
+    .hv-checkbox-label input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      accent-color: var(--hv-primary);
+      cursor: pointer;
+    }
+    .hv-checkbox-label:has(input:disabled) {
+      color: var(--hv-text-muted);
+      cursor: not-allowed;
+    }
+    .hv-checkbox-note {
+      font-size: 12px;
+      color: var(--hv-text-muted);
+      margin-left: 4px;
+    }
+
+    .hv-ref-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    .hv-ref-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--hv-border-table);
+      font-size: 14px;
+    }
+    .hv-ref-item:last-child { border-bottom: none; }
+    .hv-ref-code {
+      font-family: var(--hv-font-mono);
+      font-weight: 600;
+      color: var(--hv-primary-text);
+      white-space: nowrap;
+      min-width: 130px;
+    }
+    .hv-ref-desc { color: var(--hv-text-secondary); }
+
+    /* Skeleton loading */
+    .hv-skeleton {
+      background: linear-gradient(90deg, var(--hv-bg-soft) 25%, #e8ecf2 50%, var(--hv-bg-soft) 75%);
+      background-size: 200% 100%;
+      animation: hv-shimmer 1.5s infinite;
+      border-radius: var(--hv-radius-sm);
+    }
+    @keyframes hv-shimmer {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+    .hv-skeleton-text { height: 14px; margin-bottom: 8px; }
+    .hv-skeleton-text:last-child { margin-bottom: 0; }
+    .hv-skeleton-kpi { height: 80px; }
+    .hv-skeleton-card { height: 200px; }
+    .hv-skeleton-row { height: 44px; margin-bottom: 4px; }
+
+    /* Empty state */
+    .hv-empty {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 48px 24px;
+      text-align: center;
+    }
+    .hv-empty-icon {
+      font-size: 48px;
+      color: var(--hv-text-muted);
+      margin-bottom: 16px;
+    }
+    .hv-empty-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--hv-text-primary);
+      margin-bottom: 8px;
+    }
+    .hv-empty-desc {
+      font-size: 14px;
+      color: var(--hv-text-secondary);
+    }
+
+    /* Table overflow */
+    .hv-table-wrap {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .hv-table td.text-mono {
+      font-size: 12px;
+    }
+
+    /* Status dot in table */
+    .hv-status-dot {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .hv-status-dot::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .hv-status-dot-success::before { background: var(--hv-success); }
+    .hv-status-dot-warning::before { background: var(--hv-warning); }
+    .hv-status-dot-danger::before { background: var(--hv-danger); }
+    .hv-status-dot-info::before { background: var(--hv-info); }
+
+    @media (max-width: 767px) {
+      .hv-grid-4 { grid-template-columns: repeat(2, 1fr); }
+      .hv-alert-row { flex-wrap: wrap; }
+      .hv-alert-actions { width: 100%; justify-content: flex-end; }
+      .hv-filter-bar { flex-direction: column; align-items: stretch; }
+      .hv-filter-bar .hv-select,
+      .hv-filter-bar .hv-input { width: 100%; min-width: unset; }
+      .hv-content { padding: 12px; }
+      .hv-content-header { flex-direction: column; align-items: flex-start; gap: 12px; }
+      .hv-ref-item { flex-direction: column; gap: 4px; }
+      .hv-ref-code { min-width: unset; }
+      .hv-export-actions { flex-direction: column; }
+      .hv-export-actions .hv-btn { width: 100%; }
+      .hv-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+      .hv-table { min-width: 800px; }
+    }
+
+    @media (max-width: 480px) {
+      .hv-content { padding: 10px; }
+      .hv-grid-2 { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <aside class="hv-sidebar" aria-label="Điều hướng chính"></aside>
+
+  <!-- Topbar -->
+  <div class="hv-topbar" aria-label="Thanh công cụ"></div>
+
+  <!-- Main Content -->
+  <div class="hv-content">
+    <div class="hv-content-max">
+
+      <!-- === DEFAULT STATE === -->
+      <div id="state-default">
+
+        <!-- KPI Cards -->
+        <div class="hv-grid-4" style="margin-bottom:24px">
+          <div class="hv-kpi">
+            <div class="hv-kpi-label">Tỷ lệ CQT chấp nhận</div>
+            <div class="hv-kpi-value">98,2%</div>
+            <div style="margin-top:8px">
+              <span class="hv-badge hv-badge-success">
+                <i class="ti ti-trending-up" style="font-size:12px"></i> +1,2% so tháng trước
+              </span>
+            </div>
+          </div>
+          <div class="hv-kpi">
+            <div class="hv-kpi-label">Hóa đơn chờ xử lý</div>
+            <div class="hv-kpi-value">23</div>
+            <div style="margin-top:8px">
+              <span class="hv-badge hv-badge-warning">
+                <i class="ti ti-clock" style="font-size:12px"></i> Cần xử lý
+              </span>
+            </div>
+          </div>
+          <div class="hv-kpi">
+            <div class="hv-kpi-label">Hóa đơn vi phạm</div>
+            <div class="hv-kpi-value">3</div>
+            <div style="margin-top:8px">
+              <span class="hv-badge hv-badge-danger">
+                <i class="ti ti-alert-triangle" style="font-size:12px"></i> CQT từ chối
+              </span>
+            </div>
+          </div>
+          <div class="hv-kpi">
+            <div class="hv-kpi-label">Thời gian xử lý TB</div>
+            <div class="hv-kpi-value">2,5 <span style="font-size:16px;font-weight:500;color:var(--hv-text-secondary)">ngày</span></div>
+            <div style="margin-top:8px">
+              <span class="hv-badge hv-badge-info">
+                <i class="ti ti-trending-down" style="font-size:12px"></i> -0,3 ngày
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Regulation Alerts -->
+        <div class="hv-card" style="margin-bottom:24px">
+          <div class="hv-card-header">
+            <h2 class="hv-card-title">
+              <i class="ti ti-bell-ringing" style="font-size:20px;color:var(--hv-warning);margin-right:8px"></i>
+              Cảnh báo quy định
+            </h2>
+            <span class="hv-badge hv-badge-warning">4 cảnh báo</span>
+          </div>
+
+          <div class="hv-alert-row">
+            <div class="hv-alert-icon hv-alert-icon-warn">
+              <i class="ti ti-alert-triangle"></i>
+            </div>
+            <div class="hv-alert-body">
+              <div class="hv-alert-title">NĐ 70/2025 có hiệu lực từ 01/06/2025</div>
+              <div class="hv-alert-desc">Bỏ thủ tục hủy hóa đơn. Chỉ còn điều chỉnh/thay thế.</div>
+            </div>
+            <div class="hv-alert-actions">
+              <span class="hv-badge hv-badge-success">Đã áp dụng</span>
+              <button class="hv-btn hv-btn-sm hv-btn-tertiary">Xem chi tiết</button>
+            </div>
+          </div>
+
+          <div class="hv-alert-row">
+            <div class="hv-alert-icon hv-alert-icon-warn">
+              <i class="ti ti-alert-triangle"></i>
+            </div>
+            <div class="hv-alert-body">
+              <div class="hv-alert-title">TT 32/2025 thay thế TT 78</div>
+              <div class="hv-alert-desc">Cập nhật template biên bản điều chỉnh.</div>
+            </div>
+            <div class="hv-alert-actions">
+              <span class="hv-badge hv-badge-success">Đã cập nhật</span>
+              <button class="hv-btn hv-btn-sm hv-btn-tertiary">Xem chi tiết</button>
+            </div>
+          </div>
+
+          <div class="hv-alert-row">
+            <div class="hv-alert-icon hv-alert-icon-info">
+              <i class="ti ti-info-circle"></i>
+            </div>
+            <div class="hv-alert-body">
+              <div class="hv-alert-title">Dự thảo NĐ 2026</div>
+              <div class="hv-alert-desc">Đang trong giai đoạn thẩm định. Theo dõi cập nhật.</div>
+            </div>
+            <div class="hv-alert-actions">
+              <span class="hv-badge hv-badge-info">Theo dõi</span>
+              <button class="hv-btn hv-btn-sm hv-btn-tertiary">Xem chi tiết</button>
+            </div>
+          </div>
+
+          <div class="hv-alert-row">
+            <div class="hv-alert-icon hv-alert-icon-danger">
+              <i class="ti ti-alert-circle"></i>
+            </div>
+            <div class="hv-alert-body">
+              <div class="hv-alert-title">Cảnh báo: 3 hóa đơn bị CQT từ chối trong 7 ngày qua</div>
+              <div class="hv-alert-desc">Cần xử lý.</div>
+            </div>
+            <div class="hv-alert-actions">
+              <span class="hv-badge hv-badge-danger">Cần xử lý</span>
+              <button class="hv-btn hv-btn-sm hv-btn-tertiary">Xem chi tiết</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Audit Trail Table -->
+        <div class="hv-card" style="margin-bottom:24px">
+          <div class="hv-card-header">
+            <h2 class="hv-card-title">
+              <i class="ti ti-clipboard-text" style="font-size:20px;color:var(--hv-primary);margin-right:8px"></i>
+              Nhật ký kiểm tra
+            </h2>
+            <button class="hv-btn hv-btn-sm hv-btn-secondary">
+              <i class="ti ti-refresh" style="font-size:14px"></i> Làm mới
+            </button>
+          </div>
+
+          <!-- Filter Bar -->
+          <div class="hv-filter-bar">
+            <div>
+              <label class="hv-label" for="filter-action">Loại thay đổi</label>
+              <select class="hv-select" id="filter-action">
+                <option value="">Tất cả</option>
+                <option value="issue">Phát hành</option>
+                <option value="adjust">Điều chỉnh</option>
+                <option value="replace">Thay thế</option>
+                <option value="send">Gửi</option>
+              </select>
+            </div>
+            <div>
+              <label class="hv-label" for="filter-user">Người thực hiện</label>
+              <select class="hv-select" id="filter-user">
+                <option value="">Tất cả</option>
+                <option value="a">Nguyễn Văn A</option>
+                <option value="b">Trần Thị B</option>
+                <option value="system">Hệ thống</option>
+              </select>
+            </div>
+            <div>
+              <label class="hv-label" for="filter-from">Từ ngày</label>
+              <input type="date" class="hv-input" id="filter-from" value="2026-05-01">
+            </div>
+            <div>
+              <label class="hv-label" for="filter-to">Đến ngày</label>
+              <input type="date" class="hv-input" id="filter-to" value="2026-05-15">
+            </div>
+            <div style="align-self:flex-end">
+              <button class="hv-btn hv-btn-primary hv-btn-sm">
+                <i class="ti ti-filter" style="font-size:14px"></i> Lọc
+              </button>
+            </div>
+          </div>
+
+          <!-- Table -->
+          <div class="hv-table-wrap">
+            <table class="hv-table" aria-label="Nhật ký kiểm tra">
+              <thead>
+                <tr>
+                  <th>Thời gian</th>
+                  <th>Người thực hiện</th>
+                  <th>Hành động</th>
+                  <th>Chi tiết</th>
+                  <th>IP</th>
+                  <th>Trạng thái</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="text-caption">15/05/2026 09:16</td>
+                  <td>Hệ thống</td>
+                  <td>Gửi hóa đơn</td>
+                  <td>HĐ 2025/00001234 → Zalo OA</td>
+                  <td class="text-mono">—</td>
+                  <td><span class="hv-status-dot hv-status-dot-success">Thành công</span></td>
+                </tr>
+                <tr>
+                  <td class="text-caption">15/05/2026 09:15</td>
+                  <td>Hệ thống</td>
+                  <td>CQT chấp nhận</td>
+                  <td>HĐ 2025/00001234</td>
+                  <td class="text-mono">—</td>
+                  <td><span class="hv-status-dot hv-status-dot-success">Thành công</span></td>
+                </tr>
+                <tr>
+                  <td class="text-caption">15/05/2026 08:31</td>
+                  <td>Nguyễn Văn A</td>
+                  <td>Phát hành</td>
+                  <td>HĐ 2025/00001234</td>
+                  <td class="text-mono">192.168.1.100</td>
+                  <td><span class="hv-status-dot hv-status-dot-success">Thành công</span></td>
+                </tr>
+                <tr>
+                  <td class="text-caption">15/05/2026 08:30</td>
+                  <td>Nguyễn Văn A</td>
+                  <td>Tạo nháp</td>
+                  <td>HĐ 2025/00001234</td>
+                  <td class="text-mono">192.168.1.100</td>
+                  <td><span class="hv-badge hv-badge-neutral">—</span></td>
+                </tr>
+                <tr>
+                  <td class="text-caption">14/05/2026 16:45</td>
+                  <td>Trần Thị B</td>
+                  <td>Điều chỉnh</td>
+                  <td>HĐ 2025/00001230 (MST cũ → MST mới)</td>
+                  <td class="text-mono">192.168.1.101</td>
+                  <td><span class="hv-status-dot hv-status-dot-warning">Chờ ký</span></td>
+                </tr>
+                <tr>
+                  <td class="text-caption">14/05/2026 14:20</td>
+                  <td>Hệ thống</td>
+                  <td>Đồng bộ</td>
+                  <td>45 hóa đơn từ Hilo</td>
+                  <td class="text-mono">—</td>
+                  <td><span class="hv-status-dot hv-status-dot-success">Thành công</span></td>
+                </tr>
+                <tr>
+                  <td class="text-caption">14/05/2026 11:05</td>
+                  <td>Nguyễn Văn A</td>
+                  <td>Phát hành</td>
+                  <td>HĐ 2025/00001229</td>
+                  <td class="text-mono">192.168.1.100</td>
+                  <td><span class="hv-status-dot hv-status-dot-success">Thành công</span></td>
+                </tr>
+                <tr>
+                  <td class="text-caption">14/05/2026 10:42</td>
+                  <td>Hệ thống</td>
+                  <td>Gửi hóa đơn</td>
+                  <td>HĐ 2025/00001229 → Email</td>
+                  <td class="text-mono">—</td>
+                  <td><span class="hv-status-dot hv-status-dot-success">Thành công</span></td>
+                </tr>
+                <tr>
+                  <td class="text-caption">13/05/2026 17:30</td>
+                  <td>Trần Thị B</td>
+                  <td>Thay thế</td>
+                  <td>HĐ 2025/00001220 → HĐ 2025/00001230</td>
+                  <td class="text-mono">192.168.1.101</td>
+                  <td><span class="hv-status-dot hv-status-dot-success">Thành công</span></td>
+                </tr>
+                <tr>
+                  <td class="text-caption">13/05/2026 15:12</td>
+                  <td>Nguyễn Văn A</td>
+                  <td>Điều chỉnh</td>
+                  <td>HĐ 2025/00001218 (sai tên hàng hóa)</td>
+                  <td class="text-mono">192.168.1.100</td>
+                  <td><span class="hv-status-dot hv-status-dot-success">Thành công</span></td>
+                </tr>
+                <tr>
+                  <td class="text-caption">13/05/2026 09:00</td>
+                  <td>Hệ thống</td>
+                  <td>Đồng bộ</td>
+                  <td>32 hóa đơn từ Haravan POS</td>
+                  <td class="text-mono">—</td>
+                  <td><span class="hv-status-dot hv-status-dot-success">Thành công</span></td>
+                </tr>
+                <tr>
+                  <td class="text-caption">12/05/2026 16:55</td>
+                  <td>Trần Thị B</td>
+                  <td>Phát hành</td>
+                  <td>HĐ 2025/00001215</td>
+                  <td class="text-mono">192.168.1.101</td>
+                  <td><span class="hv-status-dot hv-status-dot-success">Thành công</span></td>
+                </tr>
+                <tr>
+                  <td class="text-caption">12/05/2026 14:38</td>
+                  <td>Nguyễn Văn A</td>
+                  <td>Phát hành</td>
+                  <td>HĐ 2025/00001210</td>
+                  <td class="text-mono">192.168.1.100</td>
+                  <td><span class="hv-status-dot hv-status-dot-danger">CQT từ chối</span></td>
+                </tr>
+                <tr>
+                  <td class="text-caption">12/05/2026 10:22</td>
+                  <td>Hệ thống</td>
+                  <td>Gửi hóa đơn</td>
+                  <td>HĐ 2025/00001208 → SMS</td>
+                  <td class="text-mono">—</td>
+                  <td><span class="hv-status-dot hv-status-dot-success">Thành công</span></td>
+                </tr>
+                <tr>
+                  <td class="text-caption">11/05/2026 16:10</td>
+                  <td>Nguyễn Văn A</td>
+                  <td>Điều chỉnh</td>
+                  <td>HĐ 2025/00001205 (địa chỉ giao hàng)</td>
+                  <td class="text-mono">192.168.1.100</td>
+                  <td><span class="hv-status-dot hv-status-dot-warning">Chờ ký</span></td>
+                </tr>
+                <tr>
+                  <td class="text-caption">11/05/2026 09:45</td>
+                  <td>Hệ thống</td>
+                  <td>Đồng bộ</td>
+                  <td>28 hóa đơn từ Shopee</td>
+                  <td class="text-mono">—</td>
+                  <td><span class="hv-status-dot hv-status-dot-success">Thành công</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Pagination -->
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-top:16px;padding-top:16px;border-top:1px solid var(--hv-border-table)">
+            <span class="text-caption" style="color:var(--hv-text-secondary)">Hiển thị 1–16 trong tổng số 1.247 bản ghi</span>
+            <div style="display:flex;gap:4px">
+              <button class="hv-btn hv-btn-sm hv-btn-secondary" disabled><i class="ti ti-chevron-left" style="font-size:14px"></i></button>
+              <button class="hv-btn hv-btn-sm hv-btn-primary">1</button>
+              <button class="hv-btn hv-btn-sm hv-btn-secondary">2</button>
+              <button class="hv-btn hv-btn-sm hv-btn-secondary">3</button>
+              <button class="hv-btn hv-btn-sm hv-btn-secondary">…</button>
+              <button class="hv-btn hv-btn-sm hv-btn-secondary">78</button>
+              <button class="hv-btn hv-btn-sm hv-btn-secondary"><i class="ti ti-chevron-right" style="font-size:14px"></i></button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Two-column: Export + Reference -->
+        <div class="hv-grid-2">
+
+          <!-- Export Section -->
+          <div class="hv-card">
+            <div class="hv-card-header">
+              <h2 class="hv-card-title">
+                <i class="ti ti-download" style="font-size:20px;color:var(--hv-primary);margin-right:8px"></i>
+                Xuất báo cáo cho CQT
+              </h2>
+            </div>
+
+            <div class="hv-export-actions">
+              <button class="hv-btn hv-btn-secondary">
+                <i class="ti ti-file-type-pdf" style="font-size:16px;color:var(--hv-danger)"></i> Xuất PDF
+              </button>
+              <button class="hv-btn hv-btn-secondary">
+                <i class="ti ti-file-spreadsheet" style="font-size:16px;color:var(--hv-success)"></i> Xuất CSV
+              </button>
+              <button class="hv-btn hv-btn-secondary">
+                <i class="ti ti-file-xls" style="font-size:16px;color:var(--hv-success)"></i> Xuất Excel
+              </button>
+            </div>
+
+            <div class="hv-export-options">
+              <div>
+                <label class="hv-label" for="export-period">Khoảng thời gian</label>
+                <select class="hv-select" id="export-period" style="width:100%">
+                  <option>Tháng này</option>
+                  <option>Quý này</option>
+                  <option>Năm nay</option>
+                  <option>Tùy chọn</option>
+                </select>
+              </div>
+
+              <label class="hv-checkbox-label">
+                <input type="checkbox" disabled>
+                Đóng dấu chữ ký số
+                <span class="hv-checkbox-note">(Tính năng Phase 3)</span>
+              </label>
+
+              <label class="hv-checkbox-label">
+                <input type="checkbox">
+                Thêm watermark
+              </label>
+            </div>
+          </div>
+
+          <!-- Compliance Reference -->
+          <div class="hv-card">
+            <div class="hv-card-header">
+              <h2 class="hv-card-title">
+                <i class="ti ti-book" style="font-size:20px;color:var(--hv-primary);margin-right:8px"></i>
+                Văn bản tham khảo
+              </h2>
+            </div>
+
+            <div class="hv-ref-list">
+              <div class="hv-ref-item">
+                <span class="hv-ref-code">NĐ 123/2020</span>
+                <span class="hv-ref-desc">Khung tổng thể về hóa đơn điện tử</span>
+              </div>
+              <div class="hv-ref-item">
+                <span class="hv-ref-code">NĐ 70/2025</span>
+                <span class="hv-ref-desc">Sửa đổi, bổ sung (có hiệu lực 01/06/2025)</span>
+              </div>
+              <div class="hv-ref-item">
+                <span class="hv-ref-code">TT 32/2025</span>
+                <span class="hv-ref-desc">Hướng dẫn thực hiện</span>
+              </div>
+              <div class="hv-ref-item">
+                <span class="hv-ref-code">QĐ 1510/2022</span>
+                <span class="hv-ref-desc">Format dữ liệu CQT</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <!-- /state-default -->
+
+      <!-- === EMPTY STATE === -->
+      <div id="state-empty" class="hv-hidden">
+        <div class="hv-grid-4" style="margin-bottom:24px">
+          <div class="hv-kpi"><div class="hv-kpi-label">Tỷ lệ CQT chấp nhận</div><div class="hv-kpi-value">—</div></div>
+          <div class="hv-kpi"><div class="hv-kpi-label">Hóa đơn chờ xử lý</div><div class="hv-kpi-value">0</div></div>
+          <div class="hv-kpi"><div class="hv-kpi-label">Hóa đơn vi phạm</div><div class="hv-kpi-value">0</div></div>
+          <div class="hv-kpi"><div class="hv-kpi-label">Thời gian xử lý TB</div><div class="hv-kpi-value">—</div></div>
+        </div>
+
+        <div class="hv-card" style="margin-bottom:24px">
+          <div class="hv-card-header">
+            <h2 class="hv-card-title">
+              <i class="ti ti-bell-ringing" style="font-size:20px;color:var(--hv-warning);margin-right:8px"></i>
+              Cảnh báo quy định
+            </h2>
+          </div>
+          <div class="hv-empty">
+            <i class="ti ti-bell-off hv-empty-icon"></i>
+            <div class="hv-empty-title">Không có cảnh báo mới</div>
+            <div class="hv-empty-desc">Hệ thống sẽ thông báo khi có quy định mới cần cập nhật.</div>
+          </div>
+        </div>
+
+        <div class="hv-card" style="margin-bottom:24px">
+          <div class="hv-card-header">
+            <h2 class="hv-card-title">
+              <i class="ti ti-clipboard-text" style="font-size:20px;color:var(--hv-primary);margin-right:8px"></i>
+              Nhật ký kiểm tra
+            </h2>
+          </div>
+          <div class="hv-empty">
+            <i class="ti ti-clipboard-off hv-empty-icon"></i>
+            <div class="hv-empty-title">Chưa có nhật ký kiểm tra</div>
+            <div class="hv-empty-desc">Nhật ký sẽ được tạo khi có hoạt động phát hành hoặc điều chỉnh hóa đơn.</div>
+          </div>
+        </div>
+
+        <div class="hv-grid-2">
+          <div class="hv-card">
+            <div class="hv-card-header">
+              <h2 class="hv-card-title">
+                <i class="ti ti-download" style="font-size:20px;color:var(--hv-primary);margin-right:8px"></i>
+                Xuất báo cáo cho CQT
+              </h2>
+            </div>
+            <div class="hv-empty" style="padding:24px">
+              <div class="hv-empty-desc">Chưa có dữ liệu để xuất báo cáo.</div>
+            </div>
+          </div>
+          <div class="hv-card">
+            <div class="hv-card-header">
+              <h2 class="hv-card-title">
+                <i class="ti ti-book" style="font-size:20px;color:var(--hv-primary);margin-right:8px"></i>
+                Văn bản tham khảo
+              </h2>
+            </div>
+            <div class="hv-ref-list">
+              <div class="hv-ref-item"><span class="hv-ref-code">NĐ 123/2020</span><span class="hv-ref-desc">Khung tổng thể về hóa đơn điện tử</span></div>
+              <div class="hv-ref-item"><span class="hv-ref-code">NĐ 70/2025</span><span class="hv-ref-desc">Sửa đổi, bổ sung (có hiệu lực 01/06/2025)</span></div>
+              <div class="hv-ref-item"><span class="hv-ref-code">TT 32/2025</span><span class="hv-ref-desc">Hướng dẫn thực hiện</span></div>
+              <div class="hv-ref-item"><span class="hv-ref-code">QĐ 1510/2022</span><span class="hv-ref-desc">Format dữ liệu CQT</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- /state-empty -->
+
+      <!-- === LOADING STATE === -->
+      <div id="state-loading" class="hv-hidden">
+        <div class="hv-grid-4" style="margin-bottom:24px">
+          <div class="hv-kpi"><div class="hv-skeleton hv-skeleton-kpi"></div></div>
+          <div class="hv-kpi"><div class="hv-skeleton hv-skeleton-kpi"></div></div>
+          <div class="hv-kpi"><div class="hv-skeleton hv-skeleton-kpi"></div></div>
+          <div class="hv-kpi"><div class="hv-skeleton hv-skeleton-kpi"></div></div>
+        </div>
+
+        <div class="hv-card" style="margin-bottom:24px">
+          <div class="hv-skeleton hv-skeleton-text" style="width:200px;height:20px;margin-bottom:20px"></div>
+          <div class="hv-skeleton hv-skeleton-card"></div>
+        </div>
+
+        <div class="hv-card" style="margin-bottom:24px">
+          <div class="hv-skeleton hv-skeleton-text" style="width:180px;height:20px;margin-bottom:20px"></div>
+          <div class="hv-skeleton hv-skeleton-row"></div>
+          <div class="hv-skeleton hv-skeleton-row"></div>
+          <div class="hv-skeleton hv-skeleton-row"></div>
+          <div class="hv-skeleton hv-skeleton-row"></div>
+          <div class="hv-skeleton hv-skeleton-row"></div>
+          <div class="hv-skeleton hv-skeleton-row"></div>
+        </div>
+
+        <div class="hv-grid-2">
+          <div class="hv-card"><div class="hv-skeleton hv-skeleton-card"></div></div>
+          <div class="hv-card"><div class="hv-skeleton hv-skeleton-card"></div></div>
+        </div>
+      </div>
+      <!-- /state-loading -->
+
+    </div>
+  </div>
+
+  <script src="assets/js/app-shell.js"></script>
+  <script>
+    // State visibility logic
+    (function() {
+      const params = new URLSearchParams(window.location.search);
+      const state = params.get('state') || 'default';
+      const states = ['default', 'empty', 'loading'];
+      states.forEach(s => {
+        const el = document.getElementById('state-' + s);
+        if (el) el.classList.toggle('hv-hidden', s !== state);
+      });
+
+      // Action buttons - "Khắc phục" buttons
+      document.querySelectorAll('.hv-alert-actions .hv-btn-primary, .hv-alert-actions .hv-btn-secondary').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.preventDefault();
+          const label = btn.textContent.trim();
+          if (label.includes('Khắc phục')) {
+            HV.toast('Đang chuyển đến trang xử lý...', 'info');
+          } else if (label.includes('Xem')) {
+            HV.toast('Đang mở chi tiết...', 'info');
+          } else {
+            HV.toast('Đã thực hiện hành động', 'success');
+          }
+        });
+      });
+
+      // Checklist toggle
+      document.querySelectorAll('.hv-checklist-item, [class*="checklist"]').forEach(item => {
+        const checkbox = item.querySelector('input[type="checkbox"]');
+        if (checkbox) {
+          checkbox.addEventListener('change', () => {
+            if (checkbox.checked) {
+              item.style.opacity = '0.6';
+              item.style.textDecoration = 'line-through';
+            } else {
+              item.style.opacity = '';
+              item.style.textDecoration = '';
+            }
+          });
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

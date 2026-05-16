@@ -1,0 +1,1056 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tổng quan — Haravan Invoice</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <link rel="stylesheet" href="assets/css/design-system.css">
+  <script>window.HV_PAGE = { id: 'dashboard', title: 'Tổng quan' };</script>
+  <style>
+    /* === Dashboard-specific styles (v2 — fixed UX) === */
+
+    /* Stack between sections — uniform vertical rhythm */
+    .hv-content-max > * + * { margin-top: 16px; }
+
+    /* Period Tabs */
+    .hv-period-tabs { margin-bottom: 0; }
+
+    /* ---------- Filter Bar (single row, compact) ---------- */
+    .hv-filter-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      background: var(--hv-bg-surface);
+      border: 1px solid var(--hv-border);
+      border-radius: var(--hv-radius-lg);
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      scrollbar-width: thin;
+      -webkit-overflow-scrolling: touch;
+    }
+    .hv-filter-bar::-webkit-scrollbar { height: 4px; }
+    .hv-filter-bar::-webkit-scrollbar-thumb { background: var(--hv-border); border-radius: 2px; }
+    .hv-filter-search {
+      position: relative;
+      flex-shrink: 0;
+      width: 240px;
+    }
+    .hv-filter-search .hv-input {
+      width: 100%;
+      padding-left: 32px;
+      height: 32px;
+      font-size: 13px;
+    }
+    .hv-filter-search > i {
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--hv-text-muted);
+      font-size: 15px;
+      pointer-events: none;
+    }
+    .hv-filter-group {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+    .hv-filter-label {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--hv-text-secondary);
+      flex-shrink: 0;
+      white-space: nowrap;
+    }
+    .hv-filter-bar .hv-select {
+      height: 32px;
+      font-size: 13px;
+      width: auto;
+      min-width: 130px;
+      padding: 0 28px 0 10px;
+      background-position: right 8px center;
+    }
+    .hv-filter-divider {
+      width: 1px;
+      height: 20px;
+      background: var(--hv-border);
+      flex-shrink: 0;
+      margin: 0 2px;
+    }
+    .hv-filter-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 2px;
+      height: 26px;
+      padding: 0 4px 0 10px;
+      font-size: 12px;
+      font-weight: 500;
+      border-radius: var(--hv-radius-pill);
+      background: var(--hv-primary-soft);
+      color: var(--hv-primary);
+      border: 1px solid transparent;
+      cursor: default;
+      flex-shrink: 0;
+    }
+    .hv-filter-chip-close {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: none;
+      border: none;
+      color: var(--hv-primary);
+      cursor: pointer;
+      font-size: 13px;
+      padding: 0;
+      transition: background 150ms;
+    }
+    .hv-filter-chip-close:hover { background: rgba(0, 136, 255, 0.18); }
+    .hv-filter-chip-close:focus-visible { outline: 2px solid var(--hv-border-focus); outline-offset: 1px; }
+
+    /* ---------- KPI Grid — fixed 4 cols with breathing room, drops down at narrow widths ---------- */
+    .hv-grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 16px;
+    }
+    @media (max-width: 1199px) { .hv-grid-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+    @media (max-width: 560px)  { .hv-grid-4 { grid-template-columns: 1fr; } }
+
+    .hv-kpi {
+      position: relative;
+      overflow: hidden;
+      padding: 16px 18px;
+      cursor: pointer;
+      transition: background 150ms ease, box-shadow 150ms ease, border-color 150ms ease;
+      min-height: 110px;
+    }
+    .hv-kpi:hover {
+      background: var(--hv-bg-surface-hover);
+      box-shadow: var(--hv-shadow-sm);
+      border-color: var(--hv-border-strong);
+    }
+    .hv-kpi:focus-visible { outline: 2px solid var(--hv-border-focus); outline-offset: 2px; }
+    .hv-kpi:active { background: var(--hv-bg-soft); }
+    .hv-kpi-change-up { color: var(--hv-success); }
+    .hv-kpi-change-down { color: var(--hv-danger); }
+    .hv-kpi-icon {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      width: 34px;
+      height: 34px;
+      border-radius: var(--hv-radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 17px;
+    }
+    .hv-kpi-label { font-size: 13px; margin-bottom: 6px; padding-right: 44px; color: var(--hv-text-secondary); }
+    .hv-kpi-value { font-size: 24px; line-height: 1.2; font-weight: 700; letter-spacing: -0.01em; }
+    .hv-kpi-change { font-size: 12px; margin-top: 8px; }
+    .hv-kpi-icon-blue { background: var(--hv-primary-soft); color: var(--hv-primary); }
+    .hv-kpi-icon-green { background: var(--hv-success-soft); color: var(--hv-success); }
+    .hv-kpi-icon-purple { background: var(--hv-purple-soft); color: var(--hv-purple); }
+    .hv-kpi-icon-orange { background: var(--hv-warning-soft); color: var(--hv-warning); }
+
+    /* ---------- Charts Row: 2-3 ratio (chart wide, pie compact) ---------- */
+    .hv-charts-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr);
+      gap: 16px;
+    }
+    @media (max-width: 1023px) { .hv-charts-row { grid-template-columns: 1fr; } }
+
+    .hv-chart-card { padding: 18px; display: flex; flex-direction: column; min-height: 340px; }
+    .hv-chart-wrapper { width: 100%; }
+    .hv-chart-wrapper svg { width: 100%; height: auto; display: block; }
+    .hv-chart-legend {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-top: 8px;
+      padding-top: 12px;
+      border-top: 1px solid var(--hv-border);
+    }
+    .hv-chart-legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--hv-text-secondary); }
+    .hv-chart-legend-dot { width: 8px; height: 8px; border-radius: 50%; }
+
+    /* Pie chart layout: donut + legend stacked vertically for clarity */
+    .hv-pie-layout {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      flex: 1;
+    }
+    .hv-pie-layout .hv-chart-wrapper {
+      flex-shrink: 0;
+      width: 180px;
+      max-width: 45%;
+    }
+    @media (max-width: 1199px) and (min-width: 1024px) {
+      .hv-pie-layout { flex-direction: column; align-items: stretch; gap: 16px; }
+      .hv-pie-layout .hv-chart-wrapper { width: 200px; max-width: 100%; margin: 0 auto; }
+    }
+    .hv-pie-legend {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      flex: 1;
+    }
+    .hv-pie-legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      min-width: 0;
+    }
+    .hv-pie-legend-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 3px;
+      flex-shrink: 0;
+    }
+    .hv-pie-legend-value {
+      font-weight: 600;
+      color: var(--hv-text-primary);
+      margin-left: auto;
+    }
+    .hv-pie-legend-label {
+      color: var(--hv-text-secondary);
+    }
+
+    /* Tables */
+    .hv-table-scroll { overflow-x: auto; position: relative; }
+    .hv-table tbody tr { cursor: pointer; }
+    .hv-table-scroll::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: 24px;
+      background: linear-gradient(to right, transparent, rgba(255,255,255,0.9));
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 200ms;
+    }
+    .hv-table-scroll.is-scrollable::after { opacity: 1; }
+    .hv-table .hv-td-name { max-width: 180px; }
+    .hv-badge i { font-size: 6px; }
+    .hv-trend-up { color: var(--hv-success); }
+    .hv-trend-down { color: var(--hv-danger); }
+    .hv-trend-stable { color: var(--hv-text-muted); }
+
+    /* Empty state */
+    .hv-empty-state {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: var(--hv-space-8) var(--hv-space-5);
+      text-align: center;
+    }
+    .hv-empty-state-icon {
+      font-size: 56px;
+      color: var(--hv-text-muted);
+      margin-bottom: var(--hv-space-4);
+    }
+    .hv-empty-state-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--hv-text-primary);
+      margin-bottom: var(--hv-space-2);
+    }
+    .hv-empty-state-desc {
+      font-size: 14px;
+      color: var(--hv-text-secondary);
+      max-width: 360px;
+      line-height: 1.5;
+    }
+
+    /* Loading skeletons */
+    .hv-skeleton {
+      background: linear-gradient(90deg, var(--hv-bg-soft) 25%, #e8ecf2 50%, var(--hv-bg-soft) 75%);
+      background-size: 200% 100%;
+      animation: hv-skeleton-shimmer 1.5s ease-in-out infinite;
+      border-radius: var(--hv-radius-sm);
+    }
+    @keyframes hv-skeleton-shimmer {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+    .hv-skeleton-text { height: 14px; width: 80px; }
+    .hv-skeleton-value { height: 22px; width: 100px; margin-bottom: 4px; }
+    .hv-skeleton-change { height: 11px; width: 50px; }
+    .hv-skeleton-chart { height: 160px; width: 100%; border-radius: var(--hv-radius-md); }
+    .hv-skeleton-row { height: 40px; width: 100%; margin-bottom: 4px; border-radius: var(--hv-radius-sm); }
+
+    /* State-based visibility — hide inactive states, let active state keep its natural display */
+    .hv-state-empty,
+    .hv-state-loading,
+    .hv-state-error { display: none; }
+
+    [data-state="empty"] .hv-state-default,
+    [data-state="loading"] .hv-state-default,
+    [data-state="error"] .hv-state-default { display: none; }
+
+    [data-state="empty"] .hv-state-empty { display: flex; }
+    [data-state="loading"] .hv-state-loading { display: grid; }
+    [data-state="error"] .hv-state-error { display: flex; }
+
+    /* Error state */
+    .hv-error-state {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: var(--hv-space-8) var(--hv-space-5);
+      text-align: center;
+    }
+    .hv-error-state-icon {
+      font-size: 56px;
+      color: var(--hv-danger);
+      margin-bottom: var(--hv-space-4);
+    }
+
+    /* ---------- Tables row — gap and graceful collapse ---------- */
+    .hv-grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+    @media (max-width: 1199px) { .hv-grid-2 { grid-template-columns: 1fr; } }
+
+    /* Responsive */
+    @media (max-width: 767px) {
+      .hv-filter-bar { padding: 8px; gap: 8px; }
+      .hv-filter-search { width: 200px; }
+      .hv-filter-bar .hv-select { min-width: 110px; }
+      .hv-content { padding: 12px; }
+      .hv-tabs { overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; flex-wrap: nowrap; }
+      .hv-tabs::-webkit-scrollbar { display: none; }
+      .hv-tab { white-space: nowrap; flex-shrink: 0; }
+      .hv-chart-card { min-height: 280px; }
+      .hv-pie-layout { flex-direction: column; align-items: stretch; }
+      .hv-pie-layout .hv-chart-wrapper { width: 180px; max-width: 100%; margin: 0 auto; }
+    }
+    @media (max-width: 480px) {
+      .hv-content { padding: 10px; }
+      .hv-kpi-value { font-size: 22px; }
+      .hv-filter-search { width: 100%; }
+    }
+
+    /* SVG chart tooltips */
+    .hv-chart-tooltip {
+      position: fixed;
+      background: var(--hv-bg-surface);
+      border: 1px solid var(--hv-border);
+      border-radius: var(--hv-radius-md);
+      padding: 8px 12px;
+      font-size: 12px;
+      box-shadow: var(--hv-shadow-md);
+      pointer-events: none;
+      z-index: 100;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <!-- Skip Link -->
+  <a href="#main-content" class="hv-skip-link">Bỏ qua đến nội dung chính</a>
+
+  <!-- Sidebar -->
+  <aside class="hv-sidebar" aria-label="Điều hướng chính"></aside>
+
+  <!-- Topbar -->
+  <div class="hv-topbar" aria-label="Thanh công cụ"></div>
+
+  <!-- Main Content -->
+  <div class="hv-content" id="main-content">
+    <div class="hv-content-max">
+
+      <!-- Period Selector -->
+      <div class="hv-period-tabs hv-state-default" role="tablist" aria-label="Chọn thời gian">
+        <div class="hv-tabs">
+          <button type="button" class="hv-tab" role="tab" aria-selected="false" tabindex="-1">
+            Hôm nay
+            <span class="hv-tab-count">42</span>
+          </button>
+          <button type="button" class="hv-tab" role="tab" aria-selected="false" tabindex="-1">
+            7 ngày
+            <span class="hv-tab-count">287</span>
+          </button>
+          <button type="button" class="hv-tab hv-tab-active" role="tab" aria-selected="true" tabindex="0">
+            30 ngày
+            <span class="hv-tab-count">1.284</span>
+          </button>
+          <button type="button" class="hv-tab" role="tab" aria-selected="false" tabindex="-1">
+            90 ngày
+            <span class="hv-tab-count">3.856</span>
+          </button>
+          <button type="button" class="hv-tab" role="tab" aria-selected="false" tabindex="-1">Tùy chọn</button>
+        </div>
+      </div>
+
+      <!-- KPI Cards -->
+      <div class="hv-grid-4 hv-state-default" style="margin-bottom: var(--hv-space-4);">
+        <div class="hv-kpi" role="button" tabindex="0" aria-label="Tổng doanh thu: 12.450.000 đồng, tăng 12.5% so với kỳ trước">
+          <div class="hv-kpi-icon hv-kpi-icon-blue">
+            <i class="ti ti-chart-line" aria-hidden="true"></i>
+          </div>
+          <div class="hv-kpi-label">Tổng doanh thu</div>
+          <div class="hv-kpi-value">12.450.000đ</div>
+          <div class="hv-kpi-change hv-kpi-change-up">
+            <i class="ti ti-trending-up" aria-hidden="true"></i>
+            <span>+12.5% so với kỳ trước</span>
+          </div>
+        </div>
+        <div class="hv-kpi" role="button" tabindex="0" aria-label="Tổng hóa đơn: 1.284, tăng 8.3% so với kỳ trước">
+          <div class="hv-kpi-icon hv-kpi-icon-green">
+            <i class="ti ti-receipt" aria-hidden="true"></i>
+          </div>
+          <div class="hv-kpi-label">Tổng hóa đơn</div>
+          <div class="hv-kpi-value">1.284</div>
+          <div class="hv-kpi-change hv-kpi-change-up">
+            <i class="ti ti-trending-up" aria-hidden="true"></i>
+            <span>+8.3% so với kỳ trước</span>
+          </div>
+        </div>
+        <div class="hv-kpi" role="button" tabindex="0" aria-label="Tỷ lệ hóa đơn trên đơn hàng: 78.5%, tăng 2.1% so với kỳ trước">
+          <div class="hv-kpi-icon hv-kpi-icon-purple">
+            <i class="ti ti-percentage" aria-hidden="true"></i>
+          </div>
+          <div class="hv-kpi-label">Tỷ lệ HĐ/ĐH</div>
+          <div class="hv-kpi-value">78.5%</div>
+          <div class="hv-kpi-change hv-kpi-change-up">
+            <i class="ti ti-trending-up" aria-hidden="true"></i>
+            <span>+2.1% so với kỳ trước</span>
+          </div>
+        </div>
+        <div class="hv-kpi" role="button" tabindex="0" aria-label="Tỷ lệ lỗi: 1.2%, giảm 0.5% so với kỳ trước">
+          <div class="hv-kpi-icon hv-kpi-icon-orange">
+            <i class="ti ti-alert-triangle" aria-hidden="true"></i>
+          </div>
+          <div class="hv-kpi-label">Tỷ lệ lỗi</div>
+          <div class="hv-kpi-value">1.2%</div>
+          <div class="hv-kpi-change hv-kpi-change-down">
+            <i class="ti ti-trending-down" aria-hidden="true"></i>
+            <span>-0.5% so với kỳ trước</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- KPI Loading State -->
+      <div class="hv-grid-4 hv-state-loading" style="margin-bottom: var(--hv-space-4); display:none;">
+        <div class="hv-kpi"><div class="hv-skeleton hv-skeleton-text" style="margin-bottom:12px;"></div><div class="hv-skeleton hv-skeleton-value"></div><div class="hv-skeleton hv-skeleton-change"></div></div>
+        <div class="hv-kpi"><div class="hv-skeleton hv-skeleton-text" style="margin-bottom:12px;"></div><div class="hv-skeleton hv-skeleton-value"></div><div class="hv-skeleton hv-skeleton-change"></div></div>
+        <div class="hv-kpi"><div class="hv-skeleton hv-skeleton-text" style="margin-bottom:12px;"></div><div class="hv-skeleton hv-skeleton-value"></div><div class="hv-skeleton hv-skeleton-change"></div></div>
+        <div class="hv-kpi"><div class="hv-skeleton hv-skeleton-text" style="margin-bottom:12px;"></div><div class="hv-skeleton hv-skeleton-value"></div><div class="hv-skeleton hv-skeleton-change"></div></div>
+      </div>
+
+      <!-- Filter Bar -->
+      <div class="hv-filter-bar hv-state-default">
+        <div class="hv-filter-search">
+          <input type="text" class="hv-input" placeholder="Tìm kiếm..." aria-label="Tìm kiếm">
+          <i class="ti ti-search" aria-hidden="true"></i>
+        </div>
+        <div class="hv-filter-group" role="group" aria-label="Chi nhánh">
+          <span class="hv-filter-label">Chi nhánh:</span>
+          <select class="hv-select" aria-label="Chọn chi nhánh">
+            <option value="">Tất cả</option>
+            <option value="cn1">Chi nhánh 1</option>
+            <option value="cn2">Chi nhánh 2</option>
+          </select>
+        </div>
+        <div class="hv-filter-group" role="group" aria-label="Kênh bán hàng">
+          <span class="hv-filter-label">Kênh:</span>
+          <select class="hv-select" aria-label="Chọn kênh bán hàng">
+            <option value="">Tất cả</option>
+            <option value="pos">POS</option>
+            <option value="web">Web</option>
+            <option value="shopee">Shopee</option>
+            <option value="lazada">Lazada</option>
+          </select>
+        </div>
+        <div class="hv-filter-group" role="group" aria-label="Bộ lọc đang áp dụng">
+          <span class="hv-filter-label">Đang lọc:</span>
+          <div class="hv-filter-chip">
+            30 ngày
+            <button type="button" class="hv-filter-chip-close" aria-label="Xóa bộ lọc 30 ngày" onclick="this.parentElement.remove()">×</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Charts Row: Line (left) + Pie (right) -->
+      <div class="hv-charts-row hv-state-default">
+        <!-- Line Chart -->
+        <div class="hv-card hv-chart-card">
+          <div class="hv-card-header">
+            <div class="hv-card-title">Doanh thu &amp; Hóa đơn</div>
+            <span id="chartDateLabel" style="font-size:11px;color:var(--hv-text-muted)">15/05/2026</span>
+          </div>
+          <div class="hv-chart-wrapper">
+            <svg id="lineChart" viewBox="0 0 520 180" role="img" aria-label="Biểu đồ đường: Doanh thu và số hóa đơn trong 30 ngày"></svg>
+          </div>
+          <div class="hv-chart-legend">
+            <div class="hv-chart-legend-item">
+              <div class="hv-chart-legend-dot" style="background:#2962ff"></div>
+              <span>Doanh thu (triệu đ)</span>
+            </div>
+            <div class="hv-chart-legend-item">
+              <div class="hv-chart-legend-dot" style="background:#16a34a"></div>
+              <span>Số hóa đơn</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pie Chart -->
+        <div class="hv-card hv-chart-card">
+          <div class="hv-card-header">
+            <div class="hv-card-title">Theo kênh</div>
+            <span style="font-size:11px;color:var(--hv-text-muted)">30 ngày</span>
+          </div>
+          <div class="hv-pie-layout">
+            <div class="hv-chart-wrapper">
+              <svg id="pieChart" viewBox="0 0 200 200" role="img" aria-label="Biểu đồ tròn: Phân bổ theo kênh bán hàng"></svg>
+            </div>
+            <div class="hv-pie-legend" id="pieLegend"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Charts Loading State -->
+      <div class="hv-charts-row hv-state-loading" style="display:none;">
+        <div class="hv-card">
+          <div class="hv-skeleton hv-skeleton-text" style="margin-bottom:12px;width:140px;"></div>
+          <div class="hv-skeleton hv-skeleton-chart"></div>
+        </div>
+        <div class="hv-card">
+          <div class="hv-skeleton hv-skeleton-text" style="margin-bottom:12px;width:100px;"></div>
+          <div class="hv-skeleton hv-skeleton-chart" style="border-radius:50%;max-width:120px;margin:0 auto;"></div>
+        </div>
+      </div>
+
+      <!-- Tables Row -->
+      <div class="hv-grid-2 hv-state-default">
+        <!-- Top Customers Table -->
+        <div class="hv-card">
+          <div class="hv-card-header">
+            <div class="hv-card-title">Top 20 khách hàng</div>
+            <a href="#" class="hv-btn hv-btn-sm hv-btn-tertiary">Xem tất cả</a>
+          </div>
+          <div class="hv-table-scroll">
+            <table class="hv-table" aria-label="Top 20 khách hàng theo doanh thu">
+              <thead>
+                <tr>
+                  <th scope="col" style="width:40px">STT</th>
+                  <th scope="col">Tên khách hàng</th>
+                  <th scope="col" abbr="Mã số thuế">MST</th>
+                  <th scope="col" class="hv-text-right" abbr="Hóa đơn">HĐ</th>
+                  <th scope="col" class="hv-text-right">Tổng tiền</th>
+                  <th scope="col" abbr="Trạng thái">TT</th>
+                </tr>
+              </thead>
+              <tbody id="customerTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Top SKUs Table -->
+        <div class="hv-card">
+          <div class="hv-card-header">
+            <div class="hv-card-title">Top 10 SKU</div>
+            <a href="#" class="hv-btn hv-btn-sm hv-btn-tertiary">Xem tất cả</a>
+          </div>
+          <div class="hv-table-scroll">
+            <table class="hv-table" aria-label="Top 10 sản phẩm bán chạy">
+              <thead>
+                <tr>
+                  <th scope="col" style="width:40px">STT</th>
+                  <th scope="col">SKU</th>
+                  <th scope="col">Tên sản phẩm</th>
+                  <th scope="col" class="hv-text-right" abbr="Số lượng">SL</th>
+                  <th scope="col" class="hv-text-right">Doanh thu</th>
+                  <th scope="col">Trend</th>
+                </tr>
+              </thead>
+              <tbody id="skuTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tables Loading State -->
+      <div class="hv-grid-2 hv-state-loading" style="display:none;">
+        <div class="hv-card">
+          <div class="hv-skeleton hv-skeleton-text" style="margin-bottom:12px;width:140px;"></div>
+          <div class="hv-skeleton hv-skeleton-row"></div>
+          <div class="hv-skeleton hv-skeleton-row"></div>
+          <div class="hv-skeleton hv-skeleton-row"></div>
+          <div class="hv-skeleton hv-skeleton-row"></div>
+          <div class="hv-skeleton hv-skeleton-row"></div>
+        </div>
+        <div class="hv-card">
+          <div class="hv-skeleton hv-skeleton-text" style="margin-bottom:12px;width:100px;"></div>
+          <div class="hv-skeleton hv-skeleton-row"></div>
+          <div class="hv-skeleton hv-skeleton-row"></div>
+          <div class="hv-skeleton hv-skeleton-row"></div>
+          <div class="hv-skeleton hv-skeleton-row"></div>
+          <div class="hv-skeleton hv-skeleton-row"></div>
+        </div>
+      </div>
+
+      <!-- Empty State -->
+      <div class="hv-state-empty" style="display:none;">
+        <div class="hv-empty-state" style="display:flex;">
+          <i class="ti ti-chart-dots hv-empty-state-icon" aria-hidden="true"></i>
+          <div class="hv-empty-state-title">Chưa có dữ liệu</div>
+          <div class="hv-empty-state-desc">Phát hành hóa đơn đầu tiên để xem báo cáo.</div>
+          <button class="hv-btn hv-btn-primary" style="margin-top:var(--hv-space-4)" aria-label="Tạo hóa đơn mới">
+            <i class="ti ti-plus" aria-hidden="true"></i>
+            Tạo hóa đơn
+          </button>
+        </div>
+      </div>
+
+      <!-- Error State -->
+      <div class="hv-state-error" style="display:none;">
+        <div class="hv-error-state" style="display:flex;">
+          <i class="ti ti-alert-circle hv-error-state-icon" aria-hidden="true"></i>
+          <div class="hv-empty-state-title">Đã xảy ra lỗi</div>
+          <div class="hv-empty-state-desc">Không thể tải dữ liệu. Vui lòng thử lại sau.</div>
+          <button class="hv-btn hv-btn-primary" style="margin-top:var(--hv-space-4)" onclick="location.reload()">
+            <i class="ti ti-refresh"></i>
+            Thử lại
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Tooltip -->
+  <div class="hv-chart-tooltip" id="chartTooltip"></div>
+
+  <script src="assets/js/app-shell.js"></script>
+  <script>
+    // === Mock Data ===
+    const mockCustomers = [
+      { name: 'Công ty TNHH Cà phê Trung Nguyên Legend', mst: '0312345678', invoices: 45, total: 2350000, status: 'active' },
+      { name: 'CTCP Vàng bạc Đá quý DOJI', mst: '0100123456', invoices: 38, total: 1890000, status: 'active' },
+      { name: 'Công ty TNHH Bánh Bao Tinh Túy', mst: '0312345678-001', invoices: 32, total: 1450000, status: 'active' },
+      { name: 'Hộ kinh doanh Nguyễn Văn An', mst: '8765432109', invoices: 28, total: 980000, status: 'inactive' },
+      { name: 'Công ty TNHH Thời trang Ivy Moda', mst: '0102345678', invoices: 25, total: 2100000, status: 'active' },
+    ];
+
+    const mockSKUs = [
+      { sku: 'CF-001', name: 'Cà phê Robusta Đắk Lắk 500g', qty: 120, revenue: 480000, trend: 'up' },
+      { sku: 'TRA-015', name: 'Trà Sen Tây Hồ hộp 200g', qty: 95, revenue: 380000, trend: 'up' },
+      { sku: 'BB-003', name: 'Bánh Bao Nhân Thịt (hộp 10)', qty: 88, revenue: 660000, trend: 'stable' },
+      { sku: 'VT-022', name: 'Vòng tay Bạc 925', qty: 72, revenue: 540000, trend: 'down' },
+      { sku: 'QN-008', name: 'Áo Thun Nam Cotton', qty: 65, revenue: 325000, trend: 'up' },
+    ];
+
+    const pieData = [
+      { label: 'POS', value: 45, color: '#2962ff' },
+      { label: 'Web', value: 35, color: '#16a34a' },
+      { label: 'Shopee', value: 15, color: '#f59e0b' },
+      { label: 'Lazada', value: 5, color: '#7c3aed' },
+    ];
+
+    function generateChartData() {
+      const data = [];
+      const baseDate = new Date(2026, 4, 1);
+      for (let i = 0; i < 30; i++) {
+        const d = new Date(baseDate);
+        d.setDate(d.getDate() + i);
+        const isWeekend = d.getDay() === 0 || d.getDay() === 6;
+        data.push({
+          day: i + 1,
+          date: d,
+          revenue: Math.round((isWeekend ? 350000 : 450000) + (Math.random() - 0.5) * 200000),
+          invoices: Math.round((isWeekend ? 35 : 48) + (Math.random() - 0.5) * 20),
+        });
+      }
+      return data;
+    }
+
+    // === Render Tables ===
+    function renderCustomerTable() {
+      const tbody = document.getElementById('customerTableBody');
+      if (!tbody) return;
+      tbody.innerHTML = mockCustomers.map((c, i) => {
+        const badge = c.status === 'active'
+          ? '<span class="hv-badge hv-badge-success"><i class="ti ti-circle-filled"></i> Hoạt động</span>'
+          : '<span class="hv-badge hv-badge-neutral"><i class="ti ti-circle-filled"></i> Ngừng</span>';
+        return `<tr>
+          <td>${i + 1}</td>
+          <td class="hv-truncate hv-td-name" title="${c.name}">${c.name}</td>
+          <td class="text-mono">${c.mst}</td>
+          <td class="hv-text-right">${c.invoices}</td>
+          <td class="hv-text-right text-body-strong">${HV.formatVND(c.total)}</td>
+          <td>${badge}</td>
+        </tr>`;
+      }).join('');
+    }
+
+    function renderSKUTable() {
+      const tbody = document.getElementById('skuTableBody');
+      if (!tbody) return;
+      tbody.innerHTML = mockSKUs.map((s, i) => {
+        const iconClass = s.trend === 'up' ? 'hv-trend-up' : s.trend === 'down' ? 'hv-trend-down' : 'hv-trend-stable';
+        const iconName = s.trend === 'up' ? 'ti-trending-up' : s.trend === 'down' ? 'ti-trending-down' : 'ti-minus';
+        return `<tr>
+          <td>${i + 1}</td>
+          <td class="text-mono">${s.sku}</td>
+          <td class="hv-truncate hv-td-name" title="${s.name}">${s.name}</td>
+          <td class="hv-text-right">${s.qty}</td>
+          <td class="hv-text-right text-body-strong">${HV.formatVND(s.revenue)}</td>
+          <td class="hv-text-center"><span class="${iconClass}"><i class="ti ${iconName}"></i></span></td>
+        </tr>`;
+      }).join('');
+    }
+
+    // === SVG Line Chart ===
+    function renderLineChart() {
+      const svg = document.getElementById('lineChart');
+      if (!svg) return;
+
+      const data = generateChartData();
+      const W = 520, H = 180;
+      const pad = { top: 16, right: 16, bottom: 24, left: 44 };
+      const chartW = W - pad.left - pad.right;
+      const chartH = H - pad.top - pad.bottom;
+
+      const maxRevenue = Math.max(...data.map(d => d.revenue));
+      const maxInvoices = Math.max(...data.map(d => d.invoices));
+      const revenueScale = v => pad.top + chartH - (v / maxRevenue) * chartH;
+      const invoiceScale = v => pad.top + chartH - (v / maxInvoices) * chartH;
+      const xScale = i => pad.left + (i / (data.length - 1)) * chartW;
+
+      // Update chart date label
+      const dateLabel = document.getElementById('chartDateLabel');
+      if (dateLabel) {
+        const lastDate = data[data.length - 1].date;
+        dateLabel.textContent = `${lastDate.getDate()}/${lastDate.getMonth() + 1}/${lastDate.getFullYear()}`;
+      }
+
+      let html = '';
+
+      // Grid lines
+      for (let i = 0; i <= 3; i++) {
+        const y = pad.top + (i / 3) * chartH;
+        html += `<line x1="${pad.left}" y1="${y}" x2="${W - pad.right}" y2="${y}" stroke="#e5e7eb" stroke-width="1" stroke-dasharray="${i === 0 ? 'none' : '3,3'}"/>`;
+        const revVal = Math.round(maxRevenue * (1 - i / 3) / 1000);
+        html += `<text x="${pad.left - 6}" y="${y + 3}" text-anchor="end" font-size="9" fill="#9ca3af" font-family="Inter,sans-serif">${revVal}k</text>`;
+      }
+
+      // X-axis labels with date format
+      for (let i = 0; i < data.length; i += 6) {
+        const d = data[i].date;
+        const label = `${d.getDate()}/${d.getMonth() + 1}`;
+        html += `<text x="${xScale(i)}" y="${H - 4}" text-anchor="middle" font-size="9" fill="#9ca3af" font-family="Inter,sans-serif">${label}</text>`;
+      }
+
+      // Revenue area
+      const revPoints = data.map((d, i) => `${xScale(i)},${revenueScale(d.revenue)}`).join(' ');
+      const areaPoints = `${xScale(0)},${pad.top + chartH} ${revPoints} ${xScale(data.length - 1)},${pad.top + chartH}`;
+      html += `<defs><linearGradient id="revGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#2962ff" stop-opacity="0.12"/><stop offset="100%" stop-color="#2962ff" stop-opacity="0"/></linearGradient></defs>`;
+      html += `<polygon points="${areaPoints}" fill="url(#revGrad)"/>`;
+
+      // Revenue line
+      html += `<polyline points="${revPoints}" fill="none" stroke="#2962ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>`;
+
+      // Invoice line
+      const invPoints = data.map((d, i) => `${xScale(i)},${invoiceScale(d.invoices)}`).join(' ');
+      html += `<polyline points="${invPoints}" fill="none" stroke="#16a34a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>`;
+
+      // Dots
+      data.forEach((d, i) => {
+        const cx = xScale(i), cy = revenueScale(d.revenue);
+        html += `<circle cx="${cx}" cy="${cy}" r="3" fill="#2962ff" stroke="white" stroke-width="1.5" opacity="0" class="hv-chart-dot" data-day="${d.day}" data-revenue="${d.revenue}" data-invoices="${d.invoices}"/>`;
+      });
+
+      // Hit areas
+      data.forEach((d, i) => {
+        const cx = xScale(i);
+        html += `<rect x="${cx - 8}" y="${pad.top}" width="16" height="${chartH}" fill="transparent" class="hv-chart-hitarea" data-day="${d.day}" data-revenue="${d.revenue}" data-invoices="${d.invoices}" style="cursor:pointer" tabindex="0" role="button" aria-label="Ngày ${d.day}: Doanh thu ${d.revenue.toLocaleString('vi-VN')}đ, ${d.invoices} hóa đơn"/>`;
+      });
+
+      svg.innerHTML = html;
+
+      // Tooltip
+      const tooltip = document.getElementById('chartTooltip');
+      const hitareas = svg.querySelectorAll('.hv-chart-hitarea');
+      const dots = svg.querySelectorAll('.hv-chart-dot');
+
+      hitareas.forEach((area, idx) => {
+        const showTooltip = () => {
+          tooltip.innerHTML = `<div style="font-weight:600;margin-bottom:2px">Ngày ${area.dataset.day}</div><div>Doanh thu: ${HV.formatVND(parseInt(area.dataset.revenue))}</div><div>Hóa đơn: ${area.dataset.invoices}</div>`;
+          tooltip.style.display = 'block';
+          if (dots[idx]) dots[idx].setAttribute('opacity', '1');
+        };
+        const hideTooltip = () => {
+          tooltip.style.display = 'none';
+          if (dots[idx]) dots[idx].setAttribute('opacity', '0');
+        };
+        area.addEventListener('mouseenter', showTooltip);
+        area.addEventListener('mousemove', (e) => {
+          let left = e.clientX + 10;
+          let top = e.clientY - 36;
+          const rect = tooltip.getBoundingClientRect();
+          if (left + rect.width > window.innerWidth - 16) {
+            left = e.clientX - rect.width - 10;
+          }
+          if (top < 8) {
+            top = e.clientY + 16;
+          }
+          tooltip.style.left = left + 'px';
+          tooltip.style.top = top + 'px';
+        });
+        area.addEventListener('mouseleave', hideTooltip);
+        area.addEventListener('focus', () => {
+          const svgRect = svg.getBoundingClientRect();
+          const cx = parseFloat(area.getAttribute('x')) + parseFloat(area.getAttribute('width')) / 2;
+          tooltip.innerHTML = `<div style="font-weight:600;margin-bottom:2px">Ngày ${area.dataset.day}</div><div>Doanh thu: ${HV.formatVND(parseInt(area.dataset.revenue))}</div><div>Hóa đơn: ${area.dataset.invoices}</div>`;
+          tooltip.style.display = 'block';
+          tooltip.style.left = (svgRect.left + cx) + 'px';
+          tooltip.style.top = (svgRect.top - 44) + 'px';
+          if (dots[idx]) dots[idx].setAttribute('opacity', '1');
+        });
+        area.addEventListener('blur', hideTooltip);
+      });
+    }
+
+    // === SVG Donut Chart ===
+    function renderPieChart() {
+      const svg = document.getElementById('pieChart');
+      const legend = document.getElementById('pieLegend');
+      if (!svg || !legend) return;
+
+      const tooltip = document.getElementById('chartTooltip');
+      const cx = 100, cy = 100, r = 80, innerR = 48;
+      const total = pieData.reduce((s, d) => s + d.value, 0);
+      let cumAngle = -90;
+
+      let html = '';
+      pieData.forEach((d, idx) => {
+        const angle = (d.value / total) * 360;
+        const startAngle = cumAngle;
+        const endAngle = cumAngle + angle;
+        const startRad = (startAngle * Math.PI) / 180;
+        const endRad = (endAngle * Math.PI) / 180;
+
+        const x1 = cx + r * Math.cos(startRad);
+        const y1 = cy + r * Math.sin(startRad);
+        const x2 = cx + r * Math.cos(endRad);
+        const y2 = cy + r * Math.sin(endRad);
+        const ix1 = cx + innerR * Math.cos(endRad);
+        const iy1 = cy + innerR * Math.sin(endRad);
+        const ix2 = cx + innerR * Math.cos(startRad);
+        const iy2 = cy + innerR * Math.sin(startRad);
+
+        const largeArc = angle > 180 ? 1 : 0;
+        html += `<path d="M ${x1} ${y1} A ${r} ${r} 0 ${largeArc} 1 ${x2} ${y2} L ${ix1} ${iy1} A ${innerR} ${innerR} 0 ${largeArc} 0 ${ix2} ${iy2} Z" fill="${d.color}" stroke="var(--hv-bg-surface)" stroke-width="2" class="hv-pie-segment" data-label="${d.label}" data-value="${d.value}" data-color="${d.color}" tabindex="0" role="button" aria-label="${d.label}: ${d.value}%" style="cursor:pointer;transition:opacity 150ms,transform 150ms;transform-origin:${cx}px ${cy}px"><title>${d.label}: ${d.value}%</title></path>`;
+
+        // Percentage label on arc
+        const midAngle = ((startAngle + endAngle) / 2 * Math.PI) / 180;
+        const labelR = (r + innerR) / 2;
+        const lx = cx + labelR * Math.cos(midAngle);
+        const ly = cy + labelR * Math.sin(midAngle);
+        if (d.value >= 10) {
+          html += `<text x="${lx}" y="${ly}" text-anchor="middle" dominant-baseline="central" font-size="11" font-weight="600" fill="white" pointer-events="none">${d.value}%</text>`;
+        }
+        cumAngle += angle;
+      });
+
+      // Center label
+      html += `<text x="${cx}" y="${cy - 4}" text-anchor="middle" font-size="16" font-weight="700" fill="var(--hv-text-primary)" pointer-events="none">1.284</text>`;
+      html += `<text x="${cx}" y="${cy + 10}" text-anchor="middle" font-size="10" fill="var(--hv-text-secondary)" pointer-events="none">hóa đơn</text>`;
+
+      svg.innerHTML = html;
+
+      // Pie segment interactions
+      svg.querySelectorAll('.hv-pie-segment').forEach(seg => {
+        const showSegTooltip = (e) => {
+          seg.style.opacity = '0.85';
+          seg.style.transform = 'scale(1.03)';
+          tooltip.innerHTML = `<div style="font-weight:600;margin-bottom:2px">${seg.dataset.label}</div><div>${seg.dataset.value}% hóa đơn</div>`;
+          tooltip.style.display = 'block';
+        };
+        const hideSegTooltip = () => {
+          seg.style.opacity = '1';
+          seg.style.transform = 'scale(1)';
+          tooltip.style.display = 'none';
+        };
+        seg.addEventListener('mouseenter', showSegTooltip);
+        seg.addEventListener('mousemove', (e) => {
+          let left = e.clientX + 10;
+          let top = e.clientY - 36;
+          const rect = tooltip.getBoundingClientRect();
+          if (left + rect.width > window.innerWidth - 16) left = e.clientX - rect.width - 10;
+          if (top < 8) top = e.clientY + 16;
+          tooltip.style.left = left + 'px';
+          tooltip.style.top = top + 'px';
+        });
+        seg.addEventListener('mouseleave', hideSegTooltip);
+        seg.addEventListener('focus', (e) => {
+          const svgRect = svg.getBoundingClientRect();
+          showSegTooltip(e);
+          tooltip.style.left = (svgRect.left + cx) + 'px';
+          tooltip.style.top = (svgRect.top - 44) + 'px';
+        });
+        seg.addEventListener('blur', hideSegTooltip);
+      });
+
+      // Legend
+      legend.innerHTML = pieData.map(d => `
+        <div class="hv-pie-legend-item">
+          <div class="hv-pie-legend-dot" style="background:${d.color}"></div>
+          <span class="hv-pie-legend-label">${d.label}</span>
+          <span class="hv-pie-legend-value">${d.value}%</span>
+        </div>
+      `).join('');
+    }
+
+    // === Table Scroll Indicator ===
+    function initTableScrollIndicator() {
+      document.querySelectorAll('.hv-table-scroll').forEach(el => {
+        const check = () => {
+          el.classList.toggle('is-scrollable', el.scrollWidth > el.clientWidth);
+        };
+        check();
+        window.addEventListener('resize', check);
+      });
+    }
+
+    // === Init ===
+    function initFilters() {
+      document.querySelectorAll('.hv-select').forEach(select => {
+        select.addEventListener('change', () => console.log('Filter:', select.value));
+      });
+      document.querySelectorAll('.hv-filter-chip-close').forEach(btn => {
+        btn.addEventListener('click', () => btn.parentElement.remove());
+      });
+    }
+
+    function initPeriodTabs() {
+      const tablist = document.querySelector('.hv-period-tabs[role="tablist"]');
+      const tabs = tablist ? tablist.querySelectorAll('.hv-tab') : [];
+      if (!tabs.length) return;
+
+      function activateTab(tab) {
+        tabs.forEach(t => {
+          t.classList.remove('hv-tab-active');
+          t.setAttribute('aria-selected', 'false');
+          t.setAttribute('tabindex', '-1');
+        });
+        tab.classList.add('hv-tab-active');
+        tab.setAttribute('aria-selected', 'true');
+        tab.setAttribute('tabindex', '0');
+        tab.focus();
+      }
+
+      tabs.forEach(tab => {
+        tab.addEventListener('click', () => activateTab(tab));
+        tab.addEventListener('keydown', (e) => {
+          const idx = Array.from(tabs).indexOf(tab);
+          let nextIdx;
+          switch (e.key) {
+            case 'ArrowRight':
+              e.preventDefault();
+              nextIdx = (idx + 1) % tabs.length;
+              activateTab(tabs[nextIdx]);
+              break;
+            case 'ArrowLeft':
+              e.preventDefault();
+              nextIdx = (idx - 1 + tabs.length) % tabs.length;
+              activateTab(tabs[nextIdx]);
+              break;
+            case 'Home':
+              e.preventDefault();
+              activateTab(tabs[0]);
+              break;
+            case 'End':
+              e.preventDefault();
+              activateTab(tabs[tabs.length - 1]);
+              break;
+          }
+        });
+      });
+    }
+
+    function initState() {
+      const state = new URLSearchParams(window.location.search).get('state') || 'default';
+      document.body.setAttribute('data-state', state);
+    }
+
+    // === KPI Card Click → Invoice List ===
+    function initKPIClicks() {
+      document.querySelectorAll('.hv-kpi[role="button"]').forEach(kpi => {
+        kpi.addEventListener('click', () => HV.navigate('invoice-list.html'));
+        kpi.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            HV.navigate('invoice-list.html');
+          }
+        });
+      });
+    }
+
+    // === Customer Table Row Click → Detail ===
+    function initCustomerTableClicks() {
+      const tbody = document.getElementById('customerTableBody');
+      if (!tbody) return;
+      tbody.addEventListener('click', (e) => {
+        const row = e.target.closest('tr');
+        if (!row) return;
+        const inv = mockCustomers[row.rowIndex - 1];
+        if (inv) HV.navigate('invoice-detail.html', { id: '2025/00001234' });
+      });
+    }
+
+    // === "Xem tất cả" Links ===
+    function initViewAllLinks() {
+      document.querySelectorAll('.hv-btn-tertiary').forEach(link => {
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          HV.navigate('invoice-list.html');
+        });
+      });
+    }
+
+    // === Empty State "Tạo hóa đơn" Button ===
+    function initEmptyStateButtons() {
+      document.querySelectorAll('.hv-btn-primary').forEach(btn => {
+        if (btn.textContent.includes('Tạo hóa đơn')) {
+          btn.addEventListener('click', () => HV.navigate('invoice-issue.html'));
+        }
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      initState();
+      initPeriodTabs();
+      initFilters();
+      renderCustomerTable();
+      renderSKUTable();
+      renderLineChart();
+      renderPieChart();
+      initKPIClicks();
+      initCustomerTableClicks();
+      initViewAllLinks();
+      initEmptyStateButtons();
+      initTableScrollIndicator();
+    });
+  </script>
+</body>
+</html>

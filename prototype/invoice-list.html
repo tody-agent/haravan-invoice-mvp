@@ -1,0 +1,1005 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Danh sách hóa đơn — Haravan Invoice</title>
+  <link rel="stylesheet" href="assets/css/design-system.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <script>window.HV_PAGE = { id: 'invoices', title: 'Danh sách hóa đơn' };</script>
+  <style>
+    .filter-bar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      padding: 16px 0;
+    }
+    .filter-bar .search-wrap {
+      position: relative;
+      flex: 1;
+      min-width: 240px;
+    }
+    .filter-bar .search-wrap i {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--hv-text-muted);
+      font-size: 16px;
+    }
+    .filter-bar .search-wrap .hv-input {
+      padding-left: 36px;
+    }
+    .filter-chips {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .filter-chip-remove {
+      width: 14px;
+      height: 14px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      cursor: pointer;
+      opacity: 0.6;
+    }
+    .filter-chip-remove:hover { opacity: 1; }
+
+    .customer-cell {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .customer-cell .name {
+      font-weight: 500;
+      color: var(--hv-text-primary);
+    }
+    .customer-cell .mst {
+      font-size: 12px;
+      color: var(--hv-text-muted);
+      font-family: var(--hv-font-mono);
+    }
+
+    .table-card {
+      overflow-x: auto;
+    }
+
+    .checkbox-col {
+      width: 44px;
+    }
+    .hv-table .checkbox-col input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      cursor: pointer;
+      accent-color: var(--hv-primary);
+    }
+
+    .bulk-bar {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--hv-bg-surface);
+      border: 1px solid var(--hv-border);
+      border-radius: var(--hv-radius-xl);
+      box-shadow: var(--hv-shadow-lg);
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      z-index: 200;
+      animation: slideUp 200ms ease;
+    }
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateX(-50%) translateY(12px); }
+      to { opacity: 1; transform: translateX(-50%) translateY(0); }
+    }
+    .bulk-bar .count {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--hv-text-primary);
+      white-space: nowrap;
+    }
+
+    .pagination {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 16px;
+    }
+    .pagination-info {
+      font-size: 13px;
+      color: var(--hv-text-secondary);
+    }
+    .pagination-btns {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .page-btn {
+      width: 32px;
+      height: 32px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 500;
+      border-radius: var(--hv-radius-md);
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--hv-text-secondary);
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 150ms;
+    }
+    .page-btn:hover {
+      background: var(--hv-bg-surface-hover);
+      color: var(--hv-text-primary);
+    }
+    .page-btn-active {
+      background: var(--hv-primary-soft);
+      color: var(--hv-primary);
+      border-color: var(--hv-primary);
+    }
+    .page-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    /* Channel badges — distinct per channel */
+    .channel-pos {
+      background: var(--hv-info-soft);
+      color: #0369a1;
+    }
+    .channel-web {
+      background: var(--hv-success-soft);
+      color: var(--hv-success);
+    }
+    .channel-shopee {
+      background: var(--hv-warning-soft);
+      color: var(--hv-warning-hover);
+    }
+    .channel-lazada {
+      background: var(--hv-purple-soft);
+      color: var(--hv-purple);
+    }
+    .channel-marketplace {
+      background: var(--hv-bg-indigo-soft);
+      color: #4f46e5;
+    }
+
+    /* Empty state */
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 80px 24px;
+      text-align: center;
+    }
+    .empty-state i {
+      font-size: 56px;
+      color: var(--hv-text-muted);
+      margin-bottom: 16px;
+    }
+    .empty-state h3 {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--hv-text-primary);
+      margin-bottom: 8px;
+    }
+    .empty-state p {
+      font-size: 14px;
+      color: var(--hv-text-secondary);
+      margin-bottom: 20px;
+    }
+
+    /* Loading skeletons */
+    .skeleton-cell {
+      height: 14px;
+      background: linear-gradient(90deg, #eef1f6 25%, #e2e7f0 50%, #eef1f6 75%);
+      background-size: 200% 100%;
+      border-radius: 4px;
+      animation: shimmer 1.5s infinite;
+    }
+    @keyframes shimmer {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    .content-area {
+      background: var(--hv-bg-surface);
+      border: 1px solid var(--hv-border);
+      border-radius: var(--hv-radius-lg);
+      box-shadow: var(--hv-shadow-xs);
+    }
+
+    @media (max-width: 767px) {
+      .filter-bar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .filter-bar .search-wrap {
+        min-width: unset;
+        max-width: unset;
+      }
+      .filter-bar .hv-select {
+        width: 100%;
+      }
+      .content-area {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+      .hv-table {
+        min-width: 900px;
+      }
+      .hv-content-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+      }
+      .hv-content-header .hv-flex {
+        width: 100%;
+      }
+      .hv-content-header .hv-btn {
+        flex: 1;
+      }
+      .pagination {
+        flex-direction: column;
+        gap: 12px;
+        align-items: center;
+      }
+      .bulk-bar {
+        flex-wrap: wrap;
+        left: 8px;
+        right: 8px;
+        transform: none;
+      }
+    }
+
+    /* Row hover — left accent for clickable affordance */
+    .hv-table tbody tr[data-id]:hover td {
+      border-left: 3px solid var(--hv-primary);
+      padding-left: 13px;
+    }
+    .hv-table tbody tr[data-id] td {
+      border-left: 3px solid transparent;
+      transition: border-color 150ms, padding-left 150ms;
+    }
+
+    /* Action menu dropdown */
+    .action-menu-wrap {
+      position: relative;
+      display: inline-flex;
+    }
+    .action-menu-btn {
+      width: 28px;
+      height: 28px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: var(--hv-radius-md);
+      border: none;
+      background: transparent;
+      color: var(--hv-text-secondary);
+      cursor: pointer;
+      font-size: 16px;
+      transition: all 150ms;
+    }
+    .action-menu-btn:hover {
+      background: var(--hv-primary-soft);
+      color: var(--hv-primary);
+    }
+    .action-menu-dropdown {
+      position: absolute;
+      right: 0;
+      top: 100%;
+      z-index: 100;
+      min-width: 180px;
+      background: var(--hv-bg-surface);
+      border: 1px solid var(--hv-border);
+      border-radius: var(--hv-radius-md);
+      box-shadow: var(--hv-shadow-lg);
+      padding: 4px;
+      display: none;
+    }
+    .action-menu-dropdown.open {
+      display: block;
+      animation: menuFadeIn 120ms ease;
+    }
+    @keyframes menuFadeIn {
+      from { opacity: 0; transform: translateY(-4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .action-menu-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      width: 100%;
+      padding: 8px 12px;
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--hv-text-primary);
+      background: none;
+      border: none;
+      border-radius: var(--hv-radius-xs);
+      cursor: pointer;
+      font-family: inherit;
+      transition: background 100ms;
+      text-align: left;
+    }
+    .action-menu-item:hover {
+      background: var(--hv-bg-surface-hover);
+    }
+    .action-menu-item i {
+      font-size: 16px;
+      color: var(--hv-text-muted);
+      width: 18px;
+      text-align: center;
+    }
+    .action-menu-item-danger {
+      color: var(--hv-danger);
+    }
+    .action-menu-item-danger i {
+      color: var(--hv-danger);
+    }
+    .action-menu-divider {
+      height: 1px;
+      background: var(--hv-border);
+      margin: 4px 0;
+    }
+
+    /* Mobile scroll hint */
+    .table-scroll-wrap {
+      position: relative;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .table-scroll-wrap::after {
+      content: '';
+      position: sticky;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      width: 32px;
+      background: linear-gradient(to right, transparent, rgba(255,255,255,0.9));
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 200ms;
+    }
+    .table-scroll-wrap.has-scroll::after {
+      opacity: 1;
+    }
+    @media (min-width: 768px) {
+      .table-scroll-wrap::after { display: none; }
+    }
+
+    /* Empty search result */
+    .empty-search {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 48px 24px;
+      text-align: center;
+    }
+    .empty-search i {
+      font-size: 40px;
+      color: var(--hv-text-muted);
+      margin-bottom: 12px;
+    }
+    .empty-search h3 {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--hv-text-primary);
+      margin-bottom: 6px;
+    }
+    .empty-search p {
+      font-size: 13px;
+      color: var(--hv-text-secondary);
+    }
+
+    @media (max-width: 480px) {
+      .hv-tabs {
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+      }
+      .hv-tabs::-webkit-scrollbar {
+        display: none;
+      }
+      .hv-tab {
+        white-space: nowrap;
+        flex-shrink: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <aside class="hv-sidebar" aria-label="Điều hướng chính"></aside>
+  <div class="hv-topbar" aria-label="Thanh công cụ"></div>
+
+  <div class="hv-content">
+    <div class="hv-content-header">
+      <h1>Danh sách hóa đơn</h1>
+      <div class="hv-flex hv-gap-3">
+        <button class="hv-btn hv-btn-secondary" aria-label="Xuất file">
+          <i class="ti ti-download"></i>
+          <span>Xuất file</span>
+        </button>
+        <button class="hv-btn hv-btn-primary" aria-label="Tạo hóa đơn mới">
+          <i class="ti ti-plus"></i>
+          <span>Tạo hóa đơn</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="hv-tabs" role="tablist" aria-label="Lọc theo trạng thái">
+      <button class="hv-tab hv-tab-active" role="tab" aria-selected="true" data-tab="all">
+        Tất cả <span class="hv-tab-count">1.284</span>
+      </button>
+      <button class="hv-tab" role="tab" aria-selected="false" data-tab="pending">
+        Chờ xử lý <span class="hv-tab-count">156</span>
+      </button>
+      <button class="hv-tab" role="tab" aria-selected="false" data-tab="issued">
+        Đã phát hành <span class="hv-tab-count">892</span>
+      </button>
+      <button class="hv-tab" role="tab" aria-selected="false" data-tab="adjusted">
+        Đã điều chỉnh <span class="hv-tab-count">186</span>
+      </button>
+      <button class="hv-tab" role="tab" aria-selected="false" data-tab="replaced">
+        Đã thay thế <span class="hv-tab-count">50</span>
+      </button>
+    </div>
+
+    <div class="content-area" style="margin-top:16px">
+
+      <!-- Filter Bar -->
+      <div style="padding:16px 16px 0">
+        <div class="filter-bar">
+          <div class="search-wrap">
+            <i class="ti ti-search"></i>
+            <input type="text" class="hv-input" placeholder="Tìm theo số HĐ, tên khách, MST..." aria-label="Tìm kiếm hóa đơn">
+          </div>
+          <select class="hv-select" aria-label="Kênh bán hàng">
+            <option value="" disabled selected hidden>Kênh bán hàng</option>
+            <option value="all">Tất cả kênh</option>
+            <option value="pos">POS</option>
+            <option value="web">Web</option>
+            <option value="marketplace">Marketplace</option>
+          </select>
+          <select class="hv-select" aria-label="Ngày tạo">
+            <option value="" disabled selected hidden>Ngày tạo</option>
+            <option value="today">Hôm nay</option>
+            <option value="7d">7 ngày qua</option>
+            <option value="30d">30 ngày qua</option>
+            <option value="custom">Tùy chọn...</option>
+          </select>
+          <select class="hv-select" aria-label="Trạng thái thanh toán">
+            <option value="" disabled selected hidden>Thanh toán</option>
+            <option value="all">Tất cả</option>
+            <option value="paid">Đã thanh toán</option>
+            <option value="unpaid">Chưa thanh toán</option>
+          </select>
+        </div>
+        <div class="filter-chips" id="filterChips" style="padding-bottom:12px"></div>
+      </div>
+
+      <!-- Loading State (shown on init) -->
+      <div id="state-loading">
+        <div class="table-scroll-wrap">
+          <table class="hv-table" aria-label="Đang tải danh sách hóa đơn">
+            <thead>
+              <tr>
+                <th class="checkbox-col"></th>
+                <th>Số hóa đơn</th>
+                <th>Khách hàng</th>
+                <th>Kênh</th>
+                <th style="text-align:right">Tổng tiền</th>
+                <th>Thanh toán</th>
+                <th>Trạng thái CQT</th>
+                <th>Ngày tạo</th>
+                <th>Hành động</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td class="checkbox-col"><div class="skeleton-cell" style="width:16px;height:16px"></div></td><td><div class="skeleton-cell" style="width:120px"></div></td><td><div class="skeleton-cell" style="width:200px"></div></td><td><div class="skeleton-cell" style="width:60px"></div></td><td><div class="skeleton-cell" style="width:100px;margin-left:auto"></div></td><td><div class="skeleton-cell" style="width:80px"></div></td><td><div class="skeleton-cell" style="width:80px"></div></td><td><div class="skeleton-cell" style="width:80px"></div></td><td><div class="skeleton-cell" style="width:28px"></div></td></tr>
+              <tr><td class="checkbox-col"><div class="skeleton-cell" style="width:16px;height:16px"></div></td><td><div class="skeleton-cell" style="width:110px"></div></td><td><div class="skeleton-cell" style="width:180px"></div></td><td><div class="skeleton-cell" style="width:50px"></div></td><td><div class="skeleton-cell" style="width:90px;margin-left:auto"></div></td><td><div class="skeleton-cell" style="width:90px"></div></td><td><div class="skeleton-cell" style="width:70px"></div></td><td><div class="skeleton-cell" style="width:80px"></div></td><td><div class="skeleton-cell" style="width:28px"></div></td></tr>
+              <tr><td class="checkbox-col"><div class="skeleton-cell" style="width:16px;height:16px"></div></td><td><div class="skeleton-cell" style="width:120px"></div></td><td><div class="skeleton-cell" style="width:160px"></div></td><td><div class="skeleton-cell" style="width:70px"></div></td><td><div class="skeleton-cell" style="width:110px;margin-left:auto"></div></td><td><div class="skeleton-cell" style="width:80px"></div></td><td><div class="skeleton-cell" style="width:90px"></div></td><td><div class="skeleton-cell" style="width:80px"></div></td><td><div class="skeleton-cell" style="width:28px"></div></td></tr>
+              <tr><td class="checkbox-col"><div class="skeleton-cell" style="width:16px;height:16px"></div></td><td><div class="skeleton-cell" style="width:115px"></div></td><td><div class="skeleton-cell" style="width:220px"></div></td><td><div class="skeleton-cell" style="width:55px"></div></td><td><div class="skeleton-cell" style="width:95px;margin-left:auto"></div></td><td><div class="skeleton-cell" style="width:85px"></div></td><td><div class="skeleton-cell" style="width:75px"></div></td><td><div class="skeleton-cell" style="width:80px"></div></td><td><div class="skeleton-cell" style="width:28px"></div></td></tr>
+              <tr><td class="checkbox-col"><div class="skeleton-cell" style="width:16px;height:16px"></div></td><td><div class="skeleton-cell" style="width:120px"></div></td><td><div class="skeleton-cell" style="width:190px"></div></td><td><div class="skeleton-cell" style="width:65px"></div></td><td><div class="skeleton-cell" style="width:100px;margin-left:auto"></div></td><td><div class="skeleton-cell" style="width:80px"></div></td><td><div class="skeleton-cell" style="width:85px"></div></td><td><div class="skeleton-cell" style="width:80px"></div></td><td><div class="skeleton-cell" style="width:28px"></div></td></tr>
+              <tr><td class="checkbox-col"><div class="skeleton-cell" style="width:16px;height:16px"></div></td><td><div class="skeleton-cell" style="width:118px"></div></td><td><div class="skeleton-cell" style="width:170px"></div></td><td><div class="skeleton-cell" style="width:58px"></div></td><td><div class="skeleton-cell" style="width:105px;margin-left:auto"></div></td><td><div class="skeleton-cell" style="width:88px"></div></td><td><div class="skeleton-cell" style="width:72px"></div></td><td><div class="skeleton-cell" style="width:80px"></div></td><td><div class="skeleton-cell" style="width:28px"></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Table — Default State (hidden until data loads) -->
+      <div id="state-default" class="table-card hv-hidden">
+        <div class="table-scroll-wrap" id="tableScrollWrap">
+        <table class="hv-table" aria-label="Danh sách hóa đơn">
+          <thead>
+            <tr>
+              <th class="checkbox-col"><input type="checkbox" aria-label="Chọn tất cả" id="checkAll"></th>
+              <th>Số hóa đơn</th>
+              <th>Khách hàng</th>
+              <th>Kênh</th>
+              <th style="text-align:right">Tổng tiền</th>
+              <th>Thanh toán</th>
+              <th>Trạng thái CQT</th>
+              <th>Ngày tạo</th>
+              <th>Hành động</th>
+            </tr>
+          </thead>
+          <tbody id="invoice-tbody"></tbody>
+        </table>
+        </div> <!-- /table-scroll-wrap -->
+
+        <!-- Pagination -->
+        <div class="pagination" style="padding:12px 16px">
+          <div class="pagination-info">Hiển thị 1–15 của 1.284 hóa đơn</div>
+          <div class="pagination-btns">
+            <button class="page-btn" disabled aria-label="Trang trước"><i class="ti ti-chevron-left"></i></button>
+            <button class="page-btn page-btn-active" aria-label="Trang 1">1</button>
+            <button class="page-btn" aria-label="Trang 2">2</button>
+            <button class="page-btn" aria-label="Trang 3">3</button>
+            <span style="color:var(--hv-text-muted);font-size:13px">…</span>
+            <button class="page-btn" aria-label="Trang 86">86</button>
+            <button class="page-btn" aria-label="Trang sau"><i class="ti ti-chevron-right"></i></button>
+          </div>
+        </div>
+      </div> <!-- /state-default -->
+
+      <!-- Empty State -->
+      <div id="state-empty" class="empty-state hv-hidden">
+        <i class="ti ti-receipt-off"></i>
+        <h3>Chưa có hóa đơn nào</h3>
+        <p>Tạo hóa đơn đầu tiên để bắt đầu!</p>
+        <button class="hv-btn hv-btn-primary" aria-label="Tạo hóa đơn mới">
+          <i class="ti ti-plus"></i>
+          <span>Tạo hóa đơn</span>
+        </button>
+      </div>
+
+      <!-- Empty Search Result -->
+      <div id="state-empty-search" class="empty-search hv-hidden">
+        <i class="ti ti-search-off"></i>
+        <h3>Không tìm thấy kết quả</h3>
+        <p>Thử thay đổi từ khóa hoặc bộ lọc</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bulk Action Bar (hidden by default) -->
+  <div id="bulkBar" class="bulk-bar hv-hidden">
+    <span class="count" id="bulkCount">Đã chọn 0 hóa đơn</span>
+    <div style="width:1px;height:24px;background:var(--hv-border)"></div>
+    <button class="hv-btn hv-btn-sm hv-btn-secondary" aria-label="In hàng loạt">
+      <i class="ti ti-printer"></i> In hàng loạt
+    </button>
+    <button class="hv-btn hv-btn-sm hv-btn-secondary" aria-label="Xuất file">
+      <i class="ti ti-download"></i> Xuất file
+    </button>
+    <button class="hv-btn hv-btn-sm hv-btn-secondary" aria-label="Điều chỉnh">
+      <i class="ti ti-edit"></i> Điều chỉnh
+    </button>
+    <div style="width:1px;height:24px;background:var(--hv-border)"></div>
+    <button class="hv-btn hv-btn-sm hv-btn-icon" id="bulkBarClose" aria-label="Đóng thanh thao tác" title="Đóng" style="width:28px;height:28px;color:var(--hv-text-muted)">
+      <i class="ti ti-x" style="font-size:16px"></i>
+    </button>
+  </div>
+
+  <script src="assets/js/app-shell.js"></script>
+  <script>
+    /* ============================================
+       Invoice List — Client-side logic
+       Fixes: action menu, filter logic, pagination,
+       empty search, debounce, a11y
+       ============================================ */
+
+    const INVOICES = HV.data.invoices;
+    const paymentMap = HV.data.paymentMap;
+    const cqtMap = HV.data.cqtMap;
+    const channelMap = HV.data.channelMap;
+
+    // --- State ---
+    const PER_PAGE = 15;
+    let currentPage = 1;
+    let currentTab = 'all';
+    let currentData = [...INVOICES];
+    let openMenu = null; // track open action menu
+
+    // --- Status derivation from CQT state ---
+    function getStatus(inv) {
+      if (inv.cqt === 'rejected') return 'adjusted';
+      if (inv.cqt === 'accepted') return 'issued';
+      return 'pending';
+    }
+
+    // --- Tab filter mapping ---
+    const tabFilters = {
+      'all': null,
+      'pending': (inv) => inv.cqt === 'pending',
+      'issued': (inv) => inv.cqt === 'accepted',
+      'adjusted': (inv) => inv.cqt === 'rejected',
+      'replaced': (inv) => inv.cqt === 'rejected' && inv.payment === 'paid'
+    };
+
+    // --- Update tab counts based on current data ---
+    function updateTabCounts(data) {
+      const counts = {
+        'all': data.length,
+        'pending': data.filter(tabFilters['pending']).length,
+        'issued': data.filter(tabFilters['issued']).length,
+        'adjusted': data.filter(tabFilters['adjusted']).length,
+        'replaced': data.filter(tabFilters['replaced']).length
+      };
+      document.querySelectorAll('.hv-tab[data-tab]').forEach(tab => {
+        const countEl = tab.querySelector('.hv-tab-count');
+        if (countEl) countEl.textContent = counts[tab.dataset.tab] ?? 0;
+      });
+    }
+
+    // --- Render table for current page ---
+    function renderTable(data) {
+      currentData = data || currentData;
+      const totalPages = Math.max(1, Math.ceil(currentData.length / PER_PAGE));
+      if (currentPage > totalPages) currentPage = totalPages;
+
+      const start = (currentPage - 1) * PER_PAGE;
+      const pageData = currentData.slice(start, start + PER_PAGE);
+
+      const tbody = document.getElementById('invoice-tbody');
+      const stateDefault = document.getElementById('state-default');
+      const stateEmpty = document.getElementById('state-empty');
+      const stateLoading = document.getElementById('state-loading');
+      const stateEmptySearch = document.getElementById('state-empty-search');
+
+      // Hide all states
+      stateLoading.classList.add('hv-hidden');
+      stateEmpty.classList.add('hv-hidden');
+      stateEmptySearch.classList.add('hv-hidden');
+      stateDefault.classList.add('hv-hidden');
+
+      if (INVOICES.length === 0) {
+        // No invoices at all
+        stateEmpty.classList.remove('hv-hidden');
+        return;
+      }
+
+      if (currentData.length === 0) {
+        // Search/filter returned nothing
+        stateEmptySearch.classList.remove('hv-hidden');
+        return;
+      }
+
+      stateDefault.classList.remove('hv-hidden');
+
+      tbody.innerHTML = pageData.map((inv, i) => {
+        const p = paymentMap[inv.payment];
+        const c = cqtMap[inv.cqt];
+        const ch = channelMap[inv.channel]?.cls || 'hv-badge-neutral';
+        const globalIdx = start + i;
+        return `<tr data-id="${inv.id}" style="cursor:pointer">
+          <td class="checkbox-col"><input type="checkbox" class="row-check" aria-label="Chọn hóa đơn ${inv.id}" data-idx="${globalIdx}" onclick="event.stopPropagation()"></td>
+          <td><a href="invoice-detail.html?id=${encodeURIComponent(inv.id)}" class="text-mono" style="color:var(--hv-text-link)" onclick="event.stopPropagation()">${inv.id}</a></td>
+          <td>
+            <div class="customer-cell">
+              <span class="name">${inv.customer}</span>
+              ${inv.mst ? `<span class="mst">MST: ${inv.mst}</span>` : ''}
+            </div>
+          </td>
+          <td><span class="hv-badge ${ch}">${inv.channel}</span></td>
+          <td style="text-align:right;font-weight:600;font-variant-numeric:tabular-nums">${HV.formatVND(inv.total)}</td>
+          <td><span class="hv-badge ${p.cls}">${p.label}</span></td>
+          <td><span class="hv-badge ${c.cls}">${c.label}</span></td>
+          <td>${inv.date}</td>
+          <td>
+            <div style="display:flex;gap:4px;align-items:center">
+              <button class="hv-btn hv-btn-sm hv-btn-tertiary btn-view" data-id="${inv.id}" aria-label="Xem hóa đơn ${inv.id}" title="Xem"><i class="ti ti-eye"></i></button>
+              <div class="action-menu-wrap">
+                <button class="action-menu-btn btn-menu" data-id="${inv.id}" aria-label="Thêm thao tác cho hóa đơn ${inv.id}" aria-haspopup="true" aria-expanded="false"><i class="ti ti-dots-vertical"></i></button>
+                <div class="action-menu-dropdown" role="menu">
+                  <button class="action-menu-item btn-print" data-id="${inv.id}" role="menuitem"><i class="ti ti-printer"></i> In hóa đơn</button>
+                  <button class="action-menu-item btn-edit" data-id="${inv.id}" role="menuitem"><i class="ti ti-edit"></i> Điều chỉnh</button>
+                  <div class="action-menu-divider"></div>
+                  <button class="action-menu-item action-menu-item-danger btn-replace" data-id="${inv.id}" role="menuitem"><i class="ti ti-refresh"></i> Thay thế</button>
+                </div>
+              </div>
+            </div>
+          </td>
+        </tr>`;
+      }).join('');
+
+      renderPagination(totalPages);
+      updateTabCounts(INVOICES);
+      updateBulkBar();
+      initScrollHint();
+    }
+
+    // --- Pagination ---
+    function renderPagination(totalPages) {
+      const infoEl = document.querySelector('.pagination-info');
+      const btnsEl = document.querySelector('.pagination-btns');
+      const total = currentData.length;
+      const start = (currentPage - 1) * PER_PAGE + 1;
+      const end = Math.min(currentPage * PER_PAGE, total);
+
+      infoEl.textContent = `Hiển thị ${start}–${end} của ${total.toLocaleString('vi-VN')} hóa đơn`;
+
+      if (totalPages <= 1) {
+        btnsEl.innerHTML = '';
+        return;
+      }
+
+      let btns = '';
+      btns += `<button class="page-btn" ${currentPage === 1 ? 'disabled' : ''} aria-label="Trang trước" data-page="prev"><i class="ti ti-chevron-left"></i></button>`;
+
+      const maxVisible = 5;
+      let startPage = Math.max(1, currentPage - Math.floor(maxVisible / 2));
+      let endPage = Math.min(totalPages, startPage + maxVisible - 1);
+      if (endPage - startPage < maxVisible - 1) {
+        startPage = Math.max(1, endPage - maxVisible + 1);
+      }
+
+      if (startPage > 1) {
+        btns += `<button class="page-btn" aria-label="Trang 1" data-page="1">1</button>`;
+        if (startPage > 2) btns += `<span role="separator" aria-hidden="true" style="color:var(--hv-text-muted);font-size:13px">…</span>`;
+      }
+
+      for (let p = startPage; p <= endPage; p++) {
+        btns += `<button class="page-btn ${p === currentPage ? 'page-btn-active' : ''}" aria-label="Trang ${p}" data-page="${p}">${p}</button>`;
+      }
+
+      if (endPage < totalPages) {
+        if (endPage < totalPages - 1) btns += `<span role="separator" aria-hidden="true" style="color:var(--hv-text-muted);font-size:13px">…</span>`;
+        btns += `<button class="page-btn" aria-label="Trang ${totalPages}" data-page="${totalPages}">${totalPages}</button>`;
+      }
+
+      btns += `<button class="page-btn" ${currentPage === totalPages ? 'disabled' : ''} aria-label="Trang sau" data-page="next"><i class="ti ti-chevron-right"></i></button>`;
+      btnsEl.innerHTML = btns;
+    }
+
+    // --- Bulk bar ---
+    function updateBulkBar() {
+      const checked = document.querySelectorAll('.row-check:checked');
+      const bar = document.getElementById('bulkBar');
+      const countEl = document.getElementById('bulkCount');
+      if (checked.length > 0) {
+        bar.classList.remove('hv-hidden');
+        countEl.textContent = `Đã chọn ${checked.length} hóa đơn`;
+      } else {
+        bar.classList.add('hv-hidden');
+      }
+    }
+
+    // --- Close all open menus ---
+    function closeAllMenus() {
+      document.querySelectorAll('.action-menu-dropdown.open').forEach(m => m.classList.remove('open'));
+      document.querySelectorAll('.btn-menu[aria-expanded="true"]').forEach(b => b.setAttribute('aria-expanded', 'false'));
+      openMenu = null;
+    }
+
+    // --- Mobile scroll hint ---
+    function initScrollHint() {
+      const wrap = document.getElementById('tableScrollWrap');
+      if (!wrap) return;
+      const check = () => {
+        wrap.classList.toggle('has-scroll', wrap.scrollWidth > wrap.clientWidth);
+      };
+      check();
+      wrap.addEventListener('scroll', check, { passive: true });
+      window.addEventListener('resize', check);
+    }
+
+    // --- Apply all filters and re-render ---
+    function applyFilters() {
+      const searchQuery = document.querySelector('.search-wrap .hv-input')?.value.trim() || '';
+      let data = [...INVOICES];
+
+      // Tab filter
+      const filterFn = tabFilters[currentTab];
+      if (filterFn) data = data.filter(filterFn);
+
+      // Search
+      if (searchQuery) data = HV.data.searchInvoices(searchQuery).filter(item => data.includes(item));
+
+      currentPage = 1;
+      renderTable(data);
+    }
+
+    // --- DOMContentLoaded ---
+    document.addEventListener('DOMContentLoaded', () => {
+      // Simulate brief loading then show data
+      setTimeout(() => {
+        renderTable(INVOICES);
+
+        // Check for search query from global search
+        const q = HV.getUrlParam('q');
+        if (q) {
+          const searchInput = document.querySelector('.search-wrap .hv-input');
+          if (searchInput) {
+            searchInput.value = q;
+            applyFilters();
+          }
+        }
+      }, 300);
+
+      // === Check all ===
+      const checkAll = document.getElementById('checkAll');
+      checkAll.addEventListener('change', () => {
+        document.querySelectorAll('.row-check').forEach(cb => { cb.checked = checkAll.checked; });
+        updateBulkBar();
+      });
+
+      // === Individual checkbox ===
+      document.getElementById('invoice-tbody').addEventListener('change', (e) => {
+        if (e.target.classList.contains('row-check')) {
+          const total = document.querySelectorAll('.row-check').length;
+          const checked = document.querySelectorAll('.row-check:checked').length;
+          checkAll.checked = checked === total;
+          checkAll.indeterminate = checked > 0 && checked < total;
+          updateBulkBar();
+        }
+      });
+
+      // === Row click → detail ===
+      document.getElementById('invoice-tbody').addEventListener('click', (e) => {
+        const row = e.target.closest('tr[data-id]');
+        if (!row) return;
+        if (e.target.closest('.row-check') || e.target.closest('.action-menu-wrap') || e.target.closest('.btn-view')) return;
+        HV.navigate('invoice-detail.html', { id: row.dataset.id });
+      });
+
+      // === View button ===
+      document.getElementById('invoice-tbody').addEventListener('click', (e) => {
+        const btn = e.target.closest('.btn-view');
+        if (btn) { e.stopPropagation(); HV.navigate('invoice-detail.html', { id: btn.dataset.id }); }
+      });
+
+      // === Action menu toggle ===
+      document.getElementById('invoice-tbody').addEventListener('click', (e) => {
+        const btn = e.target.closest('.btn-menu');
+        if (btn) {
+          e.stopPropagation();
+          const dropdown = btn.nextElementSibling;
+          const isOpen = dropdown.classList.contains('open');
+          closeAllMenus();
+          if (!isOpen) {
+            dropdown.classList.add('open');
+            btn.setAttribute('aria-expanded', 'true');
+            openMenu = dropdown;
+          }
+          return;
+        }
+
+        // Print
+        const printBtn = e.target.closest('.btn-print');
+        if (printBtn) {
+          e.stopPropagation();
+          closeAllMenus();
+          HV.toast(`Đang chuẩn bị in hóa đơn ${printBtn.dataset.id}...`, 'info');
+          return;
+        }
+
+        // Edit
+        const editBtn = e.target.closest('.btn-edit');
+        if (editBtn) {
+          e.stopPropagation();
+          closeAllMenus();
+          HV.navigate('correction-wizard.html', { id: editBtn.dataset.id });
+          return;
+        }
+
+        // Replace
+        const replaceBtn = e.target.closest('.btn-replace');
+        if (replaceBtn) {
+          e.stopPropagation();
+          closeAllMenus();
+          HV.confirm('Bạn có chắc muốn thay thế hóa đơn này? Hóa đơn gốc sẽ bị đánh dấu "Đã thay thế".', {
+            title: 'Thay thế hóa đơn',
+            confirmLabel: 'Thay thế',
+            type: 'warning'
+          }).then(ok => {
+            if (ok) HV.toast(`Hóa đơn ${replaceBtn.dataset.id} đã được đánh dấu thay thế`, 'success');
+          });
+          return;
+        }
+      });
+
+      // === Close menus on outside click ===
+      document.addEventListener('click', (e) => {
+        if (openMenu && !e.target.closest('.action-menu-wrap')) {
+          closeAllMenus();
+        }
+      });
+
+      // === Close menus on Escape ===
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeAllMenus();
+      });
+
+      // === Search with debounce (300ms) ===
+      const searchInput = document.querySelector('.search-wrap .hv-input');
+      if (searchInput) {
+        let debounce;
+        searchInput.addEventListener('input', () => {
+          clearTimeout(debounce);
+          debounce = setTimeout(() => applyFilters(), 300);
+        });
+      }
+
+      // === Tab switching ===
+      document.querySelectorAll('.hv-tab[data-tab]').forEach(tab => {
+        tab.addEventListener('click', () => {
+          document.querySelectorAll('.hv-tab').forEach(t => {
+            t.classList.remove('hv-tab-active');
+            t.setAttribute('aria-selected', 'false');
+          });
+          tab.classList.add('hv-tab-active');
+          tab.setAttribute('aria-selected', 'true');
+          currentTab = tab.dataset.tab;
+          applyFilters();
+        });
+      });
+
+      // === Pagination clicks ===
+      document.querySelector('.pagination-btns').addEventListener('click', (e) => {
+        const btn = e.target.closest('.page-btn');
+        if (!btn || btn.disabled) return;
+        const page = btn.dataset.page;
+        if (page === 'prev') currentPage--;
+        else if (page === 'next') currentPage++;
+        else currentPage = parseInt(page);
+        renderTable();
+        document.querySelector('.table-card')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+
+      // === Bulk bar close ===
+      document.getElementById('bulkBarClose')?.addEventListener('click', () => {
+        document.querySelectorAll('.row-check').forEach(cb => { cb.checked = false; });
+        document.getElementById('checkAll').checked = false;
+        document.getElementById('checkAll').indeterminate = false;
+        updateBulkBar();
+      });
+
+      // === "Tạo hóa đơn" button ===
+      const issueBtn = document.querySelector('.hv-content-header .hv-btn-primary');
+      if (issueBtn) {
+        issueBtn.addEventListener('click', () => HV.navigate('invoice-issue.html'));
+      }
+
+      // === "Xuất file" button ===
+      const exportBtn = document.querySelector('.hv-content-header .hv-btn-secondary');
+      if (exportBtn) {
+        exportBtn.addEventListener('click', () => HV.toast('Đang xuất file Excel...', 'info'));
+      }
+
+      // === Bulk actions ===
+      document.querySelector('#bulkBar .hv-btn-secondary[aria-label="In hàng loạt"]')?.addEventListener('click', () => {
+        const count = document.querySelectorAll('.row-check:checked').length;
+        HV.toast(`Đang chuẩn bị in ${count} hóa đơn...`, 'info');
+      });
+      document.querySelector('#bulkBar .hv-btn-secondary[aria-label="Xuất file"]')?.addEventListener('click', () => {
+        HV.toast('Đang xuất file...', 'info');
+      });
+      document.querySelector('#bulkBar .hv-btn-secondary[aria-label="Điều chỉnh"]')?.addEventListener('click', () => {
+        HV.toast('Chức năng điều chỉnh hàng loạt đang phát triển', 'warning');
+      });
+
+      // === Dropdown filters (placeholder logic) ===
+      document.querySelectorAll('.filter-bar .hv-select').forEach(sel => {
+        sel.addEventListener('change', () => {
+          HV.toast(`Đã chọn: ${sel.options[sel.selectedIndex].text}`, 'info');
+        });
+      });
+    });
+  </script>
+</body>
+</html>

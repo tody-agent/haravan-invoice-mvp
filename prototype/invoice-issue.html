@@ -1,0 +1,1211 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Phát hành hóa đơn — Haravan Invoice</title>
+  <link rel="stylesheet" href="assets/css/design-system.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <script>window.HV_PAGE = { id: 'issue', title: 'Phát hành hóa đơn' };</script>
+  <style>
+    /* === Page Layout === */
+    .hv-issue-layout {
+      display: grid;
+      grid-template-columns: 1fr 400px;
+      gap: 24px;
+      align-items: start;
+    }
+    @media (max-width: 1199px) {
+      .hv-issue-layout { grid-template-columns: 1fr; }
+      .hv-preview-card { position: static !important; }
+    }
+    @media (max-width: 767px) {
+      .hv-form-grid { grid-template-columns: 1fr; }
+      .hv-form-grid .hv-form-full { grid-column: 1; }
+      .hv-action-bar { flex-wrap: wrap; margin: 16px -16px -16px; padding: 12px 16px; }
+      .hv-action-bar-spacer { display: none; }
+      .hv-content { padding: 12px; }
+      .hv-breadcrumb { font-size: 12px; flex-wrap: wrap; }
+      .hv-card-accent { padding: 16px; }
+      #items-table { min-width: 700px; }
+      .hv-preview-paper { max-height: 300px; }
+    }
+    @media (max-width: 480px) {
+      .hv-content { padding: 10px; }
+      .hv-card-header h2 { font-size: 15px; }
+      .hv-btn-lg { height: 48px; font-size: 15px; }
+    }
+
+    /* === Breadcrumb === */
+    .hv-breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      color: var(--hv-text-muted);
+      margin-bottom: 20px;
+    }
+    .hv-breadcrumb a {
+      color: var(--hv-text-link);
+      text-decoration: none;
+    }
+    .hv-breadcrumb a:hover { text-decoration: underline; }
+    .hv-breadcrumb .hv-breadcrumb-sep { color: var(--hv-border-strong); }
+    .hv-breadcrumb .hv-breadcrumb-current { color: var(--hv-text-primary); font-weight: 500; }
+
+    /* === Form === */
+    .hv-form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    .hv-form-grid .hv-form-full { grid-column: 1 / -1; }
+    .hv-form-row { display: flex; flex-direction: column; gap: 4px; }
+    .hv-form-row .hv-hint {
+      font-size: 12px;
+      color: var(--hv-text-muted);
+      margin-top: 2px;
+    }
+
+    /* === Card Accent === */
+    .hv-card-accent {
+      border-left: 3px solid var(--hv-primary);
+    }
+    .hv-card-accent .hv-card-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .hv-card-accent .hv-card-title i {
+      color: var(--hv-primary);
+    }
+
+    /* === Input with button === */
+    .hv-input-group {
+      display: flex;
+      gap: 8px;
+    }
+    .hv-input-group .hv-input { flex: 1; }
+
+    /* === MST Validation Icon === */
+    .hv-mst-wrapper { position: relative; }
+    .hv-mst-wrapper .hv-input { padding-right: 36px; }
+    .hv-mst-icon {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 18px;
+      pointer-events: none;
+    }
+    .hv-mst-valid { color: var(--hv-success); }
+    .hv-mst-warn { color: var(--hv-warning); }
+    .hv-mst-invalid { color: var(--hv-danger); }
+
+    /* === Inline Table Inputs === */
+    .hv-table-input {
+      height: 32px;
+      padding: 0 8px;
+      font-size: 13px;
+      border: 1px solid transparent;
+      border-radius: var(--hv-radius-sm);
+      background: transparent;
+      color: var(--hv-text-primary);
+      font-family: inherit;
+      width: 100%;
+      transition: border-color 150ms;
+    }
+    .hv-table-input:hover { border-color: var(--hv-border); }
+    .hv-table-input:focus {
+      outline: none;
+      border-color: var(--hv-border-focus);
+      background: var(--hv-bg-surface);
+    }
+    .hv-table-input-number { text-align: right; }
+    .hv-table-select {
+      height: 32px;
+      padding: 0 28px 0 8px;
+      font-size: 13px;
+      border: 1px solid transparent;
+      border-radius: var(--hv-radius-sm);
+      background: transparent url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23667085' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E") no-repeat right 6px center;
+      color: var(--hv-text-primary);
+      font-family: inherit;
+      appearance: none;
+      cursor: pointer;
+      width: 100%;
+      transition: border-color 150ms;
+    }
+    .hv-table-select:hover { border-color: var(--hv-border); }
+    .hv-table-select:focus {
+      outline: none;
+      border-color: var(--hv-border-focus);
+      background-color: var(--hv-bg-surface);
+    }
+
+    /* === Summary Row === */
+    .hv-summary-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      font-size: 14px;
+    }
+    .hv-summary-row + .hv-summary-row { border-top: 1px solid var(--hv-border-table); }
+    .hv-summary-label { color: var(--hv-text-secondary); }
+    .hv-summary-value { font-weight: 500; color: var(--hv-text-primary); }
+    .hv-summary-total {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--hv-primary);
+      padding-top: 12px;
+      border-top: 2px solid var(--hv-border);
+    }
+
+    /* === Preview Card === */
+    .hv-preview-card {
+      position: sticky;
+      top: calc(var(--hv-topbar-height) + 24px);
+    }
+    .hv-preview-card .hv-card-header {
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--hv-border);
+      margin-bottom: 16px;
+    }
+    .hv-preview-paper {
+      background: #fff;
+      border: 1px solid var(--hv-border-table);
+      border-radius: var(--hv-radius-md);
+      padding: 32px;
+      font-size: 11px;
+      line-height: 1.5;
+      color: var(--hv-text-primary);
+      max-height: 480px;
+      overflow-y: auto;
+    }
+    .hv-preview-paper::-webkit-scrollbar { width: 6px; }
+    .hv-preview-paper::-webkit-scrollbar-track { background: transparent; }
+    .hv-preview-paper::-webkit-scrollbar-thumb { background: var(--hv-border); border-radius: 3px; }
+    .hv-preview-paper::-webkit-scrollbar-thumb:hover { background: var(--hv-border-strong); }
+    .hv-preview-paper h4 {
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .hv-preview-paper .pv-meta {
+      font-size: 10px;
+      color: var(--hv-text-muted);
+    }
+    .hv-preview-paper .pv-divider {
+      border: none;
+      border-top: 1px dashed var(--hv-border);
+      margin: 10px 0;
+    }
+    .hv-preview-paper .pv-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 10px;
+      margin: 8px 0;
+    }
+    .hv-preview-paper .pv-table th {
+      text-align: left;
+      padding: 4px 6px;
+      font-weight: 600;
+      color: var(--hv-text-secondary);
+      border-bottom: 1px solid var(--hv-border-table);
+      font-size: 9px;
+      text-transform: uppercase;
+    }
+    .hv-preview-paper .pv-table td {
+      padding: 4px 6px;
+      border-bottom: 1px solid var(--hv-border-table);
+    }
+    .hv-preview-paper .pv-table td:last-child { text-align: right; }
+    .hv-preview-paper .pv-total-row td {
+      font-weight: 700;
+      border-top: 2px solid var(--hv-text-primary);
+      padding-top: 6px;
+    }
+
+    /* === Action Bar === */
+    .hv-action-bar {
+      position: sticky;
+      bottom: 0;
+      background: var(--hv-bg-surface);
+      border-top: 1px solid var(--hv-border);
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 12px;
+      margin: 24px -24px -24px;
+      border-radius: 0 0 var(--hv-radius-lg) var(--hv-radius-lg);
+      box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.04);
+    }
+    .hv-action-bar-spacer { flex: 1; }
+
+    /* === Checkbox === */
+    .hv-checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      color: var(--hv-text-primary);
+      cursor: pointer;
+    }
+    .hv-checkbox-label input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--hv-primary);
+      cursor: pointer;
+    }
+
+    /* === Skeleton === */
+    .hv-skeleton {
+      background: linear-gradient(90deg, var(--hv-bg-soft) 25%, var(--hv-bg-surface-hover) 50%, var(--hv-bg-soft) 75%);
+      background-size: 200% 100%;
+      animation: skeleton-shimmer 1.5s infinite;
+      border-radius: var(--hv-radius-sm);
+    }
+    @keyframes skeleton-shimmer {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+    .hv-skeleton-input { height: 36px; width: 100%; }
+    .hv-skeleton-line { height: 16px; }
+    .hv-skeleton-row { height: 44px; width: 100%; margin-bottom: 8px; }
+
+    /* === Delete Row === */
+    .hv-row-delete {
+      background: none;
+      border: none;
+      color: var(--hv-text-muted);
+      cursor: pointer;
+      padding: 4px;
+      border-radius: var(--hv-radius-sm);
+      transition: all 150ms;
+      font-size: 16px;
+    }
+    .hv-row-delete:hover { color: var(--hv-danger); background: var(--hv-danger-soft); }
+
+    /* === Validation Message === */
+    .hv-field-error {
+      font-size: 12px;
+      color: var(--hv-danger);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      margin-top: 2px;
+    }
+    .hv-field-error i { font-size: 14px; }
+  </style>
+</head>
+<body>
+  <aside class="hv-sidebar" aria-label="Điều hướng chính"></aside>
+  <div class="hv-topbar" aria-label="Thanh công cụ"></div>
+
+  <div class="hv-content">
+    <div class="hv-content-max" style="max-width:1400px">
+
+      <!-- Breadcrumb removed, handled by app-shell.js -->
+
+      <!-- Loading State -->
+      <div id="state-loading" class="hv-issue-layout" style="display:none">
+        <div class="hv-flex-col hv-gap-5" style="display:flex">
+          <div class="hv-card hv-card-accent">
+            <div class="text-h3" style="margin-bottom:16px"><div class="hv-skeleton hv-skeleton-line" style="width:180px"></div></div>
+            <div class="hv-form-grid">
+              <div class="hv-form-row"><div class="hv-skeleton hv-skeleton-input"></div></div>
+              <div class="hv-form-row"><div class="hv-skeleton hv-skeleton-input"></div></div>
+              <div class="hv-form-row"><div class="hv-skeleton hv-skeleton-input"></div></div>
+              <div class="hv-form-row"><div class="hv-skeleton hv-skeleton-input"></div></div>
+              <div class="hv-form-row hv-form-full"><div class="hv-skeleton hv-skeleton-input"></div></div>
+            </div>
+          </div>
+          <div class="hv-card">
+            <div class="hv-skeleton hv-skeleton-row"></div>
+            <div class="hv-skeleton hv-skeleton-row"></div>
+            <div class="hv-skeleton hv-skeleton-row"></div>
+          </div>
+        </div>
+        <div class="hv-card">
+          <div class="hv-skeleton" style="height:400px"></div>
+        </div>
+      </div>
+
+      <!-- Main Content -->
+      <div id="state-default" class="hv-issue-layout">
+        <!-- LEFT: Form -->
+        <div class="hv-flex-col hv-gap-5" style="display:flex">
+
+          <!-- 1. Thông tin người mua -->
+          <div class="hv-card hv-card-accent" id="buyer-section">
+            <div class="hv-card-header">
+              <h2 class="hv-card-title"><i class="ti ti-user"></i>Thông tin người mua</h2>
+              <select class="hv-select" id="buyer-mode" style="width:160px" aria-label="Phương thức nhập thông tin">
+                <option value="order" selected>Từ đơn hàng</option>
+                <option value="manual">Nhập tay</option>
+              </select>
+            </div>
+
+            <div class="hv-form-grid">
+              <div class="hv-form-row">
+                <label class="hv-label" for="buyer-phone">Số điện thoại khách hàng</label>
+                <div class="hv-input-group">
+                  <input type="tel" class="hv-input" id="buyer-phone" placeholder="Nhập SĐT..." aria-describedby="buyer-phone-hint" value="0901 234 567">
+                  <button class="hv-btn hv-btn-secondary" aria-label="Tra cứu khách hàng" title="Tra cứu" id="btn-lookup">
+                    <i class="ti ti-search"></i> Tra cứu
+                  </button>
+                </div>
+                <span class="hv-hint" id="buyer-phone-hint">Nhập SĐT để tìm khách hàng từ hệ thống</span>
+              </div>
+
+              <div class="hv-form-row">
+                <label class="hv-label" for="buyer-name">Tên người mua <span style="color:var(--hv-danger)">*</span></label>
+                <input type="text" class="hv-input" id="buyer-name" placeholder="Tên người mua..." value="Nguyễn Văn An" required aria-required="true">
+              </div>
+
+              <div class="hv-form-row">
+                <label class="hv-label" for="buyer-mst">Mã số thuế</label>
+                <div class="hv-mst-wrapper">
+                  <input type="text" class="hv-input" id="buyer-mst" placeholder="10 hoặc 13 chữ số" maxlength="13" pattern="\d{10}|\d{13}" aria-describedby="buyer-mst-hint buyer-mst-status" value="0312345678">
+                  <i class="ti ti-circle-check-filled hv-mst-icon hv-mst-valid" id="buyer-mst-status" aria-label="MST hợp lệ"></i>
+                </div>
+                <span class="hv-hint" id="buyer-mst-hint">10 chữ số (doanh nghiệp) hoặc 13 chữ số (cá nhân)</span>
+              </div>
+
+              <div class="hv-form-row">
+                <label class="hv-label" for="buyer-email">Email</label>
+                <input type="email" class="hv-input" id="buyer-email" placeholder="email@example.com" value="an.nguyen@example.com" aria-describedby="buyer-email-hint">
+                <span class="hv-hint" id="buyer-email-hint">Gửi hóa đơn điện tử cho khách</span>
+              </div>
+
+              <div class="hv-form-row hv-form-full">
+                <label class="hv-label" for="buyer-address">Địa chỉ</label>
+                <input type="text" class="hv-input" id="buyer-address" placeholder="Địa chỉ người mua..." value="123 Nguyễn Huệ, Quận 1, TP. Hồ Chí Minh">
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. Thông tin hàng hóa -->
+          <div class="hv-card hv-card-accent" id="items-section">
+            <div class="hv-card-header">
+              <h2 class="hv-card-title"><i class="ti ti-package"></i>Thông tin hàng hóa</h2>
+            </div>
+
+            <div style="overflow-x:auto;margin: 0 calc(-1 * var(--hv-space-5));padding: 0 var(--hv-space-5)">
+              <table class="hv-table" id="items-table" aria-label="Danh sách hàng hóa">
+                <thead>
+                  <tr>
+                    <th style="width:40px">STT</th>
+                    <th style="min-width:180px">Tên hàng</th>
+                    <th style="width:80px">Đơn vị</th>
+                    <th style="width:100px">Số lượng</th>
+                    <th style="width:140px">Đơn giá</th>
+                    <th style="width:140px">Thành tiền</th>
+                    <th style="width:100px">Thuế suất</th>
+                    <th style="width:40px"></th>
+                  </tr>
+                </thead>
+                <tbody id="items-body">
+                  <tr data-row="0">
+                    <td class="text-caption" style="color:var(--hv-text-muted)">1</td>
+                    <td><input type="text" class="hv-table-input" value="Gói phần mềm Haravan POS" aria-label="Tên hàng dòng 1"></td>
+                    <td><input type="text" class="hv-table-input" value="Gói" aria-label="Đơn vị dòng 1"></td>
+                    <td><input type="number" class="hv-table-input hv-table-input-number" value="1" min="1" aria-label="Số lượng dòng 1" onchange="HV_ISSUE.calcRow(0)"></td>
+                    <td><input type="text" class="hv-table-input hv-table-input-number" value="500.000" aria-label="Đơn giá dòng 1" onchange="HV_ISSUE.calcRow(0)"></td>
+                    <td class="text-body-strong hv-text-right" data-field="subtotal" style="padding-right:16px">500.000đ</td>
+                    <td>
+                      <select class="hv-table-select" aria-label="Thuế suất dòng 1" onchange="HV_ISSUE.calcRow(0)">
+                        <option value="10" selected>10%</option>
+                        <option value="8">8%</option>
+                        <option value="5">5%</option>
+                        <option value="0">0%</option>
+                      </select>
+                    </td>
+                    <td><button class="hv-row-delete" aria-label="Xóa dòng 1" onclick="HV_ISSUE.removeRow(0)"><i class="ti ti-trash"></i></button></td>
+                  </tr>
+                  <tr data-row="1">
+                    <td class="text-caption" style="color:var(--hv-text-muted)">2</td>
+                    <td><input type="text" class="hv-table-input" value="Phí vận chuyển" aria-label="Tên hàng dòng 2"></td>
+                    <td><input type="text" class="hv-table-input" value="Lần" aria-label="Đơn vị dòng 2"></td>
+                    <td><input type="number" class="hv-table-input hv-table-input-number" value="1" min="1" aria-label="Số lượng dòng 2" onchange="HV_ISSUE.calcRow(1)"></td>
+                    <td><input type="text" class="hv-table-input hv-table-input-number" value="150.000" aria-label="Đơn giá dòng 2" onchange="HV_ISSUE.calcRow(1)"></td>
+                    <td class="text-body-strong hv-text-right" data-field="subtotal" style="padding-right:16px">150.000đ</td>
+                    <td>
+                      <select class="hv-table-select" aria-label="Thuế suất dòng 2" onchange="HV_ISSUE.calcRow(1)">
+                        <option value="10" selected>10%</option>
+                        <option value="8">8%</option>
+                        <option value="5">5%</option>
+                        <option value="0">0%</option>
+                      </select>
+                    </td>
+                    <td><button class="hv-row-delete" aria-label="Xóa dòng 2" onclick="HV_ISSUE.removeRow(1)"><i class="ti ti-trash"></i></button></td>
+                  </tr>
+                  <tr data-row="2">
+                    <td class="text-caption" style="color:var(--hv-text-muted)">3</td>
+                    <td><input type="text" class="hv-table-input" value="Dịch vụ hỗ trợ kỹ thuật" aria-label="Tên hàng dòng 3"></td>
+                    <td><input type="text" class="hv-table-input" value="Tháng" aria-label="Đơn vị dòng 3"></td>
+                    <td><input type="number" class="hv-table-input hv-table-input-number" value="1" min="1" aria-label="Số lượng dòng 3" onchange="HV_ISSUE.calcRow(2)"></td>
+                    <td><input type="text" class="hv-table-input hv-table-input-number" value="350.000" aria-label="Đơn giá dòng 3" onchange="HV_ISSUE.calcRow(2)"></td>
+                    <td class="text-body-strong hv-text-right" data-field="subtotal" style="padding-right:16px">350.000đ</td>
+                    <td>
+                      <select class="hv-table-select" aria-label="Thuế suất dòng 3" onchange="HV_ISSUE.calcRow(2)">
+                        <option value="10" selected>10%</option>
+                        <option value="8">8%</option>
+                        <option value="5">5%</option>
+                        <option value="0">0%</option>
+                      </select>
+                    </td>
+                    <td><button class="hv-row-delete" aria-label="Xóa dòng 3" onclick="HV_ISSUE.removeRow(2)"><i class="ti ti-trash"></i></button></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div style="margin-top:12px">
+              <button class="hv-btn hv-btn-tertiary" id="btn-add-row" onclick="HV_ISSUE.addRow()">
+                <i class="ti ti-plus"></i> Thêm hàng hóa
+              </button>
+            </div>
+
+            <!-- Validation -->
+            <div class="hv-field-error" id="items-error" style="display:none" role="alert" aria-live="polite">
+              <i class="ti ti-alert-circle"></i> <span>Phải có ít nhất 1 hàng hóa</span>
+            </div>
+          </div>
+
+          <!-- 3. Tổng tiền -->
+          <div class="hv-card hv-card-accent" id="summary-section">
+            <div class="hv-card-header">
+              <h2 class="hv-card-title"><i class="ti ti-calculator"></i>Tổng tiền</h2>
+            </div>
+            <div id="summary-body">
+              <div class="hv-summary-row">
+                <span class="hv-summary-label">Tiền hàng</span>
+                <span class="hv-summary-value" id="sum-subtotal">1.000.000đ</span>
+              </div>
+              <div class="hv-summary-row">
+                <span class="hv-summary-label">Thuế GTGT</span>
+                <span class="hv-summary-value" id="sum-tax">100.000đ</span>
+              </div>
+              <div class="hv-summary-row hv-summary-total">
+                <span>Tổng cộng</span>
+                <span id="sum-total">1.100.000đ</span>
+              </div>
+            </div>
+            <div class="hv-field-error" id="total-error" style="display:none;margin-top:8px" role="alert" aria-live="polite">
+              <i class="ti ti-alert-circle"></i> <span>Tổng tiền phải lớn hơn 0</span>
+            </div>
+          </div>
+
+          <!-- 4. Thông tin thanh toán -->
+          <div class="hv-card hv-card-accent" id="payment-section">
+            <div class="hv-card-header">
+              <h2 class="hv-card-title"><i class="ti ti-credit-card"></i>Thông tin thanh toán</h2>
+            </div>
+            <div class="hv-form-grid">
+              <div class="hv-form-row">
+                <label class="hv-label" for="payment-method">Phương thức thanh toán</label>
+                <select class="hv-select" id="payment-method" style="width:100%">
+                  <option value="cash" selected>Tiền mặt</option>
+                  <option value="transfer">Chuyển khoản</option>
+                  <option value="card">Thẻ</option>
+                  <option value="ewallet">Ví điện tử</option>
+                </select>
+              </div>
+              <div class="hv-form-row">
+                <label class="hv-label" for="payment-note">Ghi chú</label>
+                <textarea class="hv-input" id="payment-note" rows="3" style="height:auto;padding:8px 12px;resize:vertical" placeholder="Ghi chú thêm..."></textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- Action Bar -->
+          <div class="hv-action-bar">
+            <button class="hv-btn hv-btn-tertiary" onclick="window.location.href='invoice-list.html'">
+              <i class="ti ti-arrow-left"></i> Quay lại
+            </button>
+            <div class="hv-action-bar-spacer"></div>
+            <button class="hv-btn hv-btn-secondary" id="btn-save-draft" onclick="HV_ISSUE.saveDraft()">
+              <i class="ti ti-device-floppy"></i> Lưu nháp
+            </button>
+            <button class="hv-btn hv-btn-primary" id="btn-issue" onclick="HV_ISSUE.openConfirmModal()">
+              <i class="ti ti-send"></i> Phát hành
+            </button>
+          </div>
+        </div>
+
+        <!-- RIGHT: Preview -->
+        <div>
+          <div class="hv-card hv-preview-card">
+            <div class="hv-card-header">
+              <h2 class="hv-card-title"><i class="ti ti-eye"></i>Xem trước</h2>
+            </div>
+            <div class="hv-preview-paper" id="invoice-preview">
+              <div style="text-align:center;margin-bottom:12px">
+                <h4 style="margin:0">CÔNG TY TNHH ABC</h4>
+                <div class="pv-meta">MST: 0312345678</div>
+                <div class="pv-meta">123 Lê Lợi, Quận 1, TP.HCM</div>
+              </div>
+              <div style="text-align:center;margin-bottom:8px">
+                <div class="text-body-strong" style="font-size:13px">HÓA ĐƠN GIÁ TRỊ GIA TĂNG</div>
+                <div class="pv-meta">Ngày 15/05/2026</div>
+              </div>
+              <hr class="pv-divider">
+              <div style="margin-bottom:8px">
+                <div><strong>Người mua:</strong> <span id="pv-buyer">Nguyễn Văn An</span></div>
+                <div><strong>MST:</strong> <span id="pv-mst">0312345678</span></div>
+                <div><strong>Địa chỉ:</strong> <span id="pv-address">123 Nguyễn Huệ, Quận 1, TP.HCM</span></div>
+              </div>
+              <hr class="pv-divider">
+              <table class="pv-table">
+                <thead>
+                  <tr>
+                    <th>TT</th>
+                    <th>Tên hàng</th>
+                    <th>SL</th>
+                    <th>Đơn giá</th>
+                    <th>Thành tiền</th>
+                  </tr>
+                </thead>
+                <tbody id="pv-items">
+                  <tr><td>1</td><td>Gói phần mềm Haravan POS</td><td>1</td><td>500.000</td><td style="text-align:right">500.000đ</td></tr>
+                  <tr><td>2</td><td>Phí vận chuyển</td><td>1</td><td>150.000</td><td style="text-align:right">150.000đ</td></tr>
+                  <tr><td>3</td><td>Dịch vụ hỗ trợ kỹ thuật</td><td>1</td><td>350.000</td><td style="text-align:right">350.000đ</td></tr>
+                </tbody>
+                <tfoot>
+                  <tr><td colspan="4" style="padding-top:6px;font-weight:500">Tiền hàng</td><td style="text-align:right;padding-top:6px;font-weight:500" id="pv-subtotal">1.000.000đ</td></tr>
+                  <tr><td colspan="4" style="font-weight:500">Thuế GTGT</td><td style="text-align:right;font-weight:500" id="pv-tax">100.000đ</td></tr>
+                  <tr class="pv-total-row"><td colspan="4">TỔNG CỘNG</td><td style="text-align:right" id="pv-total">1.100.000đ</td></tr>
+                </tfoot>
+              </table>
+            </div>
+            <div style="margin-top:12px">
+              <button class="hv-btn hv-btn-secondary hv-w-full" onclick="HV_ISSUE.previewPDF()">
+                <i class="ti ti-file-type-pdf"></i> Xem trước PDF
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Empty State -->
+      <div id="state-empty" class="hv-issue-layout" style="display:none">
+        <div class="hv-flex-col hv-gap-5" style="display:flex">
+          <div class="hv-card hv-card-accent" id="buyer-section-empty">
+            <div class="hv-card-header">
+              <h2 class="hv-card-title"><i class="ti ti-user"></i>Thông tin người mua</h2>
+              <select class="hv-select" id="buyer-mode-empty" style="width:160px" aria-label="Phương thức nhập thông tin">
+                <option value="order">Từ đơn hàng</option>
+                <option value="manual" selected>Nhập tay</option>
+              </select>
+            </div>
+            <div class="hv-form-grid">
+              <div class="hv-form-row">
+                <label class="hv-label" for="buyer-phone-empty">Số điện thoại khách hàng</label>
+                <div class="hv-input-group">
+                  <input type="tel" class="hv-input" id="buyer-phone-empty" placeholder="Nhập SĐT..." aria-describedby="buyer-phone-hint-empty">
+                  <button class="hv-btn hv-btn-secondary" aria-label="Tra cứu khách hàng" title="Tra cứu">
+                    <i class="ti ti-search"></i> Tra cứu
+                  </button>
+                </div>
+                <span class="hv-hint" id="buyer-phone-hint-empty">Nhập SĐT để tìm khách hàng từ hệ thống</span>
+              </div>
+              <div class="hv-form-row">
+                <label class="hv-label" for="buyer-name-empty">Tên người mua <span style="color:var(--hv-danger)">*</span></label>
+                <input type="text" class="hv-input" id="buyer-name-empty" placeholder="Tên người mua..." required aria-required="true">
+              </div>
+              <div class="hv-form-row">
+                <label class="hv-label" for="buyer-mst-empty">Mã số thuế</label>
+                <div class="hv-mst-wrapper">
+                  <input type="text" class="hv-input" id="buyer-mst-empty" placeholder="10 hoặc 13 chữ số" maxlength="13" aria-describedby="buyer-mst-hint-empty">
+                  <i class="ti ti-circle-check-filled hv-mst-icon" id="buyer-mst-status-empty" style="display:none"></i>
+                </div>
+                <span class="hv-hint" id="buyer-mst-hint-empty">10 chữ số (doanh nghiệp) hoặc 13 chữ số (cá nhân)</span>
+              </div>
+              <div class="hv-form-row">
+                <label class="hv-label" for="buyer-email-empty">Email</label>
+                <input type="email" class="hv-input" id="buyer-email-empty" placeholder="email@example.com">
+              </div>
+              <div class="hv-form-row hv-form-full">
+                <label class="hv-label" for="buyer-address-empty">Địa chỉ</label>
+                <input type="text" class="hv-input" id="buyer-address-empty" placeholder="Địa chỉ người mua...">
+              </div>
+            </div>
+          </div>
+
+          <div class="hv-card hv-card-accent" id="items-section-empty">
+            <div class="hv-card-header">
+              <h2 class="hv-card-title"><i class="ti ti-package"></i>Thông tin hàng hóa</h2>
+            </div>
+            <div style="text-align:center;padding:32px 0;color:var(--hv-text-muted)">
+              <i class="ti ti-package-off" style="font-size:32px;display:block;margin-bottom:8px"></i>
+              <div class="text-body">Chưa có hàng hóa nào</div>
+              <button class="hv-btn hv-btn-tertiary" style="margin-top:12px" onclick="HV_ISSUE.addEmptyRow()">
+                <i class="ti ti-plus"></i> Thêm hàng hóa
+              </button>
+            </div>
+            <div class="hv-field-error" id="items-error-empty" style="display:none" role="alert" aria-live="polite">
+              <i class="ti ti-alert-circle"></i> <span>Phải có ít nhất 1 hàng hóa</span>
+            </div>
+          </div>
+
+          <div class="hv-card hv-card-accent">
+            <div class="hv-card-header">
+              <h2 class="hv-card-title"><i class="ti ti-calculator"></i>Tổng tiền</h2>
+            </div>
+            <div class="hv-summary-row hv-summary-total">
+              <span>Tổng cộng</span>
+              <span>0đ</span>
+            </div>
+          </div>
+
+          <div class="hv-card hv-card-accent">
+            <div class="hv-card-header">
+              <h2 class="hv-card-title"><i class="ti ti-credit-card"></i>Thông tin thanh toán</h2>
+            </div>
+            <div class="hv-form-grid">
+              <div class="hv-form-row">
+                <label class="hv-label" for="payment-method-empty">Phương thức thanh toán</label>
+                <select class="hv-select" id="payment-method-empty" style="width:100%">
+                  <option value="cash" selected>Tiền mặt</option>
+                  <option value="transfer">Chuyển khoản</option>
+                  <option value="card">Thẻ</option>
+                  <option value="ewallet">Ví điện tử</option>
+                </select>
+              </div>
+              <div class="hv-form-row">
+                <label class="hv-label" for="payment-note-empty">Ghi chú</label>
+                <textarea class="hv-input" id="payment-note-empty" rows="3" style="height:auto;padding:8px 12px;resize:vertical" placeholder="Ghi chú thêm..."></textarea>
+              </div>
+            </div>
+          </div>
+
+          <div class="hv-action-bar">
+            <button class="hv-btn hv-btn-tertiary" onclick="window.location.href='invoice-list.html'">
+              <i class="ti ti-arrow-left"></i> Quay lại
+            </button>
+            <div class="hv-action-bar-spacer"></div>
+            <button class="hv-btn hv-btn-secondary" onclick="HV_ISSUE.saveDraft()">
+              <i class="ti ti-device-floppy"></i> Lưu nháp
+            </button>
+            <button class="hv-btn hv-btn-primary" onclick="HV_ISSUE.openConfirmModal()">
+              <i class="ti ti-send"></i> Phát hành
+            </button>
+          </div>
+        </div>
+
+        <div>
+          <div class="hv-card hv-preview-card">
+            <div class="hv-card-header">
+              <h2 class="hv-card-title"><i class="ti ti-eye"></i>Xem trước</h2>
+            </div>
+            <div class="hv-preview-paper" style="text-align:center;padding:40px 20px;color:var(--hv-text-muted)">
+              <i class="ti ti-file-invoice" style="font-size:40px;display:block;margin-bottom:12px"></i>
+              <div class="text-body">Nhập thông tin để xem trước hóa đơn</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Confirmation Modal -->
+  <div class="hv-backdrop" id="confirm-modal" style="display:none" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="hv-modal" style="max-width:480px;padding:32px">
+      <div style="text-align:center;margin-bottom:24px">
+        <div style="width:56px;height:56px;border-radius:50%;background:var(--hv-primary-soft);display:inline-flex;align-items:center;justify-content:center;margin-bottom:16px">
+          <i class="ti ti-send" style="font-size:24px;color:var(--hv-primary)"></i>
+        </div>
+        <h2 class="text-h2" id="modal-title">Xác nhận phát hành hóa đơn</h2>
+        <p class="text-body" style="color:var(--hv-text-secondary);margin-top:8px">Vui lòng kiểm tra lại thông tin trước khi phát hành</p>
+      </div>
+
+      <div style="background:var(--hv-bg-soft);border-radius:var(--hv-radius-md);padding:16px;margin-bottom:24px">
+        <div class="hv-summary-row">
+          <span class="hv-summary-label">Số hóa đơn</span>
+          <span class="text-body-strong" style="font-family:var(--hv-font-mono)">HD-2026-000128</span>
+        </div>
+        <div class="hv-summary-row">
+          <span class="hv-summary-label">Người mua</span>
+          <span class="text-body-strong" id="modal-buyer">Nguyễn Văn An</span>
+        </div>
+        <div class="hv-summary-row">
+          <span class="hv-summary-label">Tổng tiền</span>
+          <span class="text-body-strong" style="color:var(--hv-primary)" id="modal-total">1.100.000đ</span>
+        </div>
+      </div>
+
+      <div style="margin-bottom:24px;padding:12px 16px;background:var(--hv-bg-primary-soft);border-radius:var(--hv-radius-md)">
+        <label class="hv-checkbox-label">
+          <input type="checkbox" id="modal-zalo">
+          <span><strong>Gửi hóa đơn qua Zalo OA</strong><br><span style="font-size:12px;color:var(--hv-text-secondary)">Khách hàng sẽ nhận hóa đơn điện tử qua Zalo</span></span>
+        </label>
+      </div>
+
+      <div class="hv-flex hv-gap-3" style="justify-content:flex-end">
+        <button class="hv-btn hv-btn-secondary" onclick="HV_ISSUE.closeConfirmModal()">Quay lại</button>
+        <button class="hv-btn hv-btn-primary" onclick="HV_ISSUE.confirmIssue()">
+          <i class="ti ti-send"></i> Xác nhận phát hành
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PDF Preview Modal -->
+  <div class="hv-backdrop" id="pdf-modal" style="display:none" role="dialog" aria-modal="true" aria-labelledby="pdf-modal-title">
+    <div class="hv-modal" style="max-width:800px;max-height:90vh;padding:0">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 24px;border-bottom:1px solid var(--hv-border)">
+        <h2 class="text-h3" id="pdf-modal-title">Xem trước hóa đơn PDF</h2>
+        <button class="hv-btn hv-btn-icon hv-btn-secondary" onclick="HV_ISSUE.closePDFModal()" aria-label="Đóng">
+          <i class="ti ti-x"></i>
+        </button>
+      </div>
+      <div style="padding:24px;overflow-y:auto;max-height:calc(90vh - 60px)">
+        <div style="background:#fff;border:1px solid var(--hv-border);border-radius:var(--hv-radius-md);padding:40px;max-width:595px;margin:0 auto;font-size:13px;line-height:1.6">
+          <div style="text-align:center;margin-bottom:24px">
+            <div style="font-size:16px;font-weight:700">CÔNG TY TNHH ABC</div>
+            <div style="color:var(--hv-text-secondary)">Mã số thuế: 0312345678</div>
+            <div style="color:var(--hv-text-secondary)">Địa chỉ: 123 Lê Lợi, Quận 1, TP. Hồ Chí Minh</div>
+          </div>
+          <div style="text-align:center;margin-bottom:24px">
+            <div style="font-size:18px;font-weight:700;color:var(--hv-primary)">HÓA ĐƠN GIÁ TRỊ GIA TĂNG</div>
+            <div style="color:var(--hv-text-secondary);margin-top:4px">Ngày 15 tháng 05 năm 2026</div>
+            <div style="color:var(--hv-text-secondary)">Số: <span style="font-family:var(--hv-font-mono);font-weight:600">HD-2026-000128</span></div>
+          </div>
+          <div style="margin-bottom:20px;padding:12px;background:var(--hv-bg-soft);border-radius:var(--hv-radius-sm)">
+            <div><strong>Đơn vị bán hàng:</strong> Công ty TNHH ABC</div>
+            <div><strong>Mã số thuế:</strong> 0312345678</div>
+            <div><strong>Địa chỉ:</strong> 123 Lê Lợi, Quận 1, TP. Hồ Chí Minh</div>
+          </div>
+          <div style="margin-bottom:20px;padding:12px;background:var(--hv-bg-soft);border-radius:var(--hv-radius-sm)">
+            <div><strong>Họ tên người mua hàng:</strong> Nguyễn Văn An</div>
+            <div><strong>Mã số thuế:</strong> 0312345678</div>
+            <div><strong>Địa chỉ:</strong> 123 Nguyễn Huệ, Quận 1, TP. Hồ Chí Minh</div>
+          </div>
+          <table style="width:100%;border-collapse:collapse;margin-bottom:20px;font-size:12px">
+            <thead>
+              <tr style="background:var(--hv-bg-soft)">
+                <th style="padding:8px;text-align:left;border:1px solid var(--hv-border-table)">STT</th>
+                <th style="padding:8px;text-align:left;border:1px solid var(--hv-border-table)">Tên hàng hóa, dịch vụ</th>
+                <th style="padding:8px;text-align:left;border:1px solid var(--hv-border-table)">ĐVT</th>
+                <th style="padding:8px;text-align:right;border:1px solid var(--hv-border-table)">Số lượng</th>
+                <th style="padding:8px;text-align:right;border:1px solid var(--hv-border-table)">Đơn giá</th>
+                <th style="padding:8px;text-align:right;border:1px solid var(--hv-border-table)">Thành tiền</th>
+                <th style="padding:8px;text-align:right;border:1px solid var(--hv-border-table)">Thuế suất</th>
+              </tr>
+            </thead>
+            <tbody id="pdf-items">
+              <tr>
+                <td style="padding:8px;border:1px solid var(--hv-border-table)">1</td>
+                <td style="padding:8px;border:1px solid var(--hv-border-table)">Gói phần mềm Haravan POS</td>
+                <td style="padding:8px;border:1px solid var(--hv-border-table)">Gói</td>
+                <td style="padding:8px;text-align:right;border:1px solid var(--hv-border-table)">1</td>
+                <td style="padding:8px;text-align:right;border:1px solid var(--hv-border-table)">500.000</td>
+                <td style="padding:8px;text-align:right;border:1px solid var(--hv-border-table)">500.000đ</td>
+                <td style="padding:8px;text-align:right;border:1px solid var(--hv-border-table)">10%</td>
+              </tr>
+              <tr>
+                <td style="padding:8px;border:1px solid var(--hv-border-table)">2</td>
+                <td style="padding:8px;border:1px solid var(--hv-border-table)">Phí vận chuyển</td>
+                <td style="padding:8px;border:1px solid var(--hv-border-table)">Lần</td>
+                <td style="padding:8px;text-align:right;border:1px solid var(--hv-border-table)">1</td>
+                <td style="padding:8px;text-align:right;border:1px solid var(--hv-border-table)">150.000</td>
+                <td style="padding:8px;text-align:right;border:1px solid var(--hv-border-table)">150.000đ</td>
+                <td style="padding:8px;text-align:right;border:1px solid var(--hv-border-table)">10%</td>
+              </tr>
+              <tr>
+                <td style="padding:8px;border:1px solid var(--hv-border-table)">3</td>
+                <td style="padding:8px;border:1px solid var(--hv-border-table)">Dịch vụ hỗ trợ kỹ thuật</td>
+                <td style="padding:8px;border:1px solid var(--hv-border-table)">Tháng</td>
+                <td style="padding:8px;text-align:right;border:1px solid var(--hv-border-table)">1</td>
+                <td style="padding:8px;text-align:right;border:1px solid var(--hv-border-table)">350.000</td>
+                <td style="padding:8px;text-align:right;border:1px solid var(--hv-border-table)">350.000đ</td>
+                <td style="padding:8px;text-align:right;border:1px solid var(--hv-border-table)">10%</td>
+              </tr>
+            </tbody>
+          </table>
+          <div style="text-align:right;margin-bottom:24px">
+            <div style="margin-bottom:4px"><strong>Cộng tiền hàng:</strong> 1.000.000đ</div>
+            <div style="margin-bottom:4px"><strong>Thuế GTGT (10%):</strong> 100.000đ</div>
+            <div style="font-size:16px;font-weight:700;color:var(--hv-primary);border-top:2px solid var(--hv-text-primary);padding-top:8px;display:inline-block">TỔNG CỘNG: 1.100.000đ</div>
+          </div>
+          <div style="text-align:center;font-style:italic;color:var(--hv-text-secondary)">
+            <div>Số tiền viết bằng chữ: Một triệu một trăm nghìn đồng chẵn</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="hv-toast" id="toast" style="display:none" role="status" aria-live="polite"></div>
+
+  <script src="assets/js/app-shell.js"></script>
+  <script>
+    const HV_ISSUE = {
+      rowCounter: 3,
+
+      init() {
+        this.bindMSTValidation();
+        this.calcAll();
+      },
+
+      /* === Row Management === */
+      addRow() {
+        const tbody = document.getElementById('items-body');
+        const idx = this.rowCounter++;
+        const tr = document.createElement('tr');
+        tr.dataset.row = idx;
+        tr.innerHTML = `
+          <td class="text-caption" style="color:var(--hv-text-muted)">${tbody.rows.length + 1}</td>
+          <td><input type="text" class="hv-table-input" value="" placeholder="Tên hàng..." aria-label="Tên hàng dòng ${tbody.rows.length + 1}"></td>
+          <td><input type="text" class="hv-table-input" value="" placeholder="ĐVT" aria-label="Đơn vị dòng ${tbody.rows.length + 1}"></td>
+          <td><input type="number" class="hv-table-input hv-table-input-number" value="1" min="1" aria-label="Số lượng dòng ${tbody.rows.length + 1}" onchange="HV_ISSUE.calcRow(${idx})"></td>
+          <td><input type="text" class="hv-table-input hv-table-input-number" value="0" aria-label="Đơn giá dòng ${tbody.rows.length + 1}" onchange="HV_ISSUE.calcRow(${idx})"></td>
+          <td class="text-body-strong hv-text-right" data-field="subtotal" style="padding-right:16px">0đ</td>
+          <td>
+            <select class="hv-table-select" aria-label="Thuế suất dòng ${tbody.rows.length + 1}" onchange="HV_ISSUE.calcRow(${idx})">
+              <option value="10" selected>10%</option>
+              <option value="8">8%</option>
+              <option value="5">5%</option>
+              <option value="0">0%</option>
+            </select>
+          </td>
+          <td><button class="hv-row-delete" aria-label="Xóa dòng ${tbody.rows.length + 1}" onclick="HV_ISSUE.removeRow(${idx})"><i class="ti ti-trash"></i></button></td>
+        `;
+        tbody.appendChild(tr);
+        this.renumberRows();
+        this.calcAll();
+        this.updatePreview();
+      },
+
+      addEmptyRow() {
+        const section = document.getElementById('items-section-empty');
+        const emptyMsg = section.querySelector('[style*="text-align:center"]');
+        if (emptyMsg) emptyMsg.remove();
+
+        let tbody = section.querySelector('table tbody');
+        if (!tbody) {
+          const table = document.createElement('table');
+          table.className = 'hv-table';
+          table.innerHTML = `
+            <thead><tr>
+              <th style="width:40px">STT</th>
+              <th>Tên hàng</th>
+              <th style="width:80px">Đơn vị</th>
+              <th style="width:80px">Số lượng</th>
+              <th style="width:120px">Đơn giá</th>
+              <th style="width:120px">Thành tiền</th>
+              <th style="width:100px">Thuế suất</th>
+              <th style="width:40px"></th>
+            </tr></thead>
+            <tbody></tbody>
+          `;
+          section.insertBefore(table, section.querySelector('.hv-field-error'));
+          tbody = table.querySelector('tbody');
+        }
+        this.rowCounter++;
+        const tr = document.createElement('tr');
+        tr.dataset.row = this.rowCounter;
+        tr.innerHTML = `
+          <td class="text-caption" style="color:var(--hv-text-muted)">${tbody.rows.length + 1}</td>
+          <td><input type="text" class="hv-table-input" placeholder="Tên hàng..."></td>
+          <td><input type="text" class="hv-table-input" placeholder="ĐVT"></td>
+          <td><input type="number" class="hv-table-input hv-table-input-number" value="1" min="1" onchange="HV_ISSUE.calcRow(${this.rowCounter})"></td>
+          <td><input type="text" class="hv-table-input hv-table-input-number" value="0" onchange="HV_ISSUE.calcRow(${this.rowCounter})"></td>
+          <td class="text-body-strong hv-text-right" data-field="subtotal" style="padding-right:16px">0đ</td>
+          <td>
+            <select class="hv-table-select" onchange="HV_ISSUE.calcRow(${this.rowCounter})">
+              <option value="10" selected>10%</option>
+              <option value="8">8%</option>
+              <option value="5">5%</option>
+              <option value="0">0%</option>
+            </select>
+          </td>
+          <td><button class="hv-row-delete" onclick="HV_ISSUE.removeRow(${this.rowCounter})"><i class="ti ti-trash"></i></button></td>
+        `;
+        tbody.appendChild(tr);
+      },
+
+      removeRow(idx) {
+        const tbody = document.getElementById('items-body');
+        const tr = tbody.querySelector(`tr[data-row="${idx}"]`);
+        if (tr) {
+          tr.remove();
+          this.renumberRows();
+          this.calcAll();
+          this.updatePreview();
+        }
+      },
+
+      renumberRows() {
+        const tbody = document.getElementById('items-body');
+        Array.from(tbody.rows).forEach((tr, i) => {
+          tr.cells[0].textContent = i + 1;
+          const delBtn = tr.querySelector('.hv-row-delete');
+          if (delBtn) delBtn.setAttribute('aria-label', `Xóa dòng ${i + 1}`);
+        });
+      },
+
+      /* === Calculations === */
+      parseVND(str) {
+        return parseInt(str.replace(/[^\d]/g, ''), 10) || 0;
+      },
+
+      calcRow(idx) {
+        const tbody = document.getElementById('items-body');
+        const tr = tbody.querySelector(`tr[data-row="${idx}"]`);
+        if (!tr) return;
+
+        const inputs = tr.querySelectorAll('.hv-table-input');
+        const qty = parseInt(inputs[2]?.value, 10) || 0;
+        const price = this.parseVND(inputs[3]?.value || '0');
+        const taxSelect = tr.querySelector('.hv-table-select');
+        const taxRate = parseInt(taxSelect?.value, 10) || 0;
+
+        const subtotal = qty * price;
+        const cell = tr.querySelector('[data-field="subtotal"]');
+        if (cell) cell.textContent = HV.formatVND(subtotal);
+
+        this.calcAll();
+        this.updatePreview();
+      },
+
+      calcAll() {
+        const tbody = document.getElementById('items-body');
+        let totalSub = 0;
+        let totalTax = 0;
+
+        Array.from(tbody.rows).forEach(tr => {
+          const inputs = tr.querySelectorAll('.hv-table-input');
+          const qty = parseInt(inputs[2]?.value, 10) || 0;
+          const price = this.parseVND(inputs[3]?.value || '0');
+          const taxSelect = tr.querySelector('.hv-table-select');
+          const taxRate = parseInt(taxSelect?.value, 10) || 0;
+
+          const sub = qty * price;
+          totalSub += sub;
+          totalTax += Math.round(sub * taxRate / 100);
+        });
+
+        const total = totalSub + totalTax;
+
+        const sumSub = document.getElementById('sum-subtotal');
+        const sumTax = document.getElementById('sum-tax');
+        const sumTotal = document.getElementById('sum-total');
+        if (sumSub) sumSub.textContent = HV.formatVND(totalSub);
+        if (sumTax) sumTax.textContent = HV.formatVND(totalTax);
+        if (sumTotal) sumTotal.textContent = HV.formatVND(total);
+      },
+
+      /* === Preview === */
+      updatePreview() {
+        const tbody = document.getElementById('items-body');
+        const pvItems = document.getElementById('pv-items');
+        if (!pvItems) return;
+
+        let html = '';
+        let totalSub = 0;
+        let totalTax = 0;
+
+        Array.from(tbody.rows).forEach((tr, i) => {
+          const inputs = tr.querySelectorAll('.hv-table-input');
+          const name = inputs[0]?.value || '—';
+          const unit = inputs[1]?.value || '—';
+          const qty = parseInt(inputs[2]?.value, 10) || 0;
+          const price = this.parseVND(inputs[3]?.value || '0');
+          const taxSelect = tr.querySelector('.hv-table-select');
+          const taxRate = parseInt(taxSelect?.value, 10) || 0;
+          const sub = qty * price;
+          totalSub += sub;
+          totalTax += Math.round(sub * taxRate / 100);
+
+          html += `<tr><td>${i + 1}</td><td>${name}</td><td>${qty}</td><td>${HV.formatVND(price)}</td><td style="text-align:right">${HV.formatVND(sub)}</td></tr>`;
+        });
+
+        pvItems.innerHTML = html;
+
+        const pvSub = document.getElementById('pv-subtotal');
+        const pvTax = document.getElementById('pv-tax');
+        const pvTotal = document.getElementById('pv-total');
+        if (pvSub) pvSub.textContent = HV.formatVND(totalSub);
+        if (pvTax) pvTax.textContent = HV.formatVND(totalTax);
+        if (pvTotal) pvTotal.textContent = HV.formatVND(totalSub + totalTax);
+
+        const buyerName = document.getElementById('buyer-name');
+        const pvBuyer = document.getElementById('pv-buyer');
+        if (buyerName && pvBuyer) pvBuyer.textContent = buyerName.value || '—';
+
+        const mst = document.getElementById('buyer-mst');
+        const pvMst = document.getElementById('pv-mst');
+        if (mst && pvMst) pvMst.textContent = mst.value || '—';
+
+        const addr = document.getElementById('buyer-address');
+        const pvAddr = document.getElementById('pv-address');
+        if (addr && pvAddr) pvAddr.textContent = addr.value || '—';
+      },
+
+      /* === MST Validation === */
+      bindMSTValidation() {
+        const mstInput = document.getElementById('buyer-mst');
+        const mstStatus = document.getElementById('buyer-mst-status');
+        if (!mstInput || !mstStatus) return;
+
+        const validate = () => {
+          const val = mstInput.value.replace(/\D/g, '');
+          mstStatus.className = 'hv-mst-icon';
+          mstStatus.style.display = 'none';
+
+          if (!val) return;
+
+          if (val.length === 10 || val.length === 13) {
+            if (val.startsWith('03') || val.startsWith('01')) {
+              mstStatus.className = 'hv-mst-icon ti ti-circle-check-filled hv-mst-valid';
+              mstStatus.setAttribute('aria-label', 'MST hợp lệ');
+            } else {
+              mstStatus.className = 'hv-mst-icon ti ti-alert-triangle-filled hv-mst-warn';
+              mstStatus.setAttribute('aria-label', 'MST đúng định dạng nhưng chưa xác minh');
+            }
+            mstStatus.style.display = '';
+          } else {
+            mstStatus.className = 'hv-mst-icon ti ti-circle-x-filled hv-mst-invalid';
+            mstStatus.setAttribute('aria-label', 'MST không hợp lệ');
+            mstStatus.style.display = '';
+          }
+        };
+
+        mstInput.addEventListener('input', validate);
+        validate();
+      },
+
+      /* === Validation === */
+      validate() {
+        let valid = true;
+
+        const name = document.getElementById('buyer-name');
+        if (name && !name.value.trim()) {
+          name.style.borderColor = 'var(--hv-danger)';
+          valid = false;
+        } else if (name) {
+          name.style.borderColor = '';
+        }
+
+        const tbody = document.getElementById('items-body');
+        const errItems = document.getElementById('items-error');
+        if (tbody.rows.length === 0) {
+          if (errItems) errItems.style.display = '';
+          valid = false;
+        } else if (errItems) {
+          errItems.style.display = 'none';
+        }
+
+        const sumTotal = document.getElementById('sum-total');
+        const errTotal = document.getElementById('total-error');
+        if (sumTotal) {
+          const total = this.parseVND(sumTotal.textContent);
+          if (total <= 0) {
+            if (errTotal) errTotal.style.display = '';
+            valid = false;
+          } else if (errTotal) {
+            errTotal.style.display = 'none';
+          }
+        }
+
+        return valid;
+      },
+
+      /* === Actions === */
+      saveDraft() {
+        this.showToast('<i class="ti ti-check" style="color:var(--hv-success)"></i> Đã lưu nháp hóa đơn');
+      },
+
+      openConfirmModal() {
+        if (!this.validate()) return;
+
+        const modal = document.getElementById('confirm-modal');
+        modal.style.display = '';
+
+        const buyerName = document.getElementById('buyer-name');
+        const sumTotal = document.getElementById('sum-total');
+        const modalBuyer = document.getElementById('modal-buyer');
+        const modalTotal = document.getElementById('modal-total');
+
+        if (buyerName && modalBuyer) modalBuyer.textContent = buyerName.value;
+        if (sumTotal && modalTotal) modalTotal.textContent = sumTotal.textContent;
+
+        modal.querySelector('button').focus();
+      },
+
+      closeConfirmModal() {
+        document.getElementById('confirm-modal').style.display = 'none';
+        document.getElementById('btn-issue').focus();
+      },
+
+      confirmIssue() {
+        this.closeConfirmModal();
+        this.showToast('<i class="ti ti-circle-check-filled" style="color:var(--hv-success);font-size:18px"></i> Hóa đơn <strong>HD-2026-000128</strong> đã được phát hành thành công!');
+      },
+
+      previewPDF() {
+        document.getElementById('pdf-modal').style.display = '';
+        document.getElementById('pdf-modal').querySelector('button').focus();
+      },
+
+      closePDFModal() {
+        document.getElementById('pdf-modal').style.display = 'none';
+      },
+
+      showToast(html) {
+        const toast = document.getElementById('toast');
+        toast.innerHTML = html;
+        toast.style.display = 'flex';
+        setTimeout(() => { toast.style.display = 'none'; }, 3500);
+      }
+    };
+
+    /* === State Management === */
+    (function() {
+      const params = new URLSearchParams(window.location.search);
+      const state = params.get('state') || 'default';
+
+      document.getElementById('state-default').style.display = state === 'default' ? '' : 'none';
+      document.getElementById('state-loading').style.display = state === 'loading' ? '' : 'none';
+
+      if (state === 'empty') {
+        document.getElementById('state-default').style.display = 'none';
+        document.getElementById('state-empty').style.display = '';
+      } else {
+        document.getElementById('state-empty').style.display = 'none';
+      }
+    })();
+
+    /* === Live preview binding === */
+    ['buyer-name', 'buyer-mst', 'buyer-address'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.addEventListener('input', () => HV_ISSUE.updatePreview());
+    });
+
+    /* === Keyboard shortcuts === */
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        HV_ISSUE.closeConfirmModal();
+        HV_ISSUE.closePDFModal();
+      }
+    });
+
+    /* === Close modals on backdrop click === */
+    document.querySelectorAll('.hv-backdrop').forEach(backdrop => {
+      backdrop.addEventListener('click', (e) => {
+        if (e.target === backdrop) {
+          backdrop.style.display = 'none';
+        }
+      });
+    });
+
+    HV_ISSUE.init();
+  </script>
+</body>
+</html>

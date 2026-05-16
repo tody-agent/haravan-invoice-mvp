@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sản phẩm — Haravan Invoice</title>
+  <link rel="stylesheet" href="assets/css/design-system.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script>window.HV_PAGE = { id: 'settings-products', title: 'Sản phẩm' };</script>
+  <style>
+    .hv-content-max > * + * { margin-top: 16px; }
+
+    .filter-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      background: var(--hv-bg-surface);
+      border: 1px solid var(--hv-border);
+      border-radius: var(--hv-radius-lg);
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      scrollbar-width: thin;
+    }
+    .filter-bar::-webkit-scrollbar { height: 4px; }
+    .filter-bar::-webkit-scrollbar-thumb { background: var(--hv-border); border-radius: 2px; }
+    .filter-search {
+      position: relative;
+      flex-shrink: 0;
+      width: 240px;
+    }
+    .filter-search .hv-input {
+      width: 100%;
+      padding-left: 32px;
+      height: 32px;
+      font-size: 13px;
+    }
+    .filter-search > i {
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--hv-text-muted);
+      font-size: 15px;
+      pointer-events: none;
+    }
+    .filter-group {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+    .filter-label {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--hv-text-secondary);
+      flex-shrink: 0;
+      white-space: nowrap;
+    }
+    .filter-bar .hv-select {
+      height: 32px;
+      font-size: 13px;
+      width: auto;
+      min-width: 130px;
+      padding: 0 28px 0 10px;
+      background-position: right 8px center;
+    }
+    .filter-divider {
+      width: 1px;
+      height: 20px;
+      background: var(--hv-border);
+      flex-shrink: 0;
+      margin: 0 2px;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .table-card {
+      overflow-x: auto;
+    }
+
+    .cell-price {
+      font-variant-numeric: tabular-nums;
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    .cell-actions {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      justify-content: flex-end;
+    }
+
+    .pagination {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 16px;
+    }
+    .pagination-info {
+      font-size: 13px;
+      color: var(--hv-text-secondary);
+    }
+    .pagination-btns {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .pagination-btns button {
+      width: 32px;
+      height: 32px;
+      border: 1px solid var(--hv-border);
+      background: var(--hv-bg-surface);
+      border-radius: var(--hv-radius-md);
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--hv-text-secondary);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 150ms;
+    }
+    .pagination-btns button:hover { border-color: var(--hv-primary); color: var(--hv-primary); }
+    .pagination-btns button.active {
+      background: var(--hv-primary);
+      border-color: var(--hv-primary);
+      color: #fff;
+    }
+    .pagination-btns button:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .modal-form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    .modal-form-grid .full-width {
+      grid-column: 1 / -1;
+    }
+
+    .notif-section {
+      margin-top: 8px;
+    }
+    .notif-section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 20px;
+      cursor: pointer;
+      user-select: none;
+    }
+    .notif-section-header:hover { background: var(--hv-bg-surface-hover); }
+    .notif-section-header .chevron {
+      font-size: 16px;
+      color: var(--hv-text-muted);
+      transition: transform 200ms ease;
+    }
+    .notif-section-header.open .chevron { transform: rotate(180deg); }
+    .notif-section-body {
+      display: none;
+      border-top: 1px solid var(--hv-border);
+    }
+    .notif-section-body.open { display: block; }
+
+    .email-status-sent { color: var(--hv-success); }
+    .email-status-pending { color: var(--hv-warning); }
+    .email-status-failed { color: var(--hv-danger); }
+
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 64px 24px;
+      text-align: center;
+    }
+    .empty-state-icon {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: var(--hv-bg-soft);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 16px;
+    }
+    .empty-state-icon i {
+      font-size: 32px;
+      color: var(--hv-text-muted);
+    }
+    .empty-state h3 {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--hv-text-primary);
+      margin-bottom: 6px;
+    }
+    .empty-state p {
+      font-size: 14px;
+      color: var(--hv-text-secondary);
+      margin-bottom: 20px;
+    }
+
+    .loading-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 64px 24px;
+    }
+    .loading-spinner {
+      width: 36px;
+      height: 36px;
+      border: 3px solid var(--hv-border);
+      border-top-color: var(--hv-primary);
+      border-radius: 50%;
+      animation: hv-spin 800ms linear infinite;
+      margin-bottom: 16px;
+    }
+
+    .badge-tax {
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    @media (max-width: 767px) {
+      .filter-bar { flex-wrap: wrap; }
+      .filter-search { width: 100%; }
+      .modal-form-grid { grid-template-columns: 1fr; }
+      .header-actions { width: 100%; justify-content: flex-end; }
+    }
+  </style>
+</head>
+<body>
+  <div class="hv-skip-link"><a href="#main-content">Chuyển đến nội dung</a></div>
+  <aside class="hv-sidebar" aria-label="Điều hướng chính"></aside>
+  <header class="hv-topbar" aria-label="Thanh công cụ"></header>
+  <main class="hv-content" id="main-content">
+    <div class="hv-content-max">
+
+      <!-- HEADER -->
+      <div class="hv-content-header">
+        <div>
+          <nav class="hv-breadcrumb" style="margin-bottom:4px">
+            <a href="dashboard.html" style="color:var(--hv-text-secondary)">Cài đặt</a>
+            <i class="ti ti-chevron-right" style="color:var(--hv-text-muted);font-size:12px"></i>
+            <span style="color:var(--hv-text-primary);font-weight:500">Sản phẩm</span>
+          </nav>
+          <h1>Quản lý sản phẩm</h1>
+        </div>
+        <div class="header-actions">
+          <button class="hv-btn hv-btn-secondary hv-btn-sm" onclick="exportExcel()"><i class="ti ti-file-spreadsheet"></i> Export Excel</button>
+          <button class="hv-btn hv-btn-primary" onclick="showAddProductModal()"><i class="ti ti-plus"></i> Thêm sản phẩm</button>
+        </div>
+      </div>
+
+      <!-- STATE: DEFAULT (table with data) -->
+      <div class="hv-state-default">
+        <!-- FILTER BAR -->
+        <div class="filter-bar">
+          <div class="filter-search">
+            <i class="ti ti-search"></i>
+            <input class="hv-input" id="product-search" type="text" placeholder="Tìm theo mã hoặc tên sản phẩm..." aria-label="Tìm kiếm sản phẩm">
+          </div>
+          <div class="filter-divider"></div>
+          <div class="filter-group">
+            <span class="filter-label">ĐVT:</span>
+            <select class="hv-select" id="filter-unit" aria-label="Lọc theo đơn vị tính">
+              <option value="">Tất cả</option>
+              <option value="Cái">Cái</option>
+              <option value="Chiếc">Chiếc</option>
+              <option value="Bộ">Bộ</option>
+              <option value="Gói">Gói</option>
+              <option value="Hộp">Hộp</option>
+              <option value="Chai">Chai</option>
+              <option value="Ly">Ly</option>
+              <option value="Cuốn">Cuốn</option>
+              <option value="Lần">Lần</option>
+              <option value="Tháng">Tháng</option>
+              <option value="Kg">Kg</option>
+              <option value="Lít">Lít</option>
+            </select>
+          </div>
+          <div class="filter-divider"></div>
+          <div class="filter-group">
+            <span class="filter-label">Thuế suất:</span>
+            <select class="hv-select" id="filter-tax" aria-label="Lọc theo thuế suất">
+              <option value="">Tất cả</option>
+              <option value="0">0%</option>
+              <option value="5">5%</option>
+              <option value="8">8%</option>
+              <option value="10">10%</option>
+              <option value="KCT">KCT</option>
+              <option value="KKKNT">KKKNT</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- DATA TABLE -->
+        <div class="hv-card hv-card-flush">
+          <div class="table-card">
+            <table class="hv-table" id="products-table">
+              <thead>
+                <tr>
+                  <th style="width:100px">Mã SP</th>
+                  <th>Tên sản phẩm</th>
+                  <th style="width:140px" class="num">Đơn giá</th>
+                  <th style="width:90px">ĐVT</th>
+                  <th style="width:110px">Thuế suất</th>
+                  <th style="width:100px" class="num">Thao tác</th>
+                </tr>
+              </thead>
+              <tbody id="products-tbody">
+              </tbody>
+            </table>
+          </div>
+          <div class="pagination" style="padding:12px 16px">
+            <span class="pagination-info" id="pagination-info">Hiển thị 1-10 / 10 sản phẩm</span>
+            <div class="pagination-btns">
+              <button disabled><i class="ti ti-chevron-left" style="font-size:14px"></i></button>
+              <button class="active">1</button>
+              <button disabled><i class="ti ti-chevron-right" style="font-size:14px"></i></button>
+            </div>
+          </div>
+        </div>
+
+        <!-- NOTIFICATION EMAIL SECTION -->
+        <div class="notif-section">
+          <div class="hv-card hv-card-flush">
+            <div class="notif-section-header" onclick="toggleNotifSection(this)" aria-expanded="false">
+              <div style="display:flex;align-items:center;gap:10px">
+                <i class="ti ti-mail" style="font-size:18px;color:var(--hv-primary)"></i>
+                <span class="hv-card-title">Thông báo qua email</span>
+                <span class="hv-badge hv-badge-info hv-badge-solid">3</span>
+              </div>
+              <i class="ti ti-chevron-down chevron"></i>
+            </div>
+            <div class="notif-section-body" id="notif-email-body">
+              <div class="table-card">
+                <table class="hv-table">
+                  <thead>
+                    <tr>
+                      <th>Tiêu đề</th>
+                      <th>Người nhận</th>
+                      <th>Ngày gửi</th>
+                      <th>Trạng thái</th>
+                      <th style="width:80px"></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td style="font-weight:500">Danh mục sản phẩm mới — Tháng 05/2026</td>
+                      <td>admin@trungnguyenlegend.com</td>
+                      <td style="font-size:13px;color:var(--hv-text-secondary)">15/05/2026 09:30</td>
+                      <td><span class="hv-badge hv-badge-success email-status-sent"><i class="ti ti-circle-check-filled" style="font-size:12px"></i> Đã gửi</span></td>
+                      <td>
+                        <div class="cell-actions">
+                          <button class="hv-btn hv-btn-sm hv-btn-tertiary hv-btn-icon" title="Gửi lại" onclick="HV.toast('Đã gửi lại email','success')"><i class="ti ti-refresh"></i></button>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="font-weight:500">Cập nhật giá sản phẩm Q2/2026</td>
+                      <td>sales@trungnguyenlegend.com</td>
+                      <td style="font-size:13px;color:var(--hv-text-secondary)">10/05/2026 14:00</td>
+                      <td><span class="hv-badge hv-badge-success email-status-sent"><i class="ti ti-circle-check-filled" style="font-size:12px"></i> Đã gửi</span></td>
+                      <td>
+                        <div class="cell-actions">
+                          <button class="hv-btn hv-btn-sm hv-btn-tertiary hv-btn-icon" title="Gửi lại" onclick="HV.toast('Đã gửi lại email','success')"><i class="ti ti-refresh"></i></button>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="font-weight:500">Thông báo sản phẩm ngừng kinh doanh</td>
+                      <td>ops@trungnguyenlegend.com</td>
+                      <td style="font-size:13px;color:var(--hv-text-secondary)">—</td>
+                      <td><span class="hv-badge hv-badge-warning email-status-pending"><i class="ti ti-clock-filled" style="font-size:12px"></i> Chờ gửi</span></td>
+                      <td>
+                        <div class="cell-actions">
+                          <button class="hv-btn hv-btn-sm hv-btn-tertiary hv-btn-icon" title="Gửi lại" onclick="HV.toast('Đã gửi email','success')"><i class="ti ti-send"></i></button>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div style="padding:12px 16px;border-top:1px solid var(--hv-border);display:flex;justify-content:flex-end">
+                <button class="hv-btn hv-btn-sm hv-btn-secondary" onclick="showAddNotifModal()"><i class="ti ti-plus"></i> Thêm thông báo</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STATE: EMPTY -->
+      <div class="hv-state-empty" style="display:none">
+        <div class="hv-card">
+          <div class="empty-state">
+            <div class="empty-state-icon">
+              <i class="ti ti-packages"></i>
+            </div>
+            <h3>Chưa có sản phẩm nào</h3>
+            <p>Thêm sản phẩm/dịch vụ để sử dụng khi phát hành hóa đơn.</p>
+            <button class="hv-btn hv-btn-primary" onclick="showAddProductModal()"><i class="ti ti-plus"></i> Thêm sản phẩm</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- STATE: LOADING -->
+      <div class="hv-state-loading" style="display:none">
+        <div class="hv-card">
+          <div class="loading-state">
+            <div class="loading-spinner"></div>
+            <span style="font-size:14px;color:var(--hv-text-muted)">Đang tải danh sách sản phẩm...</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <script src="assets/js/app-shell.js"></script>
+  <script>
+    /* ============================================
+       PRODUCT DATA
+       ============================================ */
+    const PRODUCTS = [
+      { code: 'SP001', name: 'Cà phê Robusta Đắk Lắk 500g', price: 120000, unit: 'Gói', tax: '10%', taxValue: 10, desc: 'Cà phê Robusta nguyên chất, rang xay từ Đắk Lắk' },
+      { code: 'SP002', name: 'Trà Sen Tây Hồ hộp 200g', price: 80000, unit: 'Hộp', tax: '10%', taxValue: 10, desc: 'Trà sen thơm đặc trưng vùng Tây Hồ' },
+      { code: 'SP003', name: 'Bánh Bao Nhân Thịt (hộp 10)', price: 80000, unit: 'Hộp', tax: '10%', taxValue: 10, desc: 'Bánh bao nhân thịt heo, hộp 10 cái' },
+      { code: 'SP004', name: 'Nước mắm Phú Quốc 500ml', price: 45000, unit: 'Chai', tax: '5%', taxValue: 5, desc: 'Nước mắm truyền thống Phú Quốc chai 500ml' },
+      { code: 'SP005', name: 'Cà phê sữa đá', price: 35000, unit: 'Ly', tax: '10%', taxValue: 10, desc: 'Cà phê sữa đá pha phin truyền thống' },
+      { code: 'SP006', name: 'Bánh mì thịt nướng', price: 25000, unit: 'Cái', tax: '10%', taxValue: 10, desc: 'Bánh mì baguette kẹp thịt nướng' },
+      { code: 'SP007', name: 'Trà đào cam sả', price: 45000, unit: 'Ly', tax: '10%', taxValue: 10, desc: 'Trà đào cam sả đá thơm mát' },
+      { code: 'SP008', name: 'Phí vận chuyển', price: 30000, unit: 'Lần', tax: 'KCT', taxValue: 0, desc: 'Phí vận chuyển giao hàng — Không chịu thuế' },
+      { code: 'SP009', name: 'Sách Giáo Khoa Toán Lớp 12', price: 38000, unit: 'Cuốn', tax: '5%', taxValue: 5, desc: 'Sách giáo khoa Toán lớp 12 — NXB Giáo dục' },
+      { code: 'SP010', name: 'Phần mềm Haravan POS', price: 500000, unit: 'Tháng', tax: '10%', taxValue: 10, desc: 'Phần mềm quản lý bán hàng Haravan POS' },
+    ];
+
+    const UNITS = ['Cái', 'Chiếc', 'Bộ', 'Gói', 'Hộp', 'Chai', 'Ly', 'Cuốn', 'Lần', 'Tháng', 'Kg', 'Lít'];
+    const TAX_RATES = [
+      { label: '0%', value: '0%' },
+      { label: '5%', value: '5%' },
+      { label: '8%', value: '8%' },
+      { label: '10%', value: '10%' },
+      { label: 'KCT', value: 'KCT' },
+      { label: 'KKKNT', value: 'KKKNT' },
+    ];
+
+    /* ============================================
+       RENDER TABLE
+       ============================================ */
+    function renderProducts(data) {
+      const tbody = document.getElementById('products-tbody');
+      if (!tbody) return;
+
+      if (!data || data.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" class="hv-text-center" style="padding:32px;color:var(--hv-text-muted)">Không tìm thấy sản phẩm phù hợp</td></tr>`;
+        document.getElementById('pagination-info').textContent = 'Hiển thị 0 / 0 sản phẩm';
+        return;
+      }
+
+      tbody.innerHTML = data.map(p => `
+        <tr>
+          <td class="cell-id">${p.code}</td>
+          <td>
+            <div style="font-weight:500">${p.name}</div>
+            <div style="font-size:12px;color:var(--hv-text-muted);margin-top:2px">${p.desc}</div>
+          </td>
+          <td class="cell-price">${HV.formatVND(p.price)}</td>
+          <td>${p.unit}</td>
+          <td>${renderTaxBadge(p.tax)}</td>
+          <td>
+            <div class="cell-actions">
+              <button class="hv-btn hv-btn-sm hv-btn-tertiary hv-btn-icon" title="Chỉnh sửa" onclick="showEditProductModal('${p.code}')"><i class="ti ti-pencil"></i></button>
+              <button class="hv-btn hv-btn-sm hv-btn-tertiary hv-btn-icon" title="Xóa" onclick="deleteProduct('${p.code}')"><i class="ti ti-trash"></i></button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+
+      document.getElementById('pagination-info').textContent = `Hiển thị 1-${data.length} / ${data.length} sản phẩm`;
+    }
+
+    function renderTaxBadge(tax) {
+      if (tax === 'KCT') return '<span class="hv-badge hv-badge-neutral badge-tax">KCT</span>';
+      if (tax === 'KKKNT') return '<span class="hv-badge hv-badge-neutral badge-tax">KKKNT</span>';
+      const val = parseInt(tax);
+      if (val <= 5) return `<span class="hv-badge hv-badge-info badge-tax">${tax}</span>`;
+      return `<span class="hv-badge hv-badge-primary badge-tax">${tax}</span>`;
+    }
+
+    /* ============================================
+       FILTERS
+       ============================================ */
+    function applyFilters() {
+      const query = (document.getElementById('product-search').value || '').toLowerCase().trim();
+      const unit = document.getElementById('filter-unit').value;
+      const tax = document.getElementById('filter-tax').value;
+
+      let filtered = PRODUCTS.filter(p => {
+        const matchQuery = !query || p.code.toLowerCase().includes(query) || p.name.toLowerCase().includes(query);
+        const matchUnit = !unit || p.unit === unit;
+        const matchTax = !tax || p.tax === tax;
+        return matchQuery && matchUnit && matchTax;
+      });
+
+      renderProducts(filtered);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('product-search').addEventListener('input', applyFilters);
+      document.getElementById('filter-unit').addEventListener('change', applyFilters);
+      document.getElementById('filter-tax').addEventListener('change', applyFilters);
+    });
+
+    /* ============================================
+       ADD / EDIT PRODUCT MODAL
+       ============================================ */
+    function showAddProductModal() {
+      openProductModal('Thêm sản phẩm', null);
+    }
+
+    function showEditProductModal(code) {
+      const product = PRODUCTS.find(p => p.code === code);
+      if (!product) return;
+      openProductModal('Chỉnh sửa sản phẩm', product);
+    }
+
+    function openProductModal(title, product) {
+      const isEdit = !!product;
+      const body = `
+        <div class="modal-form-grid">
+          <div>
+            <label class="hv-label">Mã sản phẩm <span style="color:var(--hv-danger)">*</span></label>
+            <input class="hv-input" id="modal-code" maxlength="20" placeholder="VD: SP001" value="${isEdit ? product.code : ''}" ${isEdit ? 'readonly style="background:var(--hv-bg-soft)"' : ''}>
+            <div class="hv-help-text">Tối đa 20 ký tự</div>
+          </div>
+          <div>
+            <label class="hv-label">Đơn vị tính <span style="color:var(--hv-danger)">*</span></label>
+            <select class="hv-select" id="modal-unit">
+              <option value="">-- Chọn ĐVT --</option>
+              ${UNITS.map(u => `<option value="${u}" ${isEdit && product.unit === u ? 'selected' : ''}>${u}</option>`).join('')}
+            </select>
+          </div>
+          <div class="full-width">
+            <label class="hv-label">Tên sản phẩm <span style="color:var(--hv-danger)">*</span></label>
+            <input class="hv-input" id="modal-name" maxlength="200" placeholder="Nhập tên sản phẩm/dịch vụ" value="${isEdit ? product.name : ''}">
+            <div class="hv-help-text">Tối đa 200 ký tự</div>
+          </div>
+          <div>
+            <label class="hv-label">Đơn giá (trước thuế) <span style="color:var(--hv-danger)">*</span></label>
+            <input class="hv-input" id="modal-price" type="text" placeholder="VD: 120,000" value="${isEdit ? new Intl.NumberFormat('vi-VN').format(product.price) : ''}">
+          </div>
+          <div>
+            <label class="hv-label">Thuế suất <span style="color:var(--hv-danger)">*</span></label>
+            <select class="hv-select" id="modal-tax">
+              <option value="">-- Chọn thuế suất --</option>
+              ${TAX_RATES.map(t => `<option value="${t.value}" ${isEdit && product.tax === t.value ? 'selected' : ''}>${t.label}</option>`).join('')}
+            </select>
+          </div>
+          <div class="full-width">
+            <label class="hv-label">Mô tả</label>
+            <textarea class="hv-textarea" id="modal-desc" rows="3" placeholder="Mô tả ngắn về sản phẩm/dịch vụ">${isEdit ? product.desc : ''}</textarea>
+          </div>
+        </div>
+      `;
+
+      HV.modal({
+        title: title,
+        body: body,
+        size: 'lg',
+        actions: [
+          { id: 'cancel', label: 'Hủy', onClick: (bd) => HV.closeModal(bd) },
+          { id: 'save', label: isEdit ? 'Cập nhật' : 'Thêm mới', primary: true, onClick: (bd) => {
+            const code = document.getElementById('modal-code').value.trim();
+            const name = document.getElementById('modal-name').value.trim();
+            const unit = document.getElementById('modal-unit').value;
+            const priceStr = document.getElementById('modal-price').value.replace(/[^\d]/g, '');
+            const tax = document.getElementById('modal-tax').value;
+
+            if (!code) { HV.toast('Vui lòng nhập mã sản phẩm', 'warning'); return; }
+            if (!name) { HV.toast('Vui lòng nhập tên sản phẩm', 'warning'); return; }
+            if (!unit) { HV.toast('Vui lòng chọn đơn vị tính', 'warning'); return; }
+            if (!priceStr) { HV.toast('Vui lòng nhập đơn giá', 'warning'); return; }
+            if (!tax) { HV.toast('Vui lòng chọn thuế suất', 'warning'); return; }
+
+            HV.closeModal(bd);
+            HV.toast(isEdit ? 'Đã cập nhật sản phẩm' : 'Đã thêm sản phẩm mới', 'success');
+          }}
+        ]
+      });
+    }
+
+    /* ============================================
+       DELETE PRODUCT
+       ============================================ */
+    async function deleteProduct(code) {
+      const product = PRODUCTS.find(p => p.code === code);
+      if (!product) return;
+      const confirmed = await HV.confirm(
+        `Bạn có chắc muốn xóa <strong>${product.name}</strong> (${product.code})?`,
+        { title: 'Xóa sản phẩm', confirmLabel: 'Xóa', type: 'danger' }
+      );
+      if (confirmed) {
+        HV.toast(`Đã xóa sản phẩm ${product.code}`, 'success');
+      }
+    }
+
+    /* ============================================
+       EXPORT EXCEL
+       ============================================ */
+    function exportExcel() {
+      HV.toast('Đang xuất file Excel...', 'info');
+      setTimeout(() => HV.toast('Đã tải xuống file DanhMucSanPham.xlsx', 'success'), 1500);
+    }
+
+    /* ============================================
+       NOTIFICATION EMAIL
+       ============================================ */
+    function toggleNotifSection(header) {
+      const body = document.getElementById('notif-email-body');
+      const isOpen = body.classList.contains('open');
+      body.classList.toggle('open');
+      header.classList.toggle('open');
+      header.setAttribute('aria-expanded', !isOpen);
+    }
+
+    function showAddNotifModal() {
+      const body = `
+        <div class="modal-form-grid">
+          <div class="full-width">
+            <label class="hv-label">Tiêu đề email <span style="color:var(--hv-danger)">*</span></label>
+            <input class="hv-input" placeholder="VD: Danh mục sản phẩm mới — Tháng 06/2026">
+          </div>
+          <div class="full-width">
+            <label class="hv-label">Người nhận <span style="color:var(--hv-danger)">*</span></label>
+            <input class="hv-input" type="email" placeholder="email@example.com">
+          </div>
+          <div>
+            <label class="hv-label">Ngày gửi</label>
+            <input class="hv-input" type="date">
+          </div>
+        </div>
+      `;
+      HV.modal({
+        title: 'Thêm thông báo email',
+        body: body,
+        size: 'md',
+        actions: [
+          { id: 'cancel', label: 'Hủy', onClick: (bd) => HV.closeModal(bd) },
+          { id: 'send', label: 'Gửi ngay', primary: true, onClick: (bd) => {
+            HV.closeModal(bd);
+            HV.toast('Đã lên lịch gửi email', 'success');
+          }}
+        ]
+      });
+    }
+
+    /* ============================================
+       STATE TOGGLE — set default
+       ============================================ */
+    document.addEventListener('DOMContentLoaded', () => {
+      const params = new URLSearchParams(window.location.search);
+      const state = params.get('state') || 'default';
+      document.querySelectorAll('[class*="hv-state-"]').forEach(el => {
+        const m = el.className.match(/hv-state-(default|empty|loading|error)/);
+        if (m) el.style.display = m[1] === state ? '' : 'none';
+      });
+    });
+
+    /* ============================================
+       INIT RENDER
+       ============================================ */
+    document.addEventListener('DOMContentLoaded', () => {
+      renderProducts(PRODUCTS);
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Haravan Invoice — Đăng nhập & Onboarding</title>
+  <link rel="stylesheet" href="assets/css/design-system.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    /* === State visibility === */
+    .auth-state { display: none; }
+    .auth-state.active { display: block; }
+
+    /* === Hero section === */
+    .auth-hero-content { position: relative; z-index: 1; max-width: 520px; }
+    .auth-hero-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 4px 12px; border-radius: 999px;
+      background: rgba(0,136,255,0.2); color: #60a5fa;
+      font-size: 12px; font-weight: 600; margin-bottom: 20px;
+    }
+    .auth-hero h1 { font-size: 40px; line-height: 48px; font-weight: 700; color: #fff; margin-bottom: 16px; letter-spacing: -0.02em; }
+    .auth-hero p { font-size: 16px; line-height: 24px; color: rgba(255,255,255,0.7); margin-bottom: 32px; }
+    .auth-checklist { list-style: none; padding: 0; margin: 0 0 40px; }
+    .auth-checklist li {
+      display: flex; align-items: center; gap: 12px;
+      padding: 10px 0; font-size: 15px; color: rgba(255,255,255,0.85);
+    }
+    .auth-checklist li i { color: #34d399; font-size: 18px; }
+    .auth-partners { display: flex; align-items: center; gap: 24px; flex-wrap: wrap; }
+    .auth-partner-logo {
+      padding: 6px 14px; border-radius: 8px;
+      background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.5);
+      font-size: 12px; font-weight: 600; letter-spacing: 0.03em;
+    }
+
+    /* === Form card === */
+    .auth-card h2 { font-size: 22px; font-weight: 600; margin-bottom: 6px; }
+    .auth-card .subtitle { font-size: 14px; color: var(--hv-text-secondary); margin-bottom: 28px; }
+    .auth-btn-sso {
+      width: 100%; height: 48px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center; gap: 12px;
+      font-size: 15px; font-weight: 600; cursor: pointer; border: none;
+      transition: all 150ms;
+    }
+    .auth-btn-haravan { background: #0088ff; color: #fff; }
+    .auth-btn-haravan:hover { background: #0070d8; }
+    .auth-btn-google { background: #fff; color: #1c2237; border: 1px solid var(--hv-border); }
+    .auth-btn-google:hover { background: #f8fafc; }
+    .auth-btn-google img { width: 20px; height: 20px; }
+    .auth-divider {
+      display: flex; align-items: center; gap: 16px; margin: 20px 0;
+      font-size: 12px; color: var(--hv-text-muted);
+    }
+    .auth-divider::before, .auth-divider::after {
+      content: ''; flex: 1; height: 1px; background: var(--hv-border);
+    }
+    .auth-footer { font-size: 12px; color: var(--hv-text-muted); margin-top: 24px; text-align: center; }
+    .auth-footer a { color: var(--hv-primary); }
+
+    /* === Callback loading === */
+    .auth-callback { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; background: var(--hv-bg-app); }
+    .auth-callback-dots { display: flex; gap: 8px; margin-bottom: 24px; }
+    .auth-callback-dot {
+      width: 10px; height: 10px; border-radius: 50%; background: var(--hv-primary);
+      animation: callback-bounce 1.4s infinite ease-in-out both;
+    }
+    .auth-callback-dot:nth-child(1) { animation-delay: -0.32s; }
+    .auth-callback-dot:nth-child(2) { animation-delay: -0.16s; }
+    @keyframes callback-bounce {
+      0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
+      40% { transform: scale(1); opacity: 1; }
+    }
+    .auth-callback-step {
+      font-size: 14px; color: var(--hv-text-muted);
+      animation: callback-fade 2s infinite;
+    }
+    @keyframes callback-fade {
+      0%, 100% { opacity: 0.4; }
+      50% { opacity: 1; }
+    }
+
+    /* === Onboarding === */
+    .auth-onboarding { min-height: 100vh; background: var(--hv-bg-app); padding: 40px 24px; display: flex; flex-direction: column; align-items: center; }
+    .auth-onboarding-inner { max-width: 720px; width: 100%; }
+    .auth-step-card {
+      background: var(--hv-bg-surface); border: 1px solid var(--hv-border);
+      border-radius: var(--hv-radius-xl); padding: 28px; margin-bottom: 16px;
+    }
+    .auth-step-header { display: flex; align-items: center; gap: 14px; margin-bottom: 20px; }
+    .auth-step-num {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: var(--hv-primary); color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 15px; font-weight: 600; flex-shrink: 0;
+    }
+    .auth-step-title { font-size: 18px; font-weight: 600; }
+    .auth-tvan-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin: 16px 0; }
+    .auth-tvan-option {
+      border: 1px solid var(--hv-border); border-radius: var(--hv-radius-lg);
+      padding: 16px; cursor: pointer; transition: all 150ms;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .auth-tvan-option:hover { border-color: var(--hv-primary); }
+    .auth-tvan-option.selected { border-color: var(--hv-primary); background: var(--hv-primary-soft); }
+    .auth-tvan-option.disabled { opacity: 0.5; cursor: not-allowed; pointer-events: none; }
+    .auth-tvan-radio {
+      width: 18px; height: 18px; border-radius: 50%;
+      border: 2px solid var(--hv-border-strong); flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .auth-tvan-option.selected .auth-tvan-radio {
+      border-color: var(--hv-primary);
+    }
+    .auth-tvan-option.selected .auth-tvan-radio::after {
+      content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--hv-primary);
+    }
+    .auth-tvan-name { font-size: 14px; font-weight: 600; }
+    .auth-tvan-desc { font-size: 12px; color: var(--hv-text-secondary); }
+    .auth-feature-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 16px; }
+    .auth-feature-card {
+      border: 1px solid var(--hv-border); border-radius: var(--hv-radius-lg);
+      padding: 16px; text-align: center; cursor: pointer; transition: all 150ms;
+    }
+    .auth-feature-card:hover { border-color: var(--hv-primary); background: var(--hv-bg-surface-hover); }
+    .auth-feature-icon { font-size: 24px; color: var(--hv-primary); margin-bottom: 8px; }
+    .auth-feature-name { font-size: 13px; font-weight: 600; }
+
+    /* === Error states === */
+    .auth-error-page { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: var(--hv-bg-app); padding: 24px; }
+    .auth-error-card {
+      text-align: center; max-width: 440px; width: 100%;
+      background: var(--hv-bg-surface); border: 1px solid var(--hv-border);
+      border-radius: var(--hv-radius-xl); padding: 40px 32px;
+    }
+    .auth-error-icon {
+      width: 72px; height: 72px; border-radius: 50%;
+      display: inline-flex; align-items: center; justify-content: center;
+      margin-bottom: 20px; font-size: 32px;
+    }
+    .auth-error-title { font-size: 20px; font-weight: 600; margin-bottom: 8px; }
+    .auth-error-desc { font-size: 14px; color: var(--hv-text-secondary); margin-bottom: 24px; line-height: 1.6; }
+
+    /* === Responsive === */
+    @media (max-width: 767px) {
+      .auth-hero h1 { font-size: 28px; line-height: 36px; }
+      .auth-tvan-grid { grid-template-columns: 1fr; }
+      .auth-feature-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+  <!-- ============================
+       STATE: LANDING (Login)
+       ============================ -->
+  <div id="state-landing" class="auth-state active">
+    <div class="hv-auth-landing">
+      <!-- Hero Side -->
+      <div class="hv-auth-hero">
+        <div class="auth-hero-content">
+          <div class="auth-hero-badge">
+            <i class="ti ti-sparkles"></i> Beta
+          </div>
+          <h1>Hóa đơn điện tử, ngay trong Haravan Admin của bạn</h1>
+          <p>Phát hành hóa đơn điện tu tuân thủ NĐ 70/2025 + TT 32/2025 ngay từ đơn hàng Haravan. Kết nối T-VAN Hilo, AI hỗ trợ, tự động hóa.</p>
+          <ul class="auth-checklist">
+            <li><i class="ti ti-circle-check-filled"></i> Phát hành 1-click từ POS, Web, Admin</li>
+            <li><i class="ti ti-circle-check-filled"></i> Xử lý sai sót theo wizard (Điều chỉnh / Thay thế)</li>
+            <li><i class="ti ti-circle-check-filled"></i> Trung tâm tuân thủ + Audit trail 10 năm</li>
+            <li><i class="ti ti-circle-check-filled"></i> AI cảnh báo rủi ro NCC & kiểm tra trước phát hành</li>
+          </ul>
+          <div class="auth-partners">
+            <span class="auth-partner-logo">HILO</span>
+            <span class="auth-partner-logo">VTC-Sign</span>
+            <span class="auth-partner-logo">Google Cloud</span>
+            <span class="auth-partner-logo">Cloudflare</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Form Side -->
+      <div class="hv-auth-form-side">
+        <div class="auth-card">
+          <div style="margin-bottom:28px">
+            <a href="dashboard.html" style="display:flex;align-items:center;gap:8px;text-decoration:none;margin-bottom:24px">
+              <div style="width:36px;height:36px;border-radius:10px;background:var(--hv-primary);color:#fff;display:flex;align-items:center;justify-content:center">
+                <i class="ti ti-receipt-2" style="font-size:20px"></i>
+              </div>
+              <span style="font-size:20px;font-weight:700;color:var(--hv-text-primary)">haravan<span style="color:var(--hv-success)">.</span></span>
+            </a>
+          </div>
+          <h2>Đăng nhập</h2>
+          <p class="subtitle">Sử dụng tài khoản Haravan Admin để tiếp tục</p>
+
+          <button class="auth-btn-sso auth-btn-haravan" onclick="showState('callback')">
+            <i class="ti ti-login-2" style="font-size:20px"></i>
+            Đăng nhập với Haravan
+          </button>
+
+          <div class="auth-divider">hoặc</div>
+
+          <button class="auth-btn-sso auth-btn-google" onclick="showState('callback')">
+            <svg width="20" height="20" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+            Đăng nhập với Google Workspace
+          </button>
+
+          <div class="auth-footer">
+            Bằng việc đăng nhập, bạn đồng ý với <a href="#">Điều khoản sử dụng</a> và <a href="#">Chính sách bảo mật</a> của Haravan.
+            <br><br>
+            <span style="color:var(--hv-text-muted)">Phiên bản Beta — Miễn phí cho merchant Haravan</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================
+       STATE: CALLBACK (Loading)
+       ============================ -->
+  <div id="state-callback" class="auth-state">
+    <div class="auth-callback">
+      <a href="dashboard.html" style="display:flex;align-items:center;gap:8px;text-decoration:none;margin-bottom:40px">
+        <div style="width:40px;height:40px;border-radius:10px;background:var(--hv-primary);color:#fff;display:flex;align-items:center;justify-content:center">
+          <i class="ti ti-receipt-2" style="font-size:22px"></i>
+        </div>
+        <span style="font-size:22px;font-weight:700;color:var(--hv-text-primary)">haravan<span style="color:var(--hv-success)">.</span></span>
+      </a>
+      <div class="auth-callback-dots">
+        <div class="auth-callback-dot"></div>
+        <div class="auth-callback-dot"></div>
+        <div class="auth-callback-dot"></div>
+      </div>
+      <p class="auth-callback-step">Đang xác thực...</p>
+      <p style="font-size:12px;color:var(--hv-text-muted);margin-top:8px">Khoảng 2-3 giây</p>
+    </div>
+  </div>
+
+  <!-- ============================
+       STATE: ONBOARDING (3-step wizard)
+       ============================ -->
+  <div id="state-onboarding" class="auth-state">
+    <div class="auth-onboarding">
+      <div class="auth-onboarding-inner">
+        <!-- Header -->
+        <div style="text-align:center;margin-bottom:32px">
+          <a href="dashboard.html" style="display:inline-flex;align-items:center;gap:8px;text-decoration:none;margin-bottom:16px">
+            <div style="width:36px;height:36px;border-radius:10px;background:var(--hv-primary);color:#fff;display:flex;align-items:center;justify-content:center">
+              <i class="ti ti-receipt-2" style="font-size:20px"></i>
+            </div>
+            <span style="font-size:20px;font-weight:700;color:var(--hv-text-primary)">haravan<span style="color:var(--hv-success)">.</span></span>
+          </a>
+          <h1 style="font-size:24px;font-weight:700;margin-bottom:6px">Thiết lập cửa hàng</h1>
+          <p style="font-size:14px;color:var(--hv-text-secondary)">Chỉ mất 2 phút để bắt đầu phát hành hóa đơn</p>
+        </div>
+
+        <!-- Step indicator -->
+        <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:32px">
+          <div style="display:flex;align-items:center;gap:6px">
+            <div style="width:28px;height:28px;border-radius:50%;background:var(--hv-success);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600"><i class="ti ti-check" style="font-size:14px"></i></div>
+            <span style="font-size:13px;font-weight:500;color:var(--hv-text-primary)">Xác nhận</span>
+          </div>
+          <div style="width:40px;height:2px;background:var(--hv-success)"></div>
+          <div style="display:flex;align-items:center;gap:6px">
+            <div style="width:28px;height:28px;border-radius:50%;background:var(--hv-primary);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600">2</div>
+            <span style="font-size:13px;font-weight:500;color:var(--hv-text-primary)">T-VAN</span>
+          </div>
+          <div style="width:40px;height:2px;background:var(--hv-border)"></div>
+          <div style="display:flex;align-items:center;gap:6px">
+            <div style="width:28px;height:28px;border-radius:50%;border:2px solid var(--hv-border-strong);color:var(--hv-text-muted);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600">3</div>
+            <span style="font-size:13px;font-weight:500;color:var(--hv-text-muted)">Khám phá</span>
+          </div>
+        </div>
+
+        <!-- Step 1: Confirm Store -->
+        <div class="auth-step-card">
+          <div class="auth-step-header">
+            <div class="auth-step-num" style="background:var(--hv-success)"><i class="ti ti-check" style="font-size:16px"></i></div>
+            <div class="auth-step-title">Xác nhận cửa hàng</div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+            <div>
+              <label class="hv-label">Tên cửa hàng</label>
+              <input class="hv-input" value="Cà phê Trung Nguyên Legend" readonly style="background:var(--hv-bg-soft)">
+            </div>
+            <div>
+              <label class="hv-label">Mã số thuế</label>
+              <input class="hv-input hv-mono" value="0312345678" readonly style="background:var(--hv-bg-soft)">
+            </div>
+            <div>
+              <label class="hv-label">Địa chỉ</label>
+              <input class="hv-input" value="12 Nguyễn Văn Trí, Phú Nhuận, TP.HCM" readonly style="background:var(--hv-bg-soft)">
+            </div>
+            <div>
+              <label class="hv-label">Chủ sở hữu</label>
+              <input class="hv-input" value="Lê Tody" readonly style="background:var(--hv-bg-soft)">
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 2: Configure T-VAN -->
+        <div class="auth-step-card">
+          <div class="auth-step-header">
+            <div class="auth-step-num">2</div>
+            <div class="auth-step-title">Cấu hình T-VAN</div>
+          </div>
+          <p style="font-size:13px;color:var(--hv-text-secondary);margin-bottom:16px">Chọn nhà cung cấp dịch vụ hóa đơn điện tử (T-VAN)</p>
+
+          <div class="auth-tvan-grid">
+            <div class="auth-tvan-option selected" onclick="selectTvan(this)">
+              <div class="auth-tvan-radio"></div>
+              <div style="flex:1">
+                <div class="auth-tvan-name">Hilo Invoice</div>
+                <div class="auth-tvan-desc">Đối tác T-VAN chính — Đang hoạt động</div>
+              </div>
+              <span class="hv-badge hv-badge-success hv-badge-solid" style="font-size:11px">Active</span>
+            </div>
+            <div class="auth-tvan-option disabled">
+              <div class="auth-tvan-radio"></div>
+              <div style="flex:1">
+                <div class="auth-tvan-name">Viettel SInvoice</div>
+                <div class="auth-tvan-desc">Kích hoạt ở Phase 4</div>
+              </div>
+              <span class="hv-badge hv-badge-neutral" style="font-size:11px">Phase 4</span>
+            </div>
+            <div class="auth-tvan-option disabled">
+              <div class="auth-tvan-radio"></div>
+              <div style="flex:1">
+                <div class="auth-tvan-name">MISA meInvoice</div>
+                <div class="auth-tvan-desc">Kích hoạt ở Phase 4</div>
+              </div>
+              <span class="hv-badge hv-badge-neutral" style="font-size:11px">Phase 4</span>
+            </div>
+            <div class="auth-tvan-option disabled">
+              <div class="auth-tvan-radio"></div>
+              <div style="flex:1">
+                <div class="auth-tvan-name">VNPT Invoice</div>
+                <div class="auth-tvan-desc">Kích hoạt ở Phase 4</div>
+              </div>
+              <span class="hv-badge hv-badge-neutral" style="font-size:11px">Phase 4</span>
+            </div>
+          </div>
+
+          <!-- Hilo config -->
+          <div style="margin-top:16px;padding:16px;background:var(--hv-bg-soft);border-radius:var(--hv-radius-lg)">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+              <span style="font-size:14px;font-weight:600">Cấu hình Hilo</span>
+              <button class="hv-btn hv-btn-sm hv-btn-secondary" onclick="testConnection()">
+                <i class="ti ti-plug-connected"></i> Kiểm tra kết nối
+              </button>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+              <div>
+                <label class="hv-label">Client ID</label>
+                <input class="hv-input hv-mono" value="hilo-client-0312345678" placeholder="Nhập Client ID">
+              </div>
+              <div>
+                <label class="hv-label">Client Secret</label>
+                <div style="position:relative">
+                  <input class="hv-input" type="password" value="sk_live_xxxxxxxxxxxx" placeholder="Nhập Client Secret">
+                  <button style="position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--hv-text-muted);cursor:pointer" onclick="togglePassword(this)">
+                    <i class="ti ti-eye"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div style="margin-top:12px">
+              <label class="hv-label">API Endpoint</label>
+              <input class="hv-input hv-mono" value="https://api.hilo.vn/v2" readonly style="background:var(--hv-bg-surface)">
+            </div>
+          </div>
+
+          <!-- Signing cert -->
+          <div style="margin-top:16px">
+            <label class="hv-label" style="font-size:14px;font-weight:600">Chứng thư số ký hóa đơn</label>
+            <div style="display:flex;gap:12px;margin-top:8px">
+              <div class="hv-cert-card" style="flex:1">
+                <div class="hv-cert-icon"><i class="ti ti-certificate"></i></div>
+                <div class="hv-cert-info">
+                  <div class="hv-cert-name">VTC-Sign</div>
+                  <div class="hv-cert-meta">CTS-2025-AB12CD · Hết hạn 18/07/2026</div>
+                </div>
+                <span class="hv-cert-expiry ok">63 ngày</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 3: Explore Features -->
+        <div class="auth-step-card">
+          <div class="auth-step-header">
+            <div class="auth-step-num">3</div>
+            <div class="auth-step-title">Khám phá tính năng</div>
+          </div>
+          <p style="font-size:13px;color:var(--hv-text-secondary);margin-bottom:16px">6 tính năng chính trong phiên bản MVP</p>
+          <div class="auth-feature-grid">
+            <div class="auth-feature-card">
+              <div class="auth-feature-icon"><i class="ti ti-zap"></i></div>
+              <div class="auth-feature-name">Phát hành 1-click</div>
+              <div style="font-size:11px;color:var(--hv-text-muted);margin-top:4px">Từ POS, Web, Admin</div>
+            </div>
+            <div class="auth-feature-card">
+              <div class="auth-feature-icon"><i class="ti ti-wand"></i></div>
+              <div class="auth-feature-name">Wizard xử lý sai sót</div>
+              <div style="font-size:11px;color:var(--hv-text-muted);margin-top:4px">5 bước theo NĐ 70</div>
+            </div>
+            <div class="auth-feature-card">
+              <div class="auth-feature-icon"><i class="ti ti-shield-check"></i></div>
+              <div class="auth-feature-name">Trung tâm tuân thủ</div>
+              <div style="font-size:11px;color:var(--hv-text-muted);margin-top:4px">Audit trail 10 năm</div>
+            </div>
+            <div class="auth-feature-card">
+              <div class="auth-feature-icon"><i class="ti ti-robot"></i></div>
+              <div class="auth-feature-name">AI Copilot</div>
+              <div style="font-size:11px;color:var(--hv-text-muted);margin-top:4px">Hỏi đáp & kiểm tra</div>
+            </div>
+            <div class="auth-feature-card">
+              <div class="auth-feature-icon"><i class="ti ti-plug-connected"></i></div>
+              <div class="auth-feature-name">Multi-T-VAN</div>
+              <div style="font-size:11px;color:var(--hv-text-muted);margin-top:4px">Hilo + 4 nhà cung cấp</div>
+            </div>
+            <div class="auth-feature-card">
+              <div class="auth-feature-icon"><i class="ti ti-history"></i></div>
+              <div class="auth-feature-name">Audit Log</div>
+              <div style="font-size:11px;color:var(--hv-text-muted);margin-top:4px">Theo dõi mọi thay đổi</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CTA -->
+        <div style="text-align:center;margin-top:24px">
+          <a href="dashboard.html" class="hv-btn hv-btn-primary hv-btn-lg" style="text-decoration:none;font-size:16px;padding:0 32px;height:48px">
+            <i class="ti ti-rocket"></i> Bắt đầu sử dụng MVP
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================
+       STATE: ERROR — Unauthorized
+       ============================ -->
+  <div id="state-unauthorized" class="auth-state">
+    <div class="auth-error-page">
+      <div class="auth-error-card">
+        <div class="auth-error-icon" style="background:var(--hv-primary-soft);color:var(--hv-primary)">
+          <i class="ti ti-lock"></i>
+        </div>
+        <h2 class="auth-error-title">Bạn cần đăng nhập</h2>
+        <p class="auth-error-desc">Phiên làm việc đã hết hạn hoặc bạn chưa đăng nhập. Vui lòng đăng nhập để tiếp tục.</p>
+        <a href="auth-flow.html" class="hv-btn hv-btn-primary" style="text-decoration:none">
+          <i class="ti ti-login-2"></i> Đăng nhập ngay
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================
+       STATE: ERROR — Forbidden
+       ============================ -->
+  <div id="state-forbidden" class="auth-state">
+    <div class="auth-error-page">
+      <div class="auth-error-card">
+        <div class="auth-error-icon" style="background:var(--hv-danger-soft);color:var(--hv-danger)">
+          <i class="ti ti-shield-x"></i>
+        </div>
+        <h2 class="auth-error-title">Không có quyền truy cập</h2>
+        <p class="auth-error-desc">Bạn không có quyền truy cập trang này. Vui lòng liên hệ chủ cửa hàng hoặc đăng nhập bằng tài khoản khác.</p>
+        <div style="display:flex;gap:8px;justify-content:center">
+          <a href="auth-flow.html" class="hv-btn hv-btn-secondary" style="text-decoration:none">
+            <i class="ti ti-login-2"></i> Đăng nhập tài khoản khác
+          </a>
+          <a href="dashboard.html" class="hv-btn hv-btn-primary" style="text-decoration:none">
+            <i class="ti ti-home"></i> Về trang chủ
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================
+       STATE: ERROR — Session Expired
+       ============================ -->
+  <div id="state-expired" class="auth-state">
+    <div class="auth-error-page">
+      <div class="auth-error-card">
+        <div class="auth-error-icon" style="background:var(--hv-warning-soft);color:var(--hv-warning)">
+          <i class="ti ti-clock-off"></i>
+        </div>
+        <h2 class="auth-error-title">Phiên đã hết hạn</h2>
+        <p class="auth-error-desc">Phiên làm việc của bạn đã hết hạn sau 8 giờ. Bạn sẽ được chuyển đến trang đăng nhập.</p>
+        <p style="font-size:24px;font-weight:700;color:var(--hv-primary);margin-bottom:20px" id="countdown">5</p>
+        <a href="auth-flow.html" class="hv-btn hv-btn-primary" style="text-decoration:none">
+          <i class="ti ti-refresh"></i> Đăng nhập lại ngay
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================
+       STATE: ERROR — Store Not Found
+       ============================ -->
+  <div id="state-store-not-found" class="auth-state">
+    <div class="auth-error-page">
+      <div class="auth-error-card">
+        <div class="auth-error-icon" style="background:var(--hv-bg-soft);color:var(--hv-text-muted)">
+          <i class="ti ti-building-off"></i>
+        </div>
+        <h2 class="auth-error-title">Không tìm thấy cửa hàng</h2>
+        <p class="auth-error-desc">Tài khoản này chưa liên kết với cửa hàng Haravan nào. Vui lòng kiểm tra lại hoặc liên hệ hỗ trợ.</p>
+        <div style="display:flex;gap:8px;justify-content:center">
+          <a href="mailto:support@haravan.com" class="hv-btn hv-btn-secondary" style="text-decoration:none">
+            <i class="ti ti-mail"></i> Liên hệ hỗ trợ
+          </a>
+          <a href="https://admin.haravan.com" class="hv-btn hv-btn-primary" style="text-decoration:none">
+            <i class="ti ti-arrow-left"></i> Về Haravan Admin
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================
+       STATE TOGGLE (bottom-right)
+       ============================ -->
+  <div id="state-toggle" style="position:fixed;bottom:16px;right:16px;z-index:1500;display:flex;gap:2px;background:var(--hv-bg-surface);border:1px solid var(--hv-border);border-radius:var(--hv-radius-lg);padding:4px;box-shadow:var(--hv-shadow-md);font-size:11px;flex-wrap:wrap;max-width:420px">
+    <button onclick="showState('landing')" class="state-btn active" data-state="landing">Landing</button>
+    <button onclick="showState('callback')" class="state-btn" data-state="callback">Callback</button>
+    <button onclick="showState('onboarding')" class="state-btn" data-state="onboarding">Onboarding</button>
+    <button onclick="showState('unauthorized')" class="state-btn" data-state="unauthorized">401</button>
+    <button onclick="showState('forbidden')" class="state-btn" data-state="forbidden">403</button>
+    <button onclick="showState('expired')" class="state-btn" data-state="expired">Expired</button>
+    <button onclick="showState('store-not-found')" class="state-btn" data-state="store-not-found">No Store</button>
+  </div>
+
+  <style>
+    .state-btn {
+      padding: 4px 10px; font-size: 11px; font-weight: 500;
+      border-radius: 6px; border: none; cursor: pointer;
+      font-family: inherit; background: transparent;
+      color: var(--hv-text-secondary); transition: all 100ms;
+    }
+    .state-btn.active { background: var(--hv-primary); color: white; }
+    .state-btn:hover:not(.active) { background: var(--hv-bg-soft); }
+  </style>
+
+  <script>
+    function showState(state) {
+      document.querySelectorAll('.auth-state').forEach(el => el.classList.remove('active'));
+      const target = document.getElementById('state-' + state);
+      if (target) target.classList.add('active');
+      document.querySelectorAll('.state-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.state === state);
+      });
+      // Countdown for expired state
+      if (state === 'expired') startCountdown();
+    }
+
+    function selectTvan(el) {
+      document.querySelectorAll('.auth-tvan-option:not(.disabled)').forEach(o => o.classList.remove('selected'));
+      el.classList.add('selected');
+    }
+
+    function togglePassword(btn) {
+      const input = btn.parentElement.querySelector('input');
+      const icon = btn.querySelector('i');
+      if (input.type === 'password') {
+        input.type = 'text';
+        icon.className = 'ti ti-eye-off';
+      } else {
+        input.type = 'password';
+        icon.className = 'ti ti-eye';
+      }
+    }
+
+    function testConnection() {
+      const btn = event.target.closest('.hv-btn');
+      const origHtml = btn.innerHTML;
+      btn.innerHTML = '<div style="width:14px;height:14px;border:2px solid currentColor;border-top-color:transparent;border-radius:50%;animation:hv-spin 800ms linear infinite"></div> Đang kiểm tra...';
+      btn.disabled = true;
+      setTimeout(() => {
+        btn.innerHTML = '<i class="ti ti-circle-check"></i> Kết nối thành công';
+        btn.style.color = 'var(--hv-success)';
+        btn.style.borderColor = 'var(--hv-success)';
+        setTimeout(() => {
+          btn.innerHTML = origHtml;
+          btn.style.color = '';
+          btn.style.borderColor = '';
+          btn.disabled = false;
+        }, 2000);
+      }, 1500);
+    }
+
+    let countdownInterval;
+    function startCountdown() {
+      clearInterval(countdownInterval);
+      let sec = 5;
+      const el = document.getElementById('countdown');
+      if (!el) return;
+      el.textContent = sec;
+      countdownInterval = setInterval(() => {
+        sec--;
+        el.textContent = sec;
+        if (sec <= 0) {
+          clearInterval(countdownInterval);
+          showState('landing');
+        }
+      }, 1000);
+    }
+
+    // Check URL hash for initial state
+    const hash = window.location.hash.replace('#', '');
+    if (hash) showState(hash);
+  </script>
+  <script src="assets/js/app-shell.js"></script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+@import './design-system.css';
+
+/* Portal-specific: alert, btn-warning, toast, spinner */
+.hv-alert { display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-radius: var(--hv-radius-md); font-size: 14px; }
+.hv-alert-danger { background: var(--hv-danger-soft); color: var(--hv-danger); border: 1px solid var(--hv-danger); }
+.hv-alert-success { background: var(--hv-success-soft); color: var(--hv-success); border: 1px solid var(--hv-success); }
+.hv-alert-warning { background: var(--hv-warning-soft); color: var(--hv-warning); border: 1px solid var(--hv-warning); }
+.hv-btn-warning { background: var(--hv-warning); color: var(--hv-text-inverse); border: 1px solid var(--hv-warning); }
+.hv-btn-warning:hover { background: var(--hv-warning-hover); border-color: var(--hv-warning-hover); }
+.hv-toast-success { border-color: var(--hv-success); color: var(--hv-success); }
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }

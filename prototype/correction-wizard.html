@@ -1,0 +1,1573 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Xử lý sai sót hóa đơn — Haravan Invoice</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/design-system.css">
+  <script>window.HV_PAGE = { id: 'correction', title: 'Xử lý sai sót hóa đơn' };</script>
+  <style>
+    /* === Correction Wizard — Haravan Admin Pixel-Perfect === */
+
+    /* Breadcrumb */
+    .hv-breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      color: var(--hv-text-muted);
+      margin-bottom: var(--hv-space-5);
+    }
+    .hv-breadcrumb a {
+      color: var(--hv-text-link);
+      text-decoration: none;
+    }
+    .hv-breadcrumb a:hover { text-decoration: underline; }
+    .hv-breadcrumb-sep { color: var(--hv-border-strong); }
+
+    /* Stepper — horizontal with labels, Haravan style */
+    .hv-stepper-wizard {
+      display: flex;
+      align-items: flex-start;
+      gap: 0;
+      margin-bottom: var(--hv-space-6);
+      padding: var(--hv-space-5) var(--hv-space-6);
+      background: var(--hv-bg-surface);
+      border: 1px solid var(--hv-border);
+      border-radius: var(--hv-radius-lg);
+      box-shadow: var(--hv-shadow-xs);
+      overflow-x: auto;
+    }
+    .hv-stepper-wizard .hv-step {
+      flex: 1;
+      min-width: 0;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 6px;
+      cursor: pointer;
+      transition: opacity 200ms ease;
+    }
+    .hv-stepper-wizard .hv-step:hover { opacity: 0.85; }
+    .hv-stepper-wizard .hv-step-line {
+      width: 40px;
+      min-width: 24px;
+      height: 2px;
+      margin: 13px 8px 0;
+      flex: 0 0 auto;
+      background: var(--hv-border);
+      transition: background 300ms ease;
+    }
+    .hv-stepper-wizard .hv-step-label {
+      font-size: 12px;
+      line-height: 14px;
+      min-height: 28px;
+      max-width: 100px;
+      color: var(--hv-text-muted);
+      font-weight: 500;
+      transition: color 200ms ease;
+    }
+    .hv-stepper-wizard .hv-step-active .hv-step-label {
+      color: var(--hv-text-primary);
+      font-weight: 600;
+    }
+    .hv-stepper-wizard .hv-step-done .hv-step-label {
+      color: var(--hv-success);
+    }
+    .hv-stepper-wizard .hv-step-number {
+      font-size: 11px;
+      color: var(--hv-text-muted);
+      font-weight: 400;
+      display: block;
+      margin-top: 2px;
+    }
+
+    /* Step Content */
+    .hv-step-content {
+      max-width: 800px;
+    }
+    .hv-step-panel {
+      display: none;
+    }
+    .hv-step-panel-active {
+      display: block;
+      animation: fadeSlideIn 250ms ease;
+    }
+    @keyframes fadeSlideIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Radio Card Grid — Haravan style selection cards */
+    .hv-radio-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+    @media (max-width: 767px) {
+      .hv-radio-grid { grid-template-columns: 1fr; }
+    }
+    .hv-radio-card {
+      position: relative;
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      padding: var(--hv-space-4) var(--hv-space-5);
+      background: var(--hv-bg-surface);
+      border: 1px solid var(--hv-border);
+      border-radius: var(--hv-radius-lg);
+      cursor: pointer;
+      transition: all 180ms ease;
+      box-shadow: var(--hv-shadow-xs);
+    }
+    .hv-radio-card:hover {
+      border-color: var(--hv-primary);
+      background: var(--hv-bg-surface-hover);
+      box-shadow: var(--hv-shadow-sm);
+    }
+    .hv-radio-card-selected {
+      border-color: var(--hv-primary);
+      background: var(--hv-primary-soft);
+      box-shadow: var(--hv-shadow-focus);
+    }
+    .hv-radio-card input[type="radio"] {
+      position: absolute;
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    .hv-radio-card:focus-within {
+      outline: 2px solid var(--hv-border-focus);
+      outline-offset: 2px;
+    }
+    .hv-radio-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--hv-radius-md);
+      background: var(--hv-bg-soft);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      color: var(--hv-text-secondary);
+      flex-shrink: 0;
+      transition: all 180ms ease;
+    }
+    .hv-radio-card-selected .hv-radio-icon {
+      background: var(--hv-primary-soft);
+      color: var(--hv-primary);
+    }
+    .hv-radio-text {
+      flex: 1;
+      min-width: 0;
+    }
+    .hv-radio-text strong {
+      display: block;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--hv-text-primary);
+      margin-bottom: 2px;
+    }
+    .hv-radio-text span {
+      font-size: 12px;
+      color: var(--hv-text-secondary);
+      line-height: 16px;
+    }
+    .hv-radio-check {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      border: 2px solid var(--hv-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 150ms ease;
+    }
+    .hv-radio-card-selected .hv-radio-check {
+      border-color: var(--hv-primary);
+      background: var(--hv-primary);
+    }
+    .hv-radio-check i {
+      font-size: 12px;
+      color: white;
+      opacity: 0;
+      transition: opacity 150ms ease;
+    }
+    .hv-radio-card-selected .hv-radio-check i { opacity: 1; }
+
+    /* Accent icon colors per error type */
+    .hv-radio-card[data-value="wrong-tax-id"] .hv-radio-icon { background: var(--hv-bg-indigo-soft); color: #4f46e5; }
+    .hv-radio-card[data-value="wrong-address"] .hv-radio-icon { background: var(--hv-bg-purple-soft); color: #7c3aed; }
+    .hv-radio-card[data-value="amount-increase"] .hv-radio-icon { background: var(--hv-bg-danger-soft); color: #ef4444; }
+    .hv-radio-card[data-value="amount-decrease"] .hv-radio-icon { background: var(--hv-bg-warning-soft); color: #f59e0b; }
+    .hv-radio-card[data-value="wrong-product"] .hv-radio-icon { background: var(--hv-bg-success-soft); color: #16a34a; }
+    .hv-radio-card[data-value="wrong-tax-rate"] .hv-radio-icon { background: var(--hv-bg-indigo-soft); color: #2563eb; }
+    .hv-radio-card[data-value="return-goods"] .hv-radio-icon { background: var(--hv-bg-warning-soft); color: #d97706; }
+    .hv-radio-card[data-value="other"] .hv-radio-icon { background: #f3f4f6; color: var(--hv-text-secondary); }
+
+    /* Binary choice cards — Step 2 */
+    .hv-binary-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+    @media (max-width: 767px) {
+      .hv-binary-grid { grid-template-columns: 1fr; }
+    }
+    .hv-binary-card {
+      position: relative;
+      padding: var(--hv-space-5) var(--hv-space-6);
+      background: var(--hv-bg-surface);
+      border: 1px solid var(--hv-border);
+      border-radius: var(--hv-radius-lg);
+      cursor: pointer;
+      text-align: center;
+      transition: all 180ms ease;
+      box-shadow: var(--hv-shadow-xs);
+    }
+    .hv-binary-card:hover {
+      border-color: var(--hv-primary);
+      background: var(--hv-bg-surface-hover);
+      box-shadow: var(--hv-shadow-sm);
+    }
+    .hv-binary-card-selected {
+      border-color: var(--hv-primary);
+      background: var(--hv-primary-soft);
+      box-shadow: var(--hv-shadow-focus);
+    }
+    .hv-binary-card input[type="radio"] {
+      position: absolute;
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    .hv-binary-card:focus-within {
+      outline: 2px solid var(--hv-border-focus);
+      outline-offset: 2px;
+    }
+    .hv-binary-badge {
+      display: inline-block;
+      margin-bottom: 12px;
+    }
+    .hv-binary-card h3 {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--hv-text-primary);
+      margin-bottom: 6px;
+    }
+    .hv-binary-card p {
+      font-size: 13px;
+      color: var(--hv-text-secondary);
+      margin: 0;
+    }
+
+    /* Invoice info strip — Step 2 */
+    .hv-invoice-strip {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      padding: var(--hv-space-4) var(--hv-space-5);
+      background: var(--hv-bg-soft);
+      border: 1px solid var(--hv-border);
+      border-radius: var(--hv-radius-lg);
+      margin-top: var(--hv-space-5);
+    }
+    @media (max-width: 767px) {
+      .hv-invoice-strip { grid-template-columns: repeat(2, 1fr); }
+    }
+    .hv-invoice-strip dt {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--hv-text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 4px;
+    }
+    .hv-invoice-strip dd {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--hv-text-primary);
+      margin: 0;
+    }
+
+    /* Recommendation card — Step 3 — Haravan badge style */
+    .hv-rec-card {
+      border: 1px solid var(--hv-border);
+      border-radius: var(--hv-radius-xl);
+      overflow: hidden;
+      margin-bottom: var(--hv-space-5);
+      box-shadow: var(--hv-shadow-xs);
+    }
+    .hv-rec-header {
+      padding: var(--hv-space-4) var(--hv-space-5);
+      background: var(--hv-bg-soft);
+      border-bottom: 1px solid var(--hv-border);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .hv-rec-header i {
+      font-size: 20px;
+      color: var(--hv-primary);
+    }
+    .hv-rec-header h3 {
+      font-size: 16px;
+      font-weight: 600;
+      margin: 0;
+      color: var(--hv-text-primary);
+    }
+    .hv-rec-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      height: 24px;
+      padding: 0 10px;
+      font-size: 12px;
+      font-weight: 600;
+      border-radius: var(--hv-radius-pill);
+      background: var(--hv-primary-soft);
+      color: var(--hv-primary);
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+    .hv-rec-badge-adjust { background: var(--hv-primary-soft); color: var(--hv-primary); }
+    .hv-rec-badge-replace { background: var(--hv-bg-warning-soft); color: var(--hv-warning-hover); }
+    .hv-rec-body {
+      padding: var(--hv-space-5);
+      background: var(--hv-bg-surface);
+    }
+    .hv-rec-reason {
+      font-size: 14px;
+      line-height: 22px;
+      color: var(--hv-text-primary);
+      margin-bottom: var(--hv-space-4);
+      padding: var(--hv-space-3) var(--hv-space-4);
+      background: var(--hv-bg-soft);
+      border-radius: var(--hv-radius-md);
+      border-left: 3px solid var(--hv-primary);
+    }
+    .hv-rec-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .hv-rec-note {
+      margin-top: var(--hv-space-4);
+      padding: var(--hv-space-3) var(--hv-space-4);
+      background: var(--hv-bg-indigo-soft);
+      border-radius: var(--hv-radius-md);
+      font-size: 12px;
+      line-height: 18px;
+      color: var(--hv-purple);
+    }
+    .hv-rec-note i { margin-right: 4px; }
+
+    /* Edit form — original vs correction — Step 4 */
+    .hv-edit-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .hv-edit-table th {
+      text-align: left;
+      padding: 10px 16px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--hv-text-secondary);
+      background: var(--hv-bg-soft);
+      border-bottom: 1px solid var(--hv-border-table);
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+    .hv-edit-table td {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--hv-border-table);
+      vertical-align: middle;
+    }
+    .hv-edit-table tr:last-child td { border-bottom: none; }
+    .hv-edit-original {
+      color: var(--hv-text-muted);
+      font-size: 13px;
+      text-decoration: line-through;
+    }
+    .hv-edit-arrow {
+      color: var(--hv-primary);
+      font-size: 16px;
+      text-align: center;
+      vertical-align: middle;
+    }
+    .hv-edit-new .hv-input {
+      height: 32px;
+      font-size: 13px;
+    }
+    .hv-edit-new .hv-input::placeholder {
+      color: #94a3b8; /* Slightly higher contrast for step 4 */
+    }
+
+    /* Mini preview — Step 4 */
+    .hv-mini-preview {
+      background: var(--hv-bg-soft);
+      border: 1px solid var(--hv-border);
+      border-radius: var(--hv-radius-lg);
+      padding: var(--hv-space-4);
+      margin-top: var(--hv-space-5);
+    }
+    .hv-mini-preview-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: var(--hv-space-3);
+    }
+    .hv-mini-preview-header h4 {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--hv-text-primary);
+    }
+    .hv-mini-doc {
+      background: white;
+      border: 1px solid var(--hv-border);
+      border-radius: var(--hv-radius-md);
+      padding: var(--hv-space-5);
+      font-size: 12px;
+      line-height: 18px;
+      color: var(--hv-text-secondary);
+      max-height: 200px;
+      overflow-y: auto;
+    }
+    .hv-mini-doc h5 {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--hv-text-primary);
+      text-align: center;
+      margin-bottom: 8px;
+    }
+    .hv-mini-doc table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 8px 0;
+    }
+    .hv-mini-doc table td {
+      padding: 3px 0;
+      vertical-align: top;
+    }
+    .hv-mini-doc table td:first-child {
+      width: 120px;
+      font-weight: 500;
+      color: var(--hv-text-primary);
+    }
+
+    /* Signing options — Step 5 */
+    .hv-sign-options {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: var(--hv-space-5);
+    }
+    .hv-sign-option {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: var(--hv-space-4) var(--hv-space-5);
+      background: var(--hv-bg-surface);
+      border: 1px solid var(--hv-border);
+      border-radius: var(--hv-radius-lg);
+      cursor: pointer;
+      transition: all 180ms ease;
+      box-shadow: var(--hv-shadow-xs);
+    }
+    .hv-sign-option:hover { border-color: var(--hv-primary); }
+    .hv-sign-option-selected { border-color: var(--hv-primary); background: var(--hv-primary-soft); box-shadow: var(--hv-shadow-focus); }
+    .hv-sign-option input[type="radio"] { margin-top: 2px; accent-color: var(--hv-primary); }
+    .hv-sign-option-text strong { display: block; font-size: 14px; font-weight: 600; color: var(--hv-text-primary); }
+    .hv-sign-option-text span { font-size: 12px; color: var(--hv-text-secondary); }
+
+    /* OTP input — Step 5 — mono font, larger touch */
+    .hv-otp-group {
+      display: flex;
+      gap: 8px;
+      margin-top: var(--hv-space-4);
+    }
+    .hv-otp-input {
+      width: 48px;
+      height: 52px;
+      text-align: center;
+      font-size: 22px;
+      font-weight: 700;
+      font-family: var(--hv-font-mono);
+      border: 1px solid var(--hv-border);
+      border-radius: var(--hv-radius-md);
+      background: var(--hv-bg-surface);
+      color: var(--hv-text-primary);
+      transition: border-color 150ms ease, box-shadow 150ms ease;
+    }
+    .hv-otp-input:focus {
+      outline: none;
+      border-color: var(--hv-primary);
+      box-shadow: var(--hv-shadow-focus);
+    }
+
+    /* Bottom navigation bar */
+    .hv-nav-bar {
+      position: sticky;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--hv-space-4) 0;
+      margin-top: var(--hv-space-6);
+      border-top: 1px solid var(--hv-border);
+      background: var(--hv-bg-surface);
+    }
+    .hv-nav-bar-left,
+    .hv-nav-bar-right {
+      display: flex;
+      gap: 12px;
+    }
+
+    /* Skeleton loading */
+    .hv-skeleton {
+      background: linear-gradient(90deg, var(--hv-bg-soft) 25%, var(--hv-bg-surface-hover) 50%, var(--hv-bg-soft) 75%);
+      background-size: 200% 100%;
+      animation: skeleton-shimmer 1.5s ease infinite;
+      border-radius: var(--hv-radius-md);
+    }
+    @keyframes skeleton-shimmer {
+      0%   { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    /* Toast */
+    .hv-toast-success { border-left: 4px solid var(--hv-success); }
+    .hv-toast-success i { color: var(--hv-success); }
+
+    /* Loading overlay */
+    .hv-loading-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.4);
+      backdrop-filter: blur(4px);
+      z-index: 1500;
+      align-items: center;
+      justify-content: center;
+    }
+    .hv-loading-overlay-active { display: flex; }
+    .hv-loading-box {
+      background: var(--hv-bg-surface);
+      border-radius: var(--hv-radius-xl);
+      padding: var(--hv-space-6);
+      text-align: center;
+      box-shadow: var(--hv-shadow-lg);
+    }
+    .hv-spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid var(--hv-border);
+      border-top-color: var(--hv-primary);
+      border-radius: 50%;
+      animation: spin 800ms linear infinite;
+      margin: 0 auto 16px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Replace option card — Step 4 */
+    .hv-replace-card {
+      text-align: center;
+      padding: var(--hv-space-6);
+      background: var(--hv-bg-soft);
+      border: 2px dashed var(--hv-border);
+      border-radius: var(--hv-radius-xl);
+    }
+    .hv-replace-card i {
+      font-size: 48px;
+      color: var(--hv-primary);
+      margin-bottom: 16px;
+    }
+    .hv-replace-card h3 {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--hv-text-primary);
+      margin-bottom: 8px;
+    }
+    .hv-replace-card p {
+      font-size: 14px;
+      color: var(--hv-text-secondary);
+      margin-bottom: 20px;
+    }
+
+    /* Section intro */
+    .hv-section-intro {
+      margin-bottom: var(--hv-space-5);
+    }
+    .hv-section-intro h2 {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--hv-text-primary);
+      margin-bottom: 6px;
+    }
+    .hv-section-intro p {
+      font-size: 14px;
+      color: var(--hv-text-secondary);
+      line-height: 20px;
+    }
+
+    /* === Mobile Responsive === */
+    @media (max-width: 767px) {
+      .hv-stepper-wizard {
+        padding: 16px;
+        overflow-x: auto;
+      }
+      .hv-stepper-wizard .hv-step {
+        min-width: 80px;
+      }
+      .hv-stepper-wizard .hv-step-label {
+        font-size: 11px;
+        max-width: 70px;
+      }
+      .hv-stepper-wizard .hv-step-line {
+        width: 20px;
+        min-width: 16px;
+        margin: 14px 4px 0;
+      }
+      .hv-content {
+        padding: 12px;
+      }
+      .hv-nav-bar {
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      .hv-nav-bar-left,
+      .hv-nav-bar-right {
+        width: 100%;
+        justify-content: center;
+      }
+      .hv-edit-table {
+        min-width: 500px;
+      }
+      .hv-edit-table-wrap {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+      .hv-section-intro h2 {
+        font-size: 16px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .hv-content {
+        padding: 10px;
+      }
+      .hv-invoice-strip {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar (auto-rendered by app-shell) -->
+  <aside class="hv-sidebar" aria-label="Điều hướng chính"></aside>
+
+  <!-- Topbar (auto-rendered by app-shell) -->
+  <div class="hv-topbar" aria-label="Thanh công cụ"></div>
+
+  <!-- Main Content -->
+  <div class="hv-content">
+    <div class="hv-content-max">
+
+      <!-- Breadcrumb removed as it's handled by app-shell -->
+
+      <!-- Stepper (5 steps) -->
+      <div class="hv-stepper-wizard" role="tablist" aria-label="Các bước xử lý sai sót">
+        <div class="hv-step hv-step-active" role="tab" aria-selected="true" tabindex="0" data-step="1">
+          <div class="hv-step-circle">1</div>
+          <div class="hv-step-label">Chọn sai sót</div>
+        </div>
+        <div class="hv-step-line"></div>
+        <div class="hv-step" role="tab" aria-selected="false" tabindex="-1" data-step="2">
+          <div class="hv-step-circle">2</div>
+          <div class="hv-step-label">Trạng thái CQT</div>
+        </div>
+        <div class="hv-step-line"></div>
+        <div class="hv-step" role="tab" aria-selected="false" tabindex="-1" data-step="3">
+          <div class="hv-step-circle">3</div>
+          <div class="hv-step-label">Đề xuất nghiệp vụ</div>
+        </div>
+        <div class="hv-step-line"></div>
+        <div class="hv-step" role="tab" aria-selected="false" tabindex="-1" data-step="4">
+          <div class="hv-step-circle">4</div>
+          <div class="hv-step-label">Thông tin chỉnh sửa</div>
+        </div>
+        <div class="hv-step-line"></div>
+        <div class="hv-step" role="tab" aria-selected="false" tabindex="-1" data-step="5">
+          <div class="hv-step-circle">5</div>
+          <div class="hv-step-label">Ký xác nhận</div>
+        </div>
+      </div>
+
+      <!-- Step Content -->
+      <div class="hv-step-content">
+
+        <!-- ===== STEP 1: Chọn sai sót ===== -->
+        <section class="hv-step-panel hv-step-panel-active" id="step-1" role="tabpanel" aria-labelledby="step-1-title">
+          <div class="hv-section-intro">
+            <h2 id="step-1-title">Bạn muốn sửa gì?</h2>
+            <p>Chọn loại sai sót trên hóa đơn cần xử lý. Hệ thống sẽ đề xuất nghiệp vụ phù hợp theo NĐ 70/2025.</p>
+          </div>
+
+          <div class="hv-radio-grid" role="radiogroup" aria-label="Loại sai sót">
+            <!-- 1. Sai MST -->
+            <label class="hv-radio-card" tabindex="0" data-value="wrong-tax-id">
+              <input type="radio" name="error-type" value="wrong-tax-id">
+              <div class="hv-radio-icon"><i class="ti ti-id"></i></div>
+              <div class="hv-radio-text">
+                <strong>Sai MST khách</strong>
+                <span>Mã số thuế người mua không khớp</span>
+              </div>
+              <div class="hv-radio-check"><i class="ti ti-check"></i></div>
+            </label>
+
+            <!-- 2. Sai địa chỉ -->
+            <label class="hv-radio-card" tabindex="0" data-value="wrong-address">
+              <input type="radio" name="error-type" value="wrong-address">
+              <div class="hv-radio-icon"><i class="ti ti-map-pin"></i></div>
+              <div class="hv-radio-text">
+                <strong>Sai địa chỉ khách</strong>
+                <span>Địa chỉ người mua không chính xác</span>
+              </div>
+              <div class="hv-radio-check"><i class="ti ti-check"></i></div>
+            </label>
+
+            <!-- 3. Sai số tiền — Tăng -->
+            <label class="hv-radio-card" tabindex="0" data-value="amount-increase">
+              <input type="radio" name="error-type" value="amount-increase">
+              <div class="hv-radio-icon"><i class="ti ti-trending-up"></i></div>
+              <div class="hv-radio-text">
+                <strong>Sai số tiền — Tăng</strong>
+                <span>Cần tăng tổng tiền hóa đơn</span>
+              </div>
+              <div class="hv-radio-check"><i class="ti ti-check"></i></div>
+            </label>
+
+            <!-- 4. Sai số tiền — Giảm -->
+            <label class="hv-radio-card" tabindex="0" data-value="amount-decrease">
+              <input type="radio" name="error-type" value="amount-decrease">
+              <div class="hv-radio-icon"><i class="ti ti-trending-down"></i></div>
+              <div class="hv-radio-text">
+                <strong>Sai số tiền — Giảm</strong>
+                <span>Cần giảm tổng tiền hóa đơn</span>
+              </div>
+              <div class="hv-radio-check"><i class="ti ti-check"></i></div>
+            </label>
+
+            <!-- 5. Sai sản phẩm -->
+            <label class="hv-radio-card" tabindex="0" data-value="wrong-product">
+              <input type="radio" name="error-type" value="wrong-product">
+              <div class="hv-radio-icon"><i class="ti ti-package"></i></div>
+              <div class="hv-radio-text">
+                <strong>Sai sản phẩm</strong>
+                <span>Tên, số lượng hoặc đơn giá sản phẩm sai</span>
+              </div>
+              <div class="hv-radio-check"><i class="ti ti-check"></i></div>
+            </label>
+
+            <!-- 6. Sai thuế suất -->
+            <label class="hv-radio-card" tabindex="0" data-value="wrong-tax-rate">
+              <input type="radio" name="error-type" value="wrong-tax-rate">
+              <div class="hv-radio-icon"><i class="ti ti-percentage"></i></div>
+              <div class="hv-radio-text">
+                <strong>Sai thuế suất</strong>
+                <span>Thuế suất VAT không chính xác</span>
+              </div>
+              <div class="hv-radio-check"><i class="ti ti-check"></i></div>
+            </label>
+
+            <!-- 7. Khách trả hàng -->
+            <label class="hv-radio-card" tabindex="0" data-value="return-goods">
+              <input type="radio" name="error-type" value="return-goods">
+              <div class="hv-radio-icon"><i class="ti ti-rotate-2"></i></div>
+              <div class="hv-radio-text">
+                <strong>Khách trả hàng</strong>
+                <span>Khách hàng trả lại toàn bộ hoặc một phần</span>
+              </div>
+              <div class="hv-radio-check"><i class="ti ti-check"></i></div>
+            </label>
+
+            <!-- 8. Khác -->
+            <label class="hv-radio-card" tabindex="0" data-value="other">
+              <input type="radio" name="error-type" value="other">
+              <div class="hv-radio-icon"><i class="ti ti-help-circle"></i></div>
+              <div class="hv-radio-text">
+                <strong>Khác</strong>
+                <span>Sai sót không thuộc các trường hợp trên</span>
+              </div>
+              <div class="hv-radio-check"><i class="ti ti-check"></i></div>
+            </label>
+          </div>
+        </section>
+
+        <!-- ===== STEP 2: Trạng thái CQT ===== -->
+        <section class="hv-step-panel" id="step-2" role="tabpanel" aria-labelledby="step-2-title">
+          <div class="hv-section-intro">
+            <h2 id="step-2-title">Hóa đơn đã được CQT chấp nhận chưa?</h2>
+            <p>Trạng thái chấp nhận của Cơ quan thuế quyết định nghiệp vụ xử lý phù hợp.</p>
+          </div>
+
+          <div class="hv-binary-grid">
+            <!-- Đã chấp nhận -->
+            <label class="hv-binary-card" tabindex="0">
+              <input type="radio" name="cqt-status" value="accepted">
+              <div class="hv-binary-badge">
+                <span class="hv-badge hv-badge-success">Đã chấp nhận</span>
+              </div>
+              <h3>Hóa đơn đã hợp lệ</h3>
+              <p>CQT đã chấp nhận, cần lập biên bản điều chỉnh hoặc hóa đơn thay thế</p>
+            </label>
+
+            <!-- Chưa / Đang chờ -->
+            <label class="hv-binary-card" tabindex="0">
+              <input type="radio" name="cqt-status" value="pending">
+              <div class="hv-binary-badge">
+                <span class="hv-badge hv-badge-warning">Chưa / Đang chờ</span>
+              </div>
+              <h3>Hóa đơn chưa được duyệt</h3>
+              <p>Có thể gửi lại hoặc tạo hóa đơn mới thay thế</p>
+            </label>
+          </div>
+
+          <!-- Current invoice info -->
+          <div class="hv-invoice-strip" aria-label="Thông tin hóa đơn hiện tại">
+            <div>
+              <dt>Số hóa đơn</dt>
+              <dd>2025/00001234</dd>
+            </div>
+            <div>
+              <dt>Ngày phát hành</dt>
+              <dd>15/05/2025</dd>
+            </div>
+            <div>
+              <dt>Tổng tiền</dt>
+              <dd>12.500.000đ</dd>
+            </div>
+            <div>
+              <dt>Trạng thái CQT</dt>
+              <dd><span class="hv-badge hv-badge-success">Đã chấp nhận</span></dd>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== STEP 3: Đề xuất nghiệp vụ ===== -->
+        <section class="hv-step-panel" id="step-3" role="tabpanel" aria-labelledby="step-3-title">
+          <div class="hv-section-intro">
+            <h2 id="step-3-title">Hệ thống đề xuất</h2>
+            <p>Dựa trên loại sai sót và trạng thái CQT, hệ thống đề xuất nghiệp vụ phù hợp.</p>
+          </div>
+
+          <!-- Recommendation card — dynamic content -->
+          <div class="hv-rec-card" id="rec-card">
+            <div class="hv-rec-header">
+              <i class="ti ti-sparkles"></i>
+              <span class="hv-rec-badge hv-rec-badge-adjust" id="rec-badge">Điều chỉnh</span>
+              <h3 id="rec-title">Điều chỉnh thông tin</h3>
+            </div>
+            <div class="hv-rec-body">
+              <div class="hv-rec-reason" id="rec-reason">
+                Sai thông tin người mua, tổng tiền không thay đổi → Điều chỉnh theo NĐ 70/2025 §7
+              </div>
+              <div class="hv-rec-actions">
+                <button class="hv-btn hv-btn-primary" id="rec-accept" onclick="CW.acceptRecommendation()">
+                  <i class="ti ti-check"></i> Đồng ý
+                </button>
+                <button class="hv-btn hv-btn-secondary" id="rec-change" onclick="CW.showAlternativeOptions()">
+                  Chọn nghiệp vụ khác
+                </button>
+              </div>
+              <div class="hv-rec-note">
+                <i class="ti ti-info-circle"></i>
+                Nghiệp vụ được đề xuất dựa trên quy định NĐ 70/2025 và TT 32/2025. Tham khảo §7 NĐ 70 và §3 TT 32.
+              </div>
+            </div>
+          </div>
+
+          <!-- Alternative options (hidden by default) -->
+          <div id="rec-alternatives" class="hv-hidden">
+            <div class="hv-card" style="margin-top:16px">
+              <h3 class="text-h3" style="margin-bottom:16px">Chọn nghiệp vụ thay thế</h3>
+              <div class="hv-radio-grid">
+                <label class="hv-radio-card" tabindex="0">
+                  <input type="radio" name="alt-method" value="adjust">
+                  <div class="hv-radio-icon"><i class="ti ti-file-diff"></i></div>
+                  <div class="hv-radio-text">
+                    <strong>Điều chỉnh</strong>
+                    <span>Lập biên bản điều chỉnh, giữ nguyên hóa đơn gốc</span>
+                  </div>
+                  <div class="hv-radio-check"><i class="ti ti-check"></i></div>
+                </label>
+                <label class="hv-radio-card" tabindex="0">
+                  <input type="radio" name="alt-method" value="replace">
+                  <div class="hv-radio-icon"><i class="ti ti-file-replace"></i></div>
+                  <div class="hv-radio-text">
+                    <strong>Thay thế</strong>
+                    <span>Tạo hóa đơn mới thay thế toàn bộ hóa đơn cũ</span>
+                  </div>
+                  <div class="hv-radio-check"><i class="ti ti-check"></i></div>
+                </label>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== STEP 4: Thông tin chỉnh sửa ===== -->
+        <section class="hv-step-panel" id="step-4" role="tabpanel" aria-labelledby="step-4-title">
+          <div class="hv-section-intro">
+            <h2 id="step-4-title">Thông tin chỉnh sửa</h2>
+            <p>Điền thông tin cần chỉnh sửa. Giá trị gốc hiển thị để đối chiếu.</p>
+          </div>
+
+          <!-- Adjustment form -->
+          <div id="step4-adjust">
+            <div class="hv-card" style="margin-bottom:20px">
+              <table class="hv-edit-table">
+                <thead>
+                  <tr>
+                    <th style="width:180px">Trường</th>
+                    <th>Giá trị gốc</th>
+                    <th style="width:40px"></th>
+                    <th>Giá trị chỉnh sửa</th>
+                  </tr>
+                </thead>
+                <tbody id="edit-rows">
+                  <!-- Dynamic rows based on Step 1 selection -->
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Mini PDF preview -->
+            <div class="hv-mini-preview">
+              <div class="hv-mini-preview-header">
+                <h4><i class="ti ti-file-text" style="margin-right:6px"></i>Biên bản điều chỉnh (xem trước)</h4>
+                <button class="hv-btn hv-btn-sm hv-btn-tertiary"><i class="ti ti-download"></i> Tải PDF</button>
+              </div>
+              <div class="hv-mini-doc" id="adjustment-preview">
+                <h5>BIÊN BẢN ĐIỀU CHỈNH HÓA ĐƠN</h5>
+                <p style="text-align:center;margin-bottom:12px">Căn cứ NĐ 70/2025/NĐ-CP và TT 32/2025/TT-BTC</p>
+                <table>
+                  <tr><td>Số HĐ gốc:</td><td>2025/00001234</td></tr>
+                  <tr><td>Ngày phát hành:</td><td>15/05/2025</td></tr>
+                  <tr><td>Bên bán:</td><td>Công ty TNHH ABC (MST: 0123456789)</td></tr>
+                  <tr><td>Bên mua:</td><td id="preview-buyer">Công ty XYZ (MST: 9876543210)</td></tr>
+                </table>
+                <p style="margin-top:8px;font-weight:500;color:var(--hv-text-primary)">Nội dung điều chỉnh:</p>
+                <div id="preview-changes" style="margin:4px 0 8px">
+                  <p>— Thông tin chỉnh sửa sẽ hiển thị tại đây</p>
+                </div>
+                <p style="margin-top:12px;font-style:italic;text-align:center">Biên bản có hiệu lực kể từ ngày ký.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Replacement option -->
+          <div id="step4-replace" class="hv-hidden">
+            <div class="hv-replace-card">
+              <i class="ti ti-file-replace"></i>
+              <h3>Thay thế bằng hóa đơn mới</h3>
+              <p>Hóa đơn gốc 2025/00001234 sẽ được đánh dấu "Đã thay thế". Tạo hóa đơn mới với thông tin chính xác.</p>
+              <a href="invoice-issue.html" class="hv-btn hv-btn-primary hv-btn-lg">
+                <i class="ti ti-plus"></i> Tạo hóa đơn mới
+              </a>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== STEP 5: Ký xác nhận ===== -->
+        <section class="hv-step-panel" id="step-5" role="tabpanel" aria-labelledby="step-5-title">
+          <div class="hv-section-intro">
+            <h2 id="step-5-title">Ký xác nhận</h2>
+            <p>Xem lại biên bản điều chỉnh và ký xác nhận để hoàn tất.</p>
+          </div>
+
+          <!-- Full preview -->
+          <div class="hv-card" style="margin-bottom:24px">
+            <div class="hv-card-header">
+              <span class="hv-card-title"><i class="ti ti-file-text" style="margin-right:6px"></i>Biên bản điều chỉnh</span>
+              <span class="hv-badge hv-badge-primary">BBĐC-2025/0001</span>
+            </div>
+            <div class="hv-mini-doc" id="final-preview" style="max-height:280px;border:none;padding:0;background:transparent">
+              <h5>BIÊN BẢN ĐIỀU CHỈNH HÓA ĐƠN ĐIỆN TỬ</h5>
+              <p style="text-align:center;margin-bottom:16px">Căn cứ NĐ 70/2025/NĐ-CP ngày 15/05/2025<br>Căn cứ TT 32/2025/TT-BTC</p>
+              <table>
+                <tr><td>Số HĐ cần điều chỉnh:</td><td>2025/00001234</td></tr>
+                <tr><td>Mẫu số:</td><td>01GTKT/001</td></tr>
+                <tr><td>Ký hiệu:</td><td>AA/25E</td></tr>
+                <tr><td>Ngày phát hành:</td><td>15/05/2025</td></tr>
+              </table>
+              <hr style="border:none;border-top:1px solid var(--hv-border);margin:12px 0">
+              <table>
+                <tr><td>Bên bán:</td><td>Công ty TNHH ABC</td></tr>
+                <tr><td>MST:</td><td>0123456789</td></tr>
+                <tr><td>Địa chỉ:</td><td>123 Nguyễn Huệ, Q.1, TP.HCM</td></tr>
+              </table>
+              <hr style="border:none;border-top:1px solid var(--hv-border);margin:12px 0">
+              <table>
+                <tr><td>Bên mua:</td><td>Công ty XYZ</td></tr>
+                <tr><td>MST:</td><td>9876543210</td></tr>
+              </table>
+              <hr style="border:none;border-top:1px solid var(--hv-border);margin:12px 0">
+              <p style="font-weight:600;color:var(--hv-text-primary)">Nội dung điều chỉnh:</p>
+              <div id="final-changes" style="margin:4px 0 12px">
+                <p>Thông tin chỉnh sửa sẽ hiển thị tại đây</p>
+              </div>
+              <p style="margin-top:16px;text-align:center;font-style:italic">
+                Biên bản này lập thành 02 bản, mỗi bên giữ 01 bản có giá trị pháp lý như nhau.
+              </p>
+            </div>
+          </div>
+
+          <!-- Signing options -->
+          <div class="hv-card">
+            <h3 class="text-h3" style="margin-bottom:16px">Phương thức ký</h3>
+            <div class="hv-sign-options" role="radiogroup" aria-label="Phương thức ký">
+              <label class="hv-sign-option hv-sign-option-selected" tabindex="0">
+                <input type="radio" name="sign-method" value="otp" checked>
+                <div class="hv-sign-option-text">
+                  <strong><i class="ti ti-shield-lock" style="margin-right:4px"></i>Ký bằng OTP</strong>
+                  <span>Gửi mã OTP qua email hoặc SMS để xác nhận</span>
+                </div>
+              </label>
+              <label class="hv-sign-option" tabindex="0">
+                <input type="radio" name="sign-method" value="draft">
+                <div class="hv-sign-option-text">
+                  <strong><i class="ti ti-edit" style="margin-right:4px"></i>Ký nháp, duyệt sau</strong>
+                  <span>Lưu bản nháp và gửi cho người duyệt ký</span>
+                </div>
+              </label>
+            </div>
+
+            <!-- OTP section -->
+            <div id="otp-section">
+              <div style="display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;margin-bottom:16px">
+                <div style="flex:1;min-width:200px">
+                  <label class="hv-label" for="otp-contact">Email hoặc Số điện thoại</label>
+                  <input type="text" id="otp-contact" class="hv-input" placeholder="email@company.com hoặc 0909xxxxxx">
+                </div>
+                <button class="hv-btn hv-btn-primary" id="btn-send-otp" onclick="CW.sendOTP()">
+                  <i class="ti ti-send"></i> Gửi mã OTP
+                </button>
+              </div>
+              <div id="otp-input-section" class="hv-hidden">
+                <label class="hv-label">Nhập mã OTP (6 số)</label>
+                <div class="hv-otp-group">
+                  <input type="text" class="hv-otp-input" maxlength="1" inputmode="numeric" pattern="[0-9]" aria-label="OTP số 1">
+                  <input type="text" class="hv-otp-input" maxlength="1" inputmode="numeric" pattern="[0-9]" aria-label="OTP số 2">
+                  <input type="text" class="hv-otp-input" maxlength="1" inputmode="numeric" pattern="[0-9]" aria-label="OTP số 3">
+                  <input type="text" class="hv-otp-input" maxlength="1" inputmode="numeric" pattern="[0-9]" aria-label="OTP số 4">
+                  <input type="text" class="hv-otp-input" maxlength="1" inputmode="numeric" pattern="[0-9]" aria-label="OTP số 5">
+                  <input type="text" class="hv-otp-input" maxlength="1" inputmode="numeric" pattern="[0-9]" aria-label="OTP số 6">
+                </div>
+                <p class="text-caption" style="color:var(--hv-text-muted);margin-top:8px">
+                  Mã OTP đã được gửi. Có thể gửi lại sau <span id="otp-countdown">60</span>s
+                </p>
+              </div>
+            </div>
+
+            <!-- Draft section (hidden by default) -->
+            <div id="draft-section" class="hv-hidden">
+              <div class="hv-card" style="background:var(--hv-bg-warning-soft);border-color:var(--hv-warning)">
+                <div class="hv-flex hv-items-center hv-gap-3">
+                  <i class="ti ti-clock" style="font-size:24px;color:var(--hv-warning)"></i>
+                  <div>
+                    <strong style="display:block;font-size:14px;color:var(--hv-text-primary)">Bản nháp chờ duyệt</strong>
+                    <span class="text-caption" style="color:var(--hv-text-secondary)">Biên bản sẽ được lưu và gửi cho người có thẩm quyền duyệt ký.</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </div><!-- /.hv-step-content -->
+
+      <!-- Navigation Buttons -->
+      <div class="hv-nav-bar">
+        <div class="hv-nav-bar-left">
+          <button class="hv-btn hv-btn-secondary" id="btn-prev" onclick="CW.prevStep()" style="display:none">
+            <i class="ti ti-arrow-left"></i> Quay lại
+          </button>
+        </div>
+        <div class="hv-nav-bar-right">
+          <button class="hv-btn hv-btn-primary" id="btn-next" onclick="CW.nextStep()">
+            Tiếp theo <i class="ti ti-arrow-right"></i>
+          </button>
+          <button class="hv-btn hv-btn-primary hv-btn-lg" id="btn-finish" onclick="CW.finish()" style="display:none">
+            <i class="ti ti-check"></i> Hoàn tất
+          </button>
+        </div>
+      </div>
+
+    </div><!-- /.hv-content-max -->
+  </div><!-- /.hv-content -->
+
+  <!-- Loading overlay -->
+  <div class="hv-loading-overlay" id="loading-overlay">
+    <div class="hv-loading-box">
+      <div class="hv-spinner"></div>
+      <p class="text-body-strong" style="color:var(--hv-text-primary)">Đang xử lý...</p>
+      <p class="text-caption" style="color:var(--hv-text-secondary)">Vui lòng không đóng trang</p>
+    </div>
+  </div>
+
+  <!-- Toast container -->
+  <div id="toast-container" style="position:fixed;top:16px;right:16px;z-index:2000;display:flex;flex-direction:column;gap:8px"></div>
+
+  <script src="assets/js/app-shell.js"></script>
+  <script>
+    /* ============================================
+       Correction Wizard — Logic
+       ============================================ */
+
+    const CW = {
+      currentStep: 1,
+      totalSteps: 5,
+      selections: {
+        errorType: null,
+        cqtStatus: null,
+        method: null, // 'adjust' or 'replace'
+      },
+
+      // Edit field definitions per error type
+      editFields: {
+        'wrong-tax-id': [
+          { key: 'buyerTaxId', label: 'MST khách', orig: '9876543210' },
+        ],
+        'wrong-address': [
+          { key: 'buyerAddress', label: 'Địa chỉ khách', orig: '456 Lê Lợi, Q.3, TP.HCM' },
+        ],
+        'amount-increase': [
+          { key: 'totalAmount', label: 'Tổng tiền', orig: '12.500.000đ' },
+          { key: 'taxAmount', label: 'Tiền thuế', orig: '1.250.000đ' },
+        ],
+        'amount-decrease': [
+          { key: 'totalAmount', label: 'Tổng tiền', orig: '12.500.000đ' },
+          { key: 'taxAmount', label: 'Tiền thuế', orig: '1.250.000đ' },
+        ],
+        'wrong-product': [
+          { key: 'productName', label: 'Tên sản phẩm', orig: 'Gói dịch vụ Premium' },
+          { key: 'quantity', label: 'Số lượng', orig: '2' },
+          { key: 'unitPrice', label: 'Đơn giá', orig: '5.000.000đ' },
+        ],
+        'wrong-tax-rate': [
+          { key: 'taxRate', label: 'Thuế suất', orig: '10%' },
+        ],
+        'return-goods': [
+          { key: 'returnQty', label: 'Số lượng trả', orig: '—' },
+          { key: 'returnAmount', label: 'Giá trị trả', orig: '—' },
+        ],
+        'other': [
+          { key: 'description', label: 'Mô tả sai sót', orig: '—' },
+        ],
+      },
+
+      // Recommendation data
+      recommendations: {
+        'wrong-tax-id': {
+          badge: 'Điều chỉnh',
+          badgeType: 'adjust',
+          title: 'Điều chỉnh thông tin',
+          reason: 'Sai thông tin người mua, tổng tiền không thay đổi → Điều chỉnh theo NĐ 70/2025 §7',
+          method: 'adjust',
+        },
+        'wrong-address': {
+          badge: 'Điều chỉnh',
+          badgeType: 'adjust',
+          title: 'Điều chỉnh thông tin',
+          reason: 'Sai thông tin người mua, tổng tiền không thay đổi → Điều chỉnh theo NĐ 70/2025 §7',
+          method: 'adjust',
+        },
+        'amount-increase': {
+          badge: 'Điều chỉnh',
+          badgeType: 'adjust',
+          title: 'Điều chỉnh tăng',
+          reason: 'Tăng tổng tiền hóa đơn → Cần lập biên bản điều chỉnh tăng theo TT 32/2025 §3',
+          method: 'adjust',
+        },
+        'amount-decrease': {
+          badge: 'Điều chỉnh',
+          badgeType: 'adjust',
+          title: 'Điều chỉnh giảm',
+          reason: 'Giảm tổng tiền hóa đơn → Cần lập biên bản điều chỉnh giảm theo TT 32/2025 §3',
+          method: 'adjust',
+        },
+        'wrong-product': {
+          badge: 'Điều chỉnh',
+          badgeType: 'adjust',
+          title: 'Điều chỉnh thông tin',
+          reason: 'Sai thông tin hàng hóa/dịch vụ → Điều chỉnh theo NĐ 70/2025 §7, tổng tiền có thể thay đổi',
+          method: 'adjust',
+        },
+        'wrong-tax-rate': {
+          badge: 'Điều chỉnh',
+          badgeType: 'adjust',
+          title: 'Điều chỉnh thuế suất',
+          reason: 'Sai thuế suất VAT → Điều chỉnh thuế suất và tổng tiền theo TT 32/2025 §3',
+          method: 'adjust',
+        },
+        'return-goods': {
+          badge: 'Thay thế',
+          badgeType: 'replace',
+          title: 'Thay thế hóa đơn',
+          reason: 'Khách trả hàng, thay đổi toàn bộ nội dung → Tạo hóa đơn mới thay thế theo NĐ 70/2025 §7',
+          method: 'replace',
+        },
+        'other': {
+          badge: 'Điều chỉnh',
+          badgeType: 'adjust',
+          title: 'Điều chỉnh thông tin',
+          reason: 'Sai sót thông tin chung → Điều chỉnh theo NĐ 70/2025 §7',
+          method: 'adjust',
+        },
+      },
+
+      init() {
+        this.bindRadioCards();
+        this.bindBinaryCards();
+        this.bindSignOptions();
+        this.bindOTPDigits();
+        this.bindStepperClicks();
+      },
+
+      // Radio card selection
+      bindRadioCards() {
+        document.querySelectorAll('.hv-radio-card').forEach(card => {
+          const radio = card.querySelector('input[type="radio"]');
+          if (!radio) return;
+          card.addEventListener('click', () => {
+            const group = card.closest('.hv-radio-grid') || card.closest('[role="radiogroup"]');
+            if (group) {
+              group.querySelectorAll('.hv-radio-card').forEach(c => {
+                c.classList.remove('hv-radio-card-selected');
+                c.querySelector('input').checked = false;
+              });
+            }
+            card.classList.add('hv-radio-card-selected');
+            radio.checked = true;
+            radio.dispatchEvent(new Event('change'));
+          });
+          card.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); card.click(); }
+          });
+        });
+      },
+
+      // Binary card selection
+      bindBinaryCards() {
+        document.querySelectorAll('.hv-binary-card').forEach(card => {
+          const radio = card.querySelector('input[type="radio"]');
+          if (!radio) return;
+          card.addEventListener('click', () => {
+            document.querySelectorAll('.hv-binary-card').forEach(c => {
+              c.classList.remove('hv-binary-card-selected');
+              c.querySelector('input').checked = false;
+            });
+            card.classList.add('hv-binary-card-selected');
+            radio.checked = true;
+            radio.dispatchEvent(new Event('change'));
+          });
+          card.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); card.click(); }
+          });
+        });
+      },
+
+      // Sign options
+      bindSignOptions() {
+        document.querySelectorAll('.hv-sign-option').forEach(opt => {
+          opt.addEventListener('click', () => {
+            document.querySelectorAll('.hv-sign-option').forEach(o => {
+              o.classList.remove('hv-sign-option-selected');
+              o.querySelector('input').checked = false;
+            });
+            opt.classList.add('hv-sign-option-selected');
+            opt.querySelector('input').checked = true;
+            const val = opt.querySelector('input').value;
+            document.getElementById('otp-section').classList.toggle('hv-hidden', val !== 'otp');
+            document.getElementById('draft-section').classList.toggle('hv-hidden', val !== 'draft');
+          });
+          opt.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); opt.click(); }
+          });
+        });
+      },
+
+      // OTP digit auto-advance
+      bindOTPDigits() {
+        const inputs = document.querySelectorAll('.hv-otp-input');
+        inputs.forEach((input, i) => {
+          input.addEventListener('input', (e) => {
+            const val = e.target.value.replace(/[^0-9]/g, '');
+            e.target.value = val;
+            if (val && i < inputs.length - 1) inputs[i + 1].focus();
+          });
+          input.addEventListener('keydown', (e) => {
+            if (e.key === 'Backspace' && !e.target.value && i > 0) inputs[i - 1].focus();
+          });
+          input.addEventListener('paste', (e) => {
+            e.preventDefault();
+            const text = (e.clipboardData.getData('text') || '').replace(/[^0-9]/g, '').slice(0, 6);
+            text.split('').forEach((ch, j) => { if (inputs[j]) inputs[j].value = ch; });
+            if (inputs[text.length]) inputs[text.length].focus();
+          });
+        });
+      },
+
+      // Stepper click navigation
+      bindStepperClicks() {
+        document.querySelectorAll('.hv-stepper-wizard .hv-step').forEach(step => {
+          step.addEventListener('click', () => {
+            const target = parseInt(step.dataset.step);
+            if (target < this.currentStep) this.goToStep(target);
+          });
+          step.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); step.click(); }
+          });
+        });
+      },
+
+      // Step navigation
+      goToStep(n) {
+        if (n < 1 || n > this.totalSteps) return;
+
+        // Validate before advancing
+        if (n > this.currentStep) {
+          if (!this.validateStep(this.currentStep)) return;
+        }
+
+        this.currentStep = n;
+        this.updateUI();
+      },
+
+      nextStep() {
+        if (!this.validateStep(this.currentStep)) return;
+        if (this.currentStep < this.totalSteps) {
+          this.currentStep++;
+          this.updateUI();
+        }
+      },
+
+      prevStep() {
+        if (this.currentStep > 1) {
+          this.currentStep--;
+          this.updateUI();
+        }
+      },
+
+      validateStep(n) {
+        if (n === 1) {
+          const selected = document.querySelector('input[name="error-type"]:checked');
+          if (!selected) {
+            this.showToast('Vui lòng chọn loại sai sót', 'warning');
+            return false;
+          }
+          this.selections.errorType = selected.value;
+        }
+        if (n === 2) {
+          const selected = document.querySelector('input[name="cqt-status"]:checked');
+          if (!selected) {
+            this.showToast('Vui lòng chọn trạng thái CQT', 'warning');
+            return false;
+          }
+          this.selections.cqtStatus = selected.value;
+        }
+        if (n === 3) {
+          // Determine method
+          const alt = document.querySelector('input[name="alt-method"]:checked');
+          if (alt) {
+            this.selections.method = alt.value;
+          } else if (this.selections.method === null) {
+            const rec = this.recommendations[this.selections.errorType];
+            if (rec) this.selections.method = rec.method;
+          }
+        }
+        return true;
+      },
+
+      updateUI() {
+        const step = this.currentStep;
+
+        // Update stepper
+        document.querySelectorAll('.hv-stepper-wizard .hv-step').forEach(el => {
+          const s = parseInt(el.dataset.step);
+          el.classList.remove('hv-step-active', 'hv-step-done');
+          el.setAttribute('aria-selected', 'false');
+          el.setAttribute('tabindex', '-1');
+          if (s === step) {
+            el.classList.add('hv-step-active');
+            el.setAttribute('aria-selected', 'true');
+            el.setAttribute('tabindex', '0');
+          } else if (s < step) {
+            el.classList.add('hv-step-done');
+          }
+        });
+
+        // Update step lines
+        const lines = document.querySelectorAll('.hv-stepper-wizard .hv-step-line');
+        lines.forEach((line, i) => {
+          line.style.background = (i < step - 1) ? 'var(--hv-success)' : 'var(--hv-border)';
+        });
+
+        // Show/hide panels
+        document.querySelectorAll('.hv-step-panel').forEach(p => p.classList.remove('hv-step-panel-active'));
+        const panel = document.getElementById('step-' + step);
+        if (panel) panel.classList.add('hv-step-panel-active');
+
+        // Update nav buttons
+        document.getElementById('btn-prev').style.display = step > 1 ? 'inline-flex' : 'none';
+        document.getElementById('btn-next').style.display = step < this.totalSteps ? 'inline-flex' : 'none';
+        document.getElementById('btn-finish').style.display = step === this.totalSteps ? 'inline-flex' : 'none';
+
+        // Step-specific updates
+        if (step === 3) this.renderRecommendation();
+        if (step === 4) this.renderEditForm();
+
+        // Scroll to top of content
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      },
+
+      renderRecommendation() {
+        const type = this.selections.errorType;
+        const rec = this.recommendations[type];
+        if (!rec) return;
+
+        const badge = document.getElementById('rec-badge');
+        badge.textContent = rec.badge;
+        badge.className = 'hv-rec-badge hv-rec-badge-' + rec.badgeType;
+
+        document.getElementById('rec-title').textContent = rec.title;
+        document.getElementById('rec-reason').textContent = rec.reason;
+        this.selections.method = rec.method;
+
+        // Hide alternatives
+        document.getElementById('rec-alternatives').classList.add('hv-hidden');
+      },
+
+      acceptRecommendation() {
+        this.nextStep();
+      },
+
+      showAlternativeOptions() {
+        document.getElementById('rec-alternatives').classList.toggle('hv-hidden');
+      },
+
+      renderEditForm() {
+        const type = this.selections.errorType;
+        const method = this.selections.method;
+        const tbody = document.getElementById('edit-rows');
+        const fields = this.editFields[type] || [];
+
+        if (method === 'replace') {
+          document.getElementById('step4-adjust').classList.add('hv-hidden');
+          document.getElementById('step4-replace').classList.remove('hv-hidden');
+          return;
+        }
+
+        document.getElementById('step4-adjust').classList.remove('hv-hidden');
+        document.getElementById('step4-replace').classList.add('hv-hidden');
+
+        let html = '';
+        fields.forEach(f => {
+          html += `
+            <tr>
+              <td><strong>${f.label}</strong></td>
+              <td><span class="hv-edit-original">${f.orig}</span></td>
+              <td class="hv-edit-arrow"><i class="ti ti-arrow-right"></i></td>
+              <td class="hv-edit-new">
+                <input type="text" class="hv-input" placeholder="Nhập giá trị mới" data-field="${f.key}" aria-label="${f.label} (mới)">
+              </td>
+            </tr>`;
+        });
+        tbody.innerHTML = html;
+      },
+
+      // Send OTP
+      sendOTP() {
+        const contact = document.getElementById('otp-contact').value.trim();
+        if (!contact) {
+          this.showToast('Vui lòng nhập email hoặc số điện thoại', 'warning');
+          return;
+        }
+
+        document.getElementById('otp-input-section').classList.remove('hv-hidden');
+        document.getElementById('btn-send-otp').disabled = true;
+        document.getElementById('btn-send-otp').innerHTML = '<i class="ti ti-check"></i> Đã gửi';
+        document.querySelector('.hv-otp-input').focus();
+
+        // Countdown
+        let sec = 60;
+        const el = document.getElementById('otp-countdown');
+        const timer = setInterval(() => {
+          sec--;
+          el.textContent = sec;
+          if (sec <= 0) clearInterval(timer);
+        }, 1000);
+      },
+
+      // Finish
+      finish() {
+        const overlay = document.getElementById('loading-overlay');
+        overlay.classList.add('hv-loading-overlay-active');
+
+        setTimeout(() => {
+          overlay.classList.remove('hv-loading-overlay-active');
+          this.showToast('Đã xử lý sai sót thành công', 'success');
+
+          setTimeout(() => {
+            window.location.href = 'invoice-detail.html';
+          }, 2000);
+        }, 2500);
+      },
+
+      // Toast
+      showToast(message, type = 'info') {
+        const container = document.getElementById('toast-container');
+        const icons = {
+          success: 'ti ti-circle-check',
+          warning: 'ti ti-alert-triangle',
+          error: 'ti ti-circle-x',
+          info: 'ti ti-info-circle',
+        };
+        const colors = {
+          success: 'var(--hv-success)',
+          warning: 'var(--hv-warning)',
+          error: 'var(--hv-danger)',
+          info: 'var(--hv-info)',
+        };
+
+        const toast = document.createElement('div');
+        toast.className = 'hv-toast';
+        toast.style.borderLeft = `4px solid ${colors[type]}`;
+        toast.innerHTML = `
+          <i class="${icons[type]}" style="font-size:20px;color:${colors[type]}"></i>
+          <span>${message}</span>
+        `;
+        container.appendChild(toast);
+
+        setTimeout(() => {
+          toast.style.transition = 'opacity 200ms ease';
+          toast.style.opacity = '0';
+          setTimeout(() => toast.remove(), 200);
+        }, 4000);
+      },
+    };
+
+    // Init on DOM ready
+    document.addEventListener('DOMContentLoaded', () => CW.init());
+  </script>
+
+</body>
+</html>

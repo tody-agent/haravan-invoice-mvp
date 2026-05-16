@@ -1,0 +1,1063 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>POS - Phát hành hóa đơn | Haravan Invoice</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <link rel="stylesheet" href="assets/css/design-system.css">
+  <script>window.HV_PAGE = { id: 'pos', title: 'POS - Phát hành hóa đơn' };</script>
+  <style>
+    /* === POS Tablet — Tablet-First Overrides === */
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--hv-bg-app);
+      overflow: hidden;
+      height: 100vh;
+    }
+
+    /* Simplified topbar — no sidebar offset */
+    .hv-topbar {
+      left: 0 !important;
+      padding: 0 16px;
+      gap: 12px;
+    }
+    .hv-topbar-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .hv-topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .pos-logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--hv-text-primary);
+      white-space: nowrap;
+    }
+    .pos-logo i { font-size: 26px; color: var(--hv-primary); }
+    .pos-register-badge {
+      display: inline-flex;
+      align-items: center;
+      height: 26px;
+      padding: 0 10px;
+      font-size: 12px;
+      font-weight: 600;
+      background: var(--hv-primary-soft);
+      color: var(--hv-primary);
+      border-radius: var(--hv-radius-pill);
+      white-space: nowrap;
+    }
+    .pos-staff-info {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--hv-text-secondary);
+      white-space: nowrap;
+    }
+    .pos-staff-info i { font-size: 16px; color: var(--hv-text-muted); }
+
+    /* Main grid */
+    .pos-main {
+      display: grid;
+      grid-template-columns: 1fr 360px;
+      gap: 0;
+      height: calc(100vh - 56px);
+      margin-top: 56px;
+    }
+
+    /* Left panel */
+    .pos-left {
+      overflow-y: auto;
+      padding: 16px;
+      background: var(--hv-bg-app);
+    }
+    .pos-left .hv-card {
+      padding: 20px;
+    }
+
+    /* Right panel */
+    .pos-right {
+      background: var(--hv-bg-surface);
+      border-left: 1px solid var(--hv-border);
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+    .pos-right-inner {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      flex: 1;
+    }
+
+    /* Order header */
+    .pos-order-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+    .pos-order-id {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--hv-text-primary);
+    }
+    .pos-order-time {
+      font-size: 12px;
+      color: var(--hv-text-muted);
+    }
+
+    /* Order meta */
+    .pos-order-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 16px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--hv-border-table);
+    }
+    .pos-meta-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: var(--hv-text-secondary);
+    }
+    .pos-meta-row i { font-size: 16px; width: 18px; text-align: center; }
+    .pos-meta-label { color: var(--hv-text-muted); min-width: 80px; }
+    .pos-meta-value { color: var(--hv-text-primary); font-weight: 500; }
+
+    /* Customer lookup input */
+    .pos-customer-input {
+      flex: 1;
+    }
+    .pos-customer-input .hv-input {
+      height: 40px;
+      font-size: 14px;
+    }
+
+    /* Items table — large touch rows */
+    .pos-items-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 16px;
+    }
+    .pos-items-table th {
+      text-align: left;
+      padding: 10px 12px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--hv-text-secondary);
+      background: var(--hv-bg-soft);
+      border-bottom: 1px solid var(--hv-border-table);
+      white-space: nowrap;
+    }
+    .pos-items-table th:last-child,
+    .pos-items-table td:last-child {
+      text-align: right;
+    }
+    .pos-items-table td {
+      padding: 14px 12px;
+      font-size: 14px;
+      border-bottom: 1px solid var(--hv-border-table);
+      color: var(--hv-text-primary);
+      vertical-align: middle;
+    }
+    .pos-items-table tr:last-child td { border-bottom: none; }
+    .pos-item-name {
+      font-weight: 500;
+    }
+    .pos-item-qty {
+      font-weight: 600;
+      color: var(--hv-primary);
+    }
+
+    /* Order summary */
+    .pos-summary {
+      border-top: 2px solid var(--hv-border);
+      padding-top: 12px;
+    }
+    .pos-summary-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 0;
+      font-size: 14px;
+      color: var(--hv-text-secondary);
+    }
+    .pos-summary-row span:last-child {
+      font-weight: 500;
+      color: var(--hv-text-primary);
+    }
+    .pos-summary-total {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0 0;
+      margin-top: 8px;
+      border-top: 2px solid var(--hv-border-strong);
+    }
+    .pos-summary-total .label {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--hv-text-primary);
+    }
+    .pos-summary-total .value {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--hv-primary);
+    }
+
+    /* Payment badge */
+    .pos-payment-badge {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px;
+      margin-top: 12px;
+      background: var(--hv-success-soft);
+      border-radius: var(--hv-radius-md);
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--hv-success);
+    }
+    .pos-payment-badge i { font-size: 20px; }
+
+    /* === Right Panel: Invoice Action === */
+    .pos-invoice-card {
+      background: var(--hv-bg-surface);
+      border: 1px solid var(--hv-border);
+      border-radius: var(--hv-radius-lg);
+      padding: 16px;
+    }
+    .pos-invoice-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--hv-text-primary);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .pos-invoice-title i {
+      font-size: 20px;
+      color: var(--hv-primary);
+    }
+
+    /* Toggle switch */
+    .pos-toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px;
+      background: var(--hv-bg-soft);
+      border-radius: var(--hv-radius-md);
+      margin-bottom: 16px;
+    }
+    .pos-toggle-label {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--hv-text-primary);
+    }
+    .pos-switch {
+      position: relative;
+      width: 52px;
+      height: 28px;
+      cursor: pointer;
+    }
+    .pos-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+      position: absolute;
+    }
+    .pos-switch-track {
+      position: absolute;
+      inset: 0;
+      background: var(--hv-border-strong);
+      border-radius: 14px;
+      transition: background 200ms ease;
+    }
+    .pos-switch input:checked + .pos-switch-track {
+      background: var(--hv-primary);
+    }
+    .pos-switch-thumb {
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 22px;
+      height: 22px;
+      background: white;
+      border-radius: 50%;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+      transition: transform 200ms ease;
+    }
+    .pos-switch input:checked ~ .pos-switch-thumb {
+      transform: translateX(24px);
+    }
+
+    /* Invoice form */
+    .pos-invoice-form {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .pos-form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .pos-form-group label {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--hv-text-secondary);
+    }
+    .pos-form-group .hv-input {
+      height: 44px;
+      font-size: 14px;
+    }
+    .pos-mst-row {
+      display: flex;
+      gap: 8px;
+    }
+    .pos-mst-row .hv-input {
+      flex: 1;
+    }
+    .pos-mst-lookup {
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--hv-border);
+      border-radius: var(--hv-radius-md);
+      background: var(--hv-bg-surface);
+      cursor: pointer;
+      color: var(--hv-text-secondary);
+      font-size: 20px;
+      transition: all 150ms ease;
+      flex-shrink: 0;
+    }
+    .pos-mst-lookup:hover {
+      border-color: var(--hv-primary);
+      color: var(--hv-primary);
+      background: var(--hv-primary-soft);
+    }
+    .pos-mst-valid {
+      position: absolute;
+      right: 60px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--hv-success);
+      font-size: 18px;
+      pointer-events: none;
+    }
+
+    /* Zalo checkbox */
+    .pos-zalo-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      background: var(--hv-bg-soft);
+      border-radius: var(--hv-radius-md);
+      cursor: pointer;
+    }
+    .pos-zalo-row input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      accent-color: var(--hv-primary);
+      cursor: pointer;
+    }
+    .pos-zalo-row span {
+      font-size: 13px;
+      color: var(--hv-text-primary);
+      font-weight: 500;
+    }
+    .pos-zalo-row i {
+      color: #0068ff;
+      font-size: 18px;
+    }
+
+    /* Action button */
+    .pos-action-btn {
+      width: 100%;
+      height: 56px;
+      font-size: 16px;
+      font-weight: 600;
+      border-radius: var(--hv-radius-md);
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: all 200ms ease;
+      font-family: inherit;
+      margin-top: 8px;
+    }
+    .pos-action-btn:focus-visible {
+      outline: 2px solid var(--hv-border-focus);
+      outline-offset: 2px;
+    }
+    .pos-action-btn-primary {
+      background: var(--hv-primary);
+      color: white;
+    }
+    .pos-action-btn-primary:hover {
+      background: var(--hv-primary-hover);
+    }
+    .pos-action-btn-primary:active {
+      background: var(--hv-primary-active);
+    }
+    .pos-action-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+    .pos-action-btn i { font-size: 22px; }
+
+    /* Processing state */
+    .pos-processing {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 16px;
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--hv-primary);
+    }
+    .pos-spinner {
+      width: 22px;
+      height: 22px;
+      border: 3px solid var(--hv-primary-soft);
+      border-top-color: var(--hv-primary);
+      border-radius: 50%;
+      animation: spin 700ms linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Status section */
+    .pos-status {
+      display: none;
+      flex-direction: column;
+      gap: 10px;
+      padding: 16px;
+      background: var(--hv-success-soft);
+      border-radius: var(--hv-radius-lg);
+      border: 1px solid rgba(22,163,74,0.2);
+    }
+    .pos-status-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--hv-text-primary);
+    }
+    .pos-status-item .check { color: var(--hv-success); font-size: 18px; }
+    .pos-status-item .icon { font-size: 18px; }
+    .pos-invoice-no {
+      font-family: var(--hv-font-mono);
+      font-size: 13px;
+      color: var(--hv-text-secondary);
+      margin-left: 4px;
+    }
+
+    /* Print button */
+    .pos-print-btn {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      height: 44px;
+      font-size: 14px;
+      font-weight: 500;
+      background: var(--hv-bg-surface);
+      color: var(--hv-text-primary);
+      border: 1px solid var(--hv-border-strong);
+      border-radius: var(--hv-radius-md);
+      cursor: pointer;
+      transition: all 150ms ease;
+      font-family: inherit;
+    }
+    .pos-print-btn:hover {
+      border-color: var(--hv-primary);
+      color: var(--hv-primary);
+    }
+    .pos-print-btn i { font-size: 18px; }
+
+    /* Error state */
+    .pos-error {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      padding: 20px;
+      background: var(--hv-danger-soft);
+      border-radius: var(--hv-radius-lg);
+      border: 1px solid rgba(239,68,68,0.2);
+      text-align: center;
+    }
+    .pos-error i {
+      font-size: 32px;
+      color: var(--hv-danger);
+    }
+    .pos-error-msg {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--hv-danger);
+    }
+    .pos-retry-btn {
+      height: 40px;
+      padding: 0 20px;
+      font-size: 14px;
+      font-weight: 500;
+      background: var(--hv-danger);
+      color: white;
+      border: none;
+      border-radius: var(--hv-radius-md);
+      cursor: pointer;
+      font-family: inherit;
+      transition: background 150ms ease;
+    }
+    .pos-retry-btn:hover { background: var(--hv-danger-hover); }
+
+    /* Quick actions */
+    .pos-quick-actions {
+      display: flex;
+      gap: 8px;
+      padding: 12px 16px;
+      border-top: 1px solid var(--hv-border);
+      background: var(--hv-bg-soft);
+    }
+    .pos-quick-btn {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      height: 48px;
+      font-size: 13px;
+      font-weight: 500;
+      background: var(--hv-bg-surface);
+      color: var(--hv-text-secondary);
+      border: 1px solid var(--hv-border);
+      border-radius: var(--hv-radius-md);
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 150ms ease;
+    }
+    .pos-quick-btn:hover {
+      border-color: var(--hv-primary);
+      color: var(--hv-primary);
+      background: var(--hv-primary-soft);
+    }
+    .pos-quick-btn:active {
+      transform: scale(0.97);
+    }
+    .pos-quick-btn i { font-size: 20px; }
+
+    /* Responsive — smaller tablets / portrait */
+    @media (max-width: 860px) {
+      .pos-main {
+        grid-template-columns: 1fr;
+        grid-template-rows: 1fr auto;
+      }
+      .pos-right {
+        border-left: none;
+        border-top: 1px solid var(--hv-border);
+        max-height: 50vh;
+      }
+      .pos-staff-name { display: none; }
+      .pos-left { padding: 12px; }
+      .pos-items-table td { padding: 12px 8px; font-size: 13px; }
+      .pos-action-btn { height: 52px; }
+      .pos-form-group .hv-input { height: 48px; font-size: 16px; }
+    }
+
+    @media (max-width: 480px) {
+      .pos-items-table { min-width: 500px; }
+      .pos-left { overflow-x: auto; }
+      .pos-summary-total .value { font-size: 20px; }
+    }
+
+    /* Hide sidebar & menu toggle on POS page */
+    .hv-sidebar,
+    .hv-sidebar-toggle {
+      display: none !important;
+    }
+
+    /* State demo override for POS */
+    .hv-state-tog {
+      position: fixed;
+      bottom: 16px;
+      right: 16px;
+      z-index: 9999;
+      display: flex;
+      gap: 4px;
+      background: var(--hv-bg-surface);
+      border: 1px solid var(--hv-border);
+      border-radius: var(--hv-radius-lg);
+      padding: 4px;
+      box-shadow: var(--hv-shadow-md);
+    }
+    .hv-state-tog button {
+      padding: 4px 10px;
+      font-size: 11px;
+      font-weight: 500;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 150ms;
+      background: transparent;
+      color: var(--hv-text-secondary);
+    }
+    .hv-state-tog button.active {
+      background: var(--hv-primary);
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <script src="assets/js/app-shell.js"></script>
+
+  <!-- ===== TOPBAR (simplified) ===== -->
+  <div class="hv-topbar">
+    <div class="hv-topbar-left">
+      <div class="pos-logo">
+        <i class="ti ti-device-tablet"></i>
+        <span>Haravan POS</span>
+      </div>
+      <span class="pos-register-badge">Quầy 01</span>
+    </div>
+    <div class="hv-topbar-right">
+      <span class="pos-staff-info">
+        <span class="pos-staff-name">Nguyễn Văn A (Thu ngân)</span>
+        <i class="ti ti-clock"></i>
+      </span>
+    </div>
+  </div>
+
+  <!-- ===== MAIN GRID ===== -->
+  <div class="pos-main">
+
+    <!-- LEFT: Order Summary -->
+    <div class="pos-left">
+      <div class="hv-card">
+        <div class="pos-order-header">
+          <span class="pos-order-id">Đơn hàng #ORD-20260515-001</span>
+          <span class="hv-badge hv-badge-success">Đã thanh toán</span>
+        </div>
+
+        <div class="pos-order-meta">
+          <div class="pos-meta-row">
+            <i class="ti ti-clock"></i>
+            <span class="pos-meta-label">Thời gian</span>
+            <span class="pos-meta-value">15/05/2026 09:30</span>
+          </div>
+          <div class="pos-meta-row">
+            <i class="ti ti-user"></i>
+            <span class="pos-meta-label">Khách hàng</span>
+            <div class="pos-customer-input">
+              <input type="text" class="hv-input" placeholder="Tìm khách hàng..." aria-label="Tìm khách hàng" value="Khách lẻ">
+            </div>
+          </div>
+          <div class="pos-meta-row">
+            <i class="ti ti-id-badge"></i>
+            <span class="pos-meta-label">Thu ngân</span>
+            <span class="pos-meta-value">Nguyễn Văn A</span>
+          </div>
+        </div>
+
+        <!-- Items table -->
+        <table class="pos-items-table" role="table" aria-label="Chi tiết đơn hàng">
+          <thead>
+            <tr>
+              <th scope="col">Tên hàng</th>
+              <th scope="col" style="width:60px;text-align:center">SL</th>
+              <th scope="col" style="width:100px;text-align:right">Đơn giá</th>
+              <th scope="col" style="width:110px">Thành tiền</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="pos-item-name">Cà phê sữa đá</td>
+              <td class="pos-item-qty" style="text-align:center">2</td>
+              <td style="text-align:right">35.000đ</td>
+              <td style="text-align:right;font-weight:500">70.000đ</td>
+            </tr>
+            <tr>
+              <td class="pos-item-name">Bánh mì thịt nướng</td>
+              <td class="pos-item-qty" style="text-align:center">1</td>
+              <td style="text-align:right">25.000đ</td>
+              <td style="text-align:right;font-weight:500">25.000đ</td>
+            </tr>
+            <tr>
+              <td class="pos-item-name">Trà đào cam sả</td>
+              <td class="pos-item-qty" style="text-align:center">1</td>
+              <td style="text-align:right">45.000đ</td>
+              <td style="text-align:right;font-weight:500">45.000đ</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- Summary -->
+        <div class="pos-summary">
+          <div class="pos-summary-row">
+            <span>Tiền hàng</span>
+            <span>140.000đ</span>
+          </div>
+          <div class="pos-summary-row">
+            <span>Thuế (8%)</span>
+            <span>11.200đ</span>
+          </div>
+          <div class="pos-summary-total">
+            <span class="label">Tổng cộng</span>
+            <span class="value">151.200đ</span>
+          </div>
+        </div>
+
+        <div class="pos-payment-badge" aria-label="Trạng thái thanh toán: Đã thanh toán">
+          <i class="ti ti-circle-check-filled"></i>
+          Đã thanh toán
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Invoice Action Panel -->
+    <div class="pos-right">
+      <div class="pos-right-inner">
+
+        <!-- Invoice card -->
+        <div class="pos-invoice-card">
+          <div class="pos-invoice-title">
+            <i class="ti ti-receipt"></i>
+            Phát hành hóa đơn
+          </div>
+
+          <!-- Toggle -->
+          <div class="pos-toggle-row">
+            <span class="pos-toggle-label">Xuất hóa đơn</span>
+            <label class="pos-switch" aria-label="Bật/tắt xuất hóa đơn">
+              <input type="checkbox" id="invoiceToggle" checked>
+              <span class="pos-switch-track"></span>
+              <span class="pos-switch-thumb"></span>
+            </label>
+          </div>
+
+          <!-- Invoice form -->
+          <div class="pos-invoice-form" id="invoiceForm">
+            <div class="pos-form-group" style="position:relative">
+              <label for="mstInput">MST khách hàng</label>
+              <div class="pos-mst-row">
+                <input type="text" id="mstInput" class="hv-input" placeholder="Nhập MST hoặc quét QR" aria-label="Mã số thuế khách hàng" inputmode="numeric">
+                <button class="pos-mst-lookup" aria-label="Tra cứu MST" title="Tra cứu MST">
+                  <i class="ti ti-search"></i>
+                </button>
+              </div>
+              <i class="ti ti-circle-check-filled pos-mst-valid" id="mstValidIcon" style="display:none" aria-hidden="true"></i>
+            </div>
+
+            <div class="pos-form-group">
+              <label for="buyerName">Tên người mua</label>
+              <input type="text" id="buyerName" class="hv-input" placeholder="Tên người mua" aria-label="Tên người mua">
+            </div>
+
+            <div class="pos-form-group">
+              <label for="buyerAddress">Địa chỉ</label>
+              <input type="text" id="buyerAddress" class="hv-input" placeholder="Địa chỉ người mua" aria-label="Địa chỉ người mua">
+            </div>
+
+            <label class="pos-zalo-row">
+              <input type="checkbox" id="zaloCheck" checked>
+              <i class="ti ti-brand-zalo"></i>
+              <span>Gửi hóa đơn qua Zalo OA</span>
+            </label>
+          </div>
+
+          <!-- Main action button -->
+          <button class="pos-action-btn pos-action-btn-primary" id="actionBtn" aria-label="Thanh toán và phát hành hóa đơn">
+            <i class="ti ti-receipt"></i>
+            <i class="ti ti-check" style="font-size:16px;margin-left:-6px"></i>
+            Thanh toán + Phát hành
+          </button>
+
+          <!-- Processing state -->
+          <div class="pos-processing" id="processingState" role="status" aria-live="polite">
+            <div class="pos-spinner"></div>
+            Đang phát hành...
+          </div>
+
+          <!-- Success status -->
+          <div class="pos-status" id="successStatus" role="status" aria-live="polite">
+            <div class="pos-status-item">
+              <i class="ti ti-circle-check-filled check"></i>
+              Thanh toán thành công
+            </div>
+            <div class="pos-status-item">
+              <i class="ti ti-receipt check"></i>
+              Hóa đơn đã phát hành
+              <span class="pos-invoice-no">(2025/00001234)</span>
+            </div>
+            <div class="pos-status-item">
+              <i class="ti ti-brand-zalo icon" style="color:#0068ff"></i>
+              Đã gửi Zalo OA
+            </div>
+          </div>
+
+          <!-- Print button -->
+          <button class="pos-print-btn" id="printBtn" aria-label="In hóa đơn">
+            <i class="ti ti-printer"></i>
+            In hóa đơn
+          </button>
+
+          <!-- Error state -->
+          <div class="pos-error" id="errorState" role="alert">
+            <i class="ti ti-alert-triangle"></i>
+            <span class="pos-error-msg">Phát hành thất bại. Thử lại?</span>
+            <button class="pos-retry-btn" id="retryBtn">Thử lại</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick actions -->
+      <div class="pos-quick-actions">
+        <button class="pos-quick-btn" id="quickRetail" aria-label="Khách lẻ">
+          <i class="ti ti-user"></i>
+          Khách lẻ
+        </button>
+        <button class="pos-quick-btn" id="quickQR" aria-label="Quét QR MST">
+          <i class="ti ti-qrcode"></i>
+          Quét QR MST
+        </button>
+        <button class="pos-quick-btn" id="quickReprint" aria-label="In lại hóa đơn">
+          <i class="ti ti-printer"></i>
+          In lại
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // === POS Page Logic ===
+    (function() {
+      const toggle = document.getElementById('invoiceToggle');
+      const form = document.getElementById('invoiceForm');
+      const actionBtn = document.getElementById('actionBtn');
+      const processing = document.getElementById('processingState');
+      const success = document.getElementById('successStatus');
+      const printBtn = document.getElementById('printBtn');
+      const error = document.getElementById('errorState');
+      const retryBtn = document.getElementById('retryBtn');
+      const mstInput = document.getElementById('mstInput');
+      const mstValidIcon = document.getElementById('mstValidIcon');
+      const buyerName = document.getElementById('buyerName');
+      const buyerAddress = document.getElementById('buyerAddress');
+
+      // State management
+      const STATES = {
+        DEFAULT: 'default',
+        PROCESSING: 'processing',
+        SUCCESS: 'success',
+        ERROR: 'error',
+        NO_INVOICE: 'no_invoice'
+      };
+
+      let currentState = STATES.DEFAULT;
+
+      function setState(state) {
+        currentState = state;
+        // Reset all
+        actionBtn.style.display = 'none';
+        processing.style.display = 'none';
+        success.style.display = 'none';
+        printBtn.style.display = 'none';
+        error.style.display = 'none';
+
+        switch (state) {
+          case STATES.DEFAULT:
+            actionBtn.style.display = 'flex';
+            break;
+          case STATES.PROCESSING:
+            processing.style.display = 'flex';
+            break;
+          case STATES.SUCCESS:
+            success.style.display = 'flex';
+            printBtn.style.display = 'flex';
+            break;
+          case STATES.ERROR:
+            actionBtn.style.display = 'flex';
+            error.style.display = 'flex';
+            break;
+          case STATES.NO_INVOICE:
+            // No action button needed
+            break;
+        }
+      }
+
+      // Toggle invoice form
+      toggle.addEventListener('change', function() {
+        if (this.checked) {
+          form.style.display = 'flex';
+          setState(STATES.DEFAULT);
+        } else {
+          form.style.display = 'none';
+          setState(STATES.NO_INVOICE);
+        }
+      });
+
+      // Main action: Thanh toán + Phát hành
+      actionBtn.addEventListener('click', function() {
+        if (currentState === STATES.ERROR) {
+          // Retry from error
+        }
+        setState(STATES.PROCESSING);
+
+        // Simulate processing
+        setTimeout(() => {
+          // 80% success, 20% error for demo
+          const urlParams = new URLSearchParams(window.location.search);
+          const forceState = urlParams.get('state');
+
+          if (forceState === 'error') {
+            setState(STATES.ERROR);
+          } else {
+            setState(STATES.SUCCESS);
+          }
+        }, 2000);
+      });
+
+      // Retry
+      retryBtn.addEventListener('click', function() {
+        setState(STATES.DEFAULT);
+        actionBtn.click();
+      });
+
+      // MST lookup simulation
+      document.querySelector('.pos-mst-lookup').addEventListener('click', function() {
+        const mst = mstInput.value.trim();
+        if (mst.length >= 10) {
+          mstValidIcon.style.display = 'block';
+          mstInput.style.borderColor = 'var(--hv-success)';
+          // Auto-fill demo
+          if (!buyerName.value) {
+            buyerName.value = 'Công ty TNHH ABC';
+            buyerAddress.value = '123 Nguyễn Huệ, Q.1, TP.HCM';
+          }
+        }
+      });
+
+      // MST input validation
+      mstInput.addEventListener('input', function() {
+        if (this.value.trim().length >= 10) {
+          mstValidIcon.style.display = 'block';
+          this.style.borderColor = 'var(--hv-success)';
+        } else {
+          mstValidIcon.style.display = 'none';
+          this.style.borderColor = '';
+        }
+      });
+
+      // Quick actions
+      document.getElementById('quickRetail').addEventListener('click', function() {
+        buyerName.value = 'Khách lẻ';
+        buyerAddress.value = '';
+        mstInput.value = '';
+        mstValidIcon.style.display = 'none';
+        mstInput.style.borderColor = '';
+      });
+
+      document.getElementById('quickQR').addEventListener('click', function() {
+        // Simulate QR scan
+        mstInput.value = '0123456789';
+        mstInput.dispatchEvent(new Event('input'));
+        document.querySelector('.pos-mst-lookup').click();
+      });
+
+      document.getElementById('quickReprint').addEventListener('click', function() {
+        if (currentState === STATES.SUCCESS) {
+          alert('Đang in lại hóa đơn 2025/00001234...');
+        } else {
+          HV.toast('Chưa có hóa đơn để in lại.', 'warning');
+        }
+      });
+
+      // Print button
+      printBtn.addEventListener('click', function() {
+        HV.toast('Đang in hóa đơn 2025/00001234...', 'info');
+      });
+
+      // State demo toggle — override app-shell
+      document.addEventListener('DOMContentLoaded', function() {
+        // Remove app-shell state toggle
+        const existing = document.querySelector('.hv-state-tog');
+        if (existing) existing.remove();
+
+        // Create POS-specific state toggle
+        const states = ['default', 'processing', 'success', 'error', 'no_invoice'];
+        const tog = document.createElement('div');
+        tog.className = 'hv-state-tog';
+        states.forEach(s => {
+          const btn = document.createElement('button');
+          btn.textContent = s.replace('_', ' ');
+          btn.className = s === 'default' ? 'active' : '';
+          btn.addEventListener('click', () => {
+            tog.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            switch (s) {
+              case 'default':
+                toggle.checked = true;
+                toggle.dispatchEvent(new Event('change'));
+                setState(STATES.DEFAULT);
+                break;
+              case 'processing':
+                toggle.checked = true;
+                toggle.dispatchEvent(new Event('change'));
+                setState(STATES.PROCESSING);
+                break;
+              case 'success':
+                toggle.checked = true;
+                toggle.dispatchEvent(new Event('change'));
+                setState(STATES.SUCCESS);
+                break;
+              case 'error':
+                toggle.checked = true;
+                toggle.dispatchEvent(new Event('change'));
+                setState(STATES.ERROR);
+                break;
+              case 'no_invoice':
+                toggle.checked = false;
+                toggle.dispatchEvent(new Event('change'));
+                break;
+            }
+          });
+          tog.appendChild(btn);
+        });
+        document.body.appendChild(tog);
+      });
+
+      // Init default state
+      setState(STATES.DEFAULT);
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>States Library — Haravan Invoice</title>
+  <link rel="stylesheet" href="assets/css/design-system.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script>window.HV_PAGE = { id: 'states-library', title: 'States Library' };</script>
+  <style>
+    .pattern-section { margin-bottom: 32px; }
+    .pattern-title {
+      font-size: 16px; font-weight: 600; margin-bottom: 4px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .pattern-desc { font-size: 13px; color: var(--hv-text-secondary); margin-bottom: 16px; }
+    .pattern-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; }
+    .pattern-card {
+      background: var(--hv-bg-surface); border: 1px solid var(--hv-border);
+      border-radius: var(--hv-radius-lg); overflow: hidden;
+    }
+    .pattern-card-header {
+      padding: 10px 14px; background: var(--hv-bg-soft);
+      border-bottom: 1px solid var(--hv-border);
+      display: flex; align-items: center; justify-content: space-between;
+      font-size: 12px; font-weight: 600; color: var(--hv-text-muted);
+    }
+    .pattern-card-body { padding: 20px; }
+    .toc { position: sticky; top: 80px; }
+    .toc a {
+      display: block; padding: 4px 0; font-size: 13px;
+      color: var(--hv-text-secondary); text-decoration: none;
+    }
+    .toc a:hover { color: var(--hv-primary); }
+  </style>
+</head>
+<body>
+  <a href="#main" class="hv-skip-link">Bỏ qua đến nội dung</a>
+  <aside class="hv-sidebar" aria-label="Điều hướng chính"></aside>
+  <header class="hv-topbar" aria-label="Thanh công cụ"></header>
+
+  <main class="hv-content" id="main">
+    <div class="hv-content-max">
+      <div class="hv-content-header">
+        <div>
+          <h1>States &amp; Patterns Library</h1>
+          <p style="font-size:13px;color:var(--hv-text-secondary);margin-top:4px">Thư viện trạng thái UI — copy HTML để sử dụng trong các trang prototype</p>
+        </div>
+      </div>
+
+      <div class="hv-grid-sidebar" style="display:grid;gap:24px">
+        <!-- TOC -->
+        <div>
+          <nav class="toc">
+            <a href="#loading">Loading States</a>
+            <a href="#empty">Empty States</a>
+            <a href="#error">Error States</a>
+            <a href="#success">Success States</a>
+            <a href="#skeleton">Skeleton Loaders</a>
+            <a href="#partial">Partial Success</a>
+            <a href="#pending">Pending / Progress</a>
+          </nav>
+        </div>
+
+        <!-- Content -->
+        <div>
+
+          <!-- 1. LOADING STATES -->
+          <div id="loading" class="pattern-section">
+            <div class="pattern-title"><i class="ti ti-loader-2" style="color:var(--hv-primary)"></i> Loading States</div>
+            <div class="pattern-desc">Spinner, button loading, full-page loading</div>
+            <div class="pattern-grid">
+              <div class="pattern-card">
+                <div class="pattern-card-header">Inline Button Loading</div>
+                <div class="pattern-card-body" style="display:flex;gap:8px">
+                  <button class="hv-btn hv-btn-primary" onclick="HV.btnLoading(this);setTimeout(()=>HV.btnLoading(this,false),2000)">
+                    <i class="ti ti-send"></i> Phát hành
+                  </button>
+                  <button class="hv-btn hv-btn-secondary" onclick="HV.btnLoading(this);setTimeout(()=>HV.btnLoading(this,false),2000)">
+                    Lưu bản nháp
+                  </button>
+                </div>
+              </div>
+              <div class="pattern-card">
+                <div class="pattern-card-header">Full Page Loading</div>
+                <div class="pattern-card-body" style="text-align:center;padding:32px">
+                  <div style="width:40px;height:40px;border:3px solid var(--hv-border);border-top-color:var(--hv-primary);border-radius:50%;animation:hv-spin 800ms linear infinite;margin:0 auto 16px"></div>
+                  <div style="font-size:14px;font-weight:500">Đang tải dữ liệu...</div>
+                  <div style="font-size:12px;color:var(--hv-text-muted);margin-top:4px">Vui lòng đợi trong giây lát</div>
+                </div>
+              </div>
+              <div class="pattern-card">
+                <div class="pattern-card-header">Inline Spinner</div>
+                <div class="pattern-card-body" style="display:flex;align-items:center;gap:12px">
+                  <div style="width:20px;height:20px;border:2px solid var(--hv-border);border-top-color:var(--hv-primary);border-radius:50%;animation:hv-spin 800ms linear infinite;flex-shrink:0"></div>
+                  <span style="font-size:13px;color:var(--hv-text-secondary)">Đang kiểm tra kết nối Hilo...</span>
+                </div>
+              </div>
+              <div class="pattern-card">
+                <div class="pattern-card-header">Overlay Loading</div>
+                <div class="pattern-card-body" style="position:relative;min-height:120px">
+                  <div style="opacity:0.3">
+                    <div style="height:14px;width:60%;background:var(--hv-bg-soft);border-radius:4px;margin-bottom:8px"></div>
+                    <div style="height:14px;width:80%;background:var(--hv-bg-soft);border-radius:4px;margin-bottom:8px"></div>
+                    <div style="height:14px;width:40%;background:var(--hv-bg-soft);border-radius:4px"></div>
+                  </div>
+                  <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(255,255,255,0.8)">
+                    <div style="width:28px;height:28px;border:3px solid var(--hv-border);border-top-color:var(--hv-primary);border-radius:50%;animation:hv-spin 800ms linear infinite;margin-bottom:8px"></div>
+                    <span style="font-size:12px;color:var(--hv-text-muted)">Đang phát hành...</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. EMPTY STATES -->
+          <div id="empty" class="pattern-section">
+            <div class="pattern-title"><i class="ti ti-inbox" style="color:var(--hv-warning)"></i> Empty States</div>
+            <div class="pattern-desc">Empty list, empty filter, empty search, empty notification</div>
+            <div class="pattern-grid">
+              <div class="pattern-card">
+                <div class="pattern-card-header">Empty List — New Tenant</div>
+                <div class="pattern-card-body">
+                  <div class="hv-empty">
+                    <div class="hv-empty-icon"><i class="ti ti-receipt-2"></i></div>
+                    <div class="hv-empty-title">Chưa có hóa đơn nào</div>
+                    <div class="hv-empty-desc">Bắt đầu bằng cách phát hành hóa đơn đầu tiên từ đơn hàng hoặc tạo mới.</div>
+                    <a href="invoice-issue.html" class="hv-btn hv-btn-primary"><i class="ti ti-zap"></i> Phát hành hóa đơn</a>
+                  </div>
+                </div>
+              </div>
+              <div class="pattern-card">
+                <div class="pattern-card-header">Empty Filter Result</div>
+                <div class="pattern-card-body">
+                  <div class="hv-empty">
+                    <div class="hv-empty-icon"><i class="ti ti-filter-off"></i></div>
+                    <div class="hv-empty-title">Không tìm thấy kết quả</div>
+                    <div class="hv-empty-desc">Thử thay đổi bộ lọc hoặc từ khóa tìm kiếm.</div>
+                    <button class="hv-btn hv-btn-secondary"><i class="ti ti-x"></i> Xóa bộ lọc</button>
+                  </div>
+                </div>
+              </div>
+              <div class="pattern-card">
+                <div class="pattern-card-header">Empty Notifications</div>
+                <div class="pattern-card-body">
+                  <div class="hv-empty">
+                    <div class="hv-empty-icon"><i class="ti ti-bell-off"></i></div>
+                    <div class="hv-empty-title">Bạn đã xử lý hết thông báo</div>
+                    <div class="hv-empty-desc">Tuyệt! Không có thông báo mới nào cần chú ý.</div>
+                  </div>
+                </div>
+              </div>
+              <div class="pattern-card">
+                <div class="pattern-card-header">Empty T-VAN Connection</div>
+                <div class="pattern-card-body">
+                  <div class="hv-empty">
+                    <div class="hv-empty-icon"><i class="ti ti-plug-off"></i></div>
+                    <div class="hv-empty-title">Chưa kết nối T-VAN</div>
+                    <div class="hv-empty-desc">Kết nối nhà cung cấp T-VAN để bắt đầu phát hành hóa đơn điện tử.</div>
+                    <button class="hv-btn hv-btn-primary"><i class="ti ti-plug-connected"></i> Kết nối ngay</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3. ERROR STATES -->
+          <div id="error" class="pattern-section">
+            <div class="pattern-title"><i class="ti ti-alert-triangle" style="color:var(--hv-danger)"></i> Error States</div>
+            <div class="pattern-desc">Inline error, field validation, CQT reject, network error</div>
+            <div class="pattern-grid">
+              <div class="pattern-card">
+                <div class="pattern-card-header">Inline Error Banner</div>
+                <div class="pattern-card-body">
+                  <div style="background:var(--hv-danger-soft);border:1px solid var(--hv-danger);border-radius:var(--hv-radius-lg);padding:12px 16px;display:flex;align-items:flex-start;gap:12px">
+                    <i class="ti ti-circle-x" style="color:var(--hv-danger);font-size:18px;flex-shrink:0;margin-top:1px"></i>
+                    <div style="flex:1">
+                      <div style="font-size:14px;font-weight:600;color:var(--hv-danger);margin-bottom:2px">Lỗi phát hành hóa đơn</div>
+                      <div style="font-size:13px;color:var(--hv-text-secondary)">Mã lỗi: <code style="font-family:var(--hv-font-mono);background:rgba(0,0,0,0.06);padding:1px 4px;border-radius:3px">TRX-4521</code> — MST người mua không hợp lệ. Kiểm tra lại MST 10 hoặc 13 chữ số.</div>
+                      <div style="margin-top:8px;display:flex;gap:8px">
+                        <button class="hv-btn hv-btn-sm hv-btn-danger-outline"><i class="ti ti-refresh"></i> Thử lại</button>
+                        <button class="hv-btn hv-btn-sm hv-btn-tertiary">Báo lỗi</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="pattern-card">
+                <div class="pattern-card-header">Field Validation Error</div>
+                <div class="pattern-card-body">
+                  <div style="margin-bottom:12px">
+                    <label class="hv-label">Mã số thuế</label>
+                    <input class="hv-input has-error" value="12345" style="border-color:var(--hv-danger)">
+                    <div class="hv-error-text"><i class="ti ti-alert-circle" style="font-size:14px"></i> MST phải có 10 hoặc 13 chữ số</div>
+                  </div>
+                  <div>
+                    <label class="hv-label">Email</label>
+                    <input class="hv-input has-error" value="abc" style="border-color:var(--hv-danger)">
+                    <div class="hv-error-text"><i class="ti ti-alert-circle" style="font-size:14px"></i> Email không hợp lệ</div>
+                  </div>
+                </div>
+              </div>
+              <div class="pattern-card">
+                <div class="pattern-card-header">CQT Rejection</div>
+                <div class="pattern-card-body">
+                  <div style="background:var(--hv-danger-soft);border:1px solid var(--hv-danger);border-radius:var(--hv-radius-lg);padding:16px;text-align:center">
+                    <div style="width:48px;height:48px;border-radius:50%;background:var(--hv-danger-soft);display:inline-flex;align-items:center;justify-content:center;margin-bottom:8px">
+                      <i class="ti ti-shield-x" style="font-size:24px;color:var(--hv-danger)"></i>
+                    </div>
+                    <div style="font-size:15px;font-weight:600;margin-bottom:4px">CQT từ chối</div>
+                    <div style="font-size:13px;color:var(--hv-text-secondary);margin-bottom:4px">Mã lỗi: <code style="font-family:var(--hv-font-mono)">M042</code></div>
+                    <div style="font-size:13px;color:var(--hv-text-secondary);margin-bottom:12px">Lý do: MST người mua không tồn tại trong hệ thống CQT</div>
+                    <button class="hv-btn hv-btn-sm hv-btn-danger"><i class="ti ti-wand"></i> Mở wizard xử lý</button>
+                  </div>
+                </div>
+              </div>
+              <div class="pattern-card">
+                <div class="pattern-card-header">Network Offline</div>
+                <div class="pattern-card-body">
+                  <div style="background:var(--hv-warning-soft);border:1px solid var(--hv-warning);border-radius:var(--hv-radius-lg);padding:12px 16px;display:flex;align-items:center;gap:12px">
+                    <i class="ti ti-wifi-off" style="color:var(--hv-warning);font-size:20px;flex-shrink:0"></i>
+                    <div style="flex:1">
+                      <div style="font-size:13px;font-weight:600">Mất kết nối mạng</div>
+                      <div style="font-size:12px;color:var(--hv-text-secondary)">Dữ liệu đã lưu cục bộ. Đang tự động kết nối lại...</div>
+                    </div>
+                    <div style="width:8px;height:8px;border-radius:50%;background:var(--hv-warning);animation:hv-pulse 1.5s infinite"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 4. SUCCESS STATES -->
+          <div id="success" class="pattern-section">
+            <div class="pattern-title"><i class="ti ti-circle-check" style="color:var(--hv-success)"></i> Success States</div>
+            <div class="pattern-desc">Toast, modal, inline confirmation</div>
+            <div class="pattern-grid">
+              <div class="pattern-card">
+                <div class="pattern-card-header">Toast Success</div>
+                <div class="pattern-card-body">
+                  <button class="hv-btn hv-btn-primary" onclick="HV.toast('Phát hành thành công HD-2026-0185!','success')">
+                    <i class="ti ti-check"></i> Show Toast
+                  </button>
+                  <button class="hv-btn hv-btn-secondary" onclick="HV.toast('CQT từ chối HD-2026-0130','danger')">
+                    Show Error Toast
+                  </button>
+                  <button class="hv-btn hv-btn-secondary" onclick="HV.toast('Cảnh báo: MST sắp hết hạn','warning')">
+                    Show Warning
+                  </button>
+                </div>
+              </div>
+              <div class="pattern-card">
+                <div class="pattern-card-header">Modal Success</div>
+                <div class="pattern-card-body">
+                  <button class="hv-btn hv-btn-primary" onclick="showSuccessModal()">
+                    <i class="ti ti-check"></i> Show Success Modal
+                  </button>
+                </div>
+              </div>
+              <div class="pattern-card">
+                <div class="pattern-card-header">Inline Confirmation</div>
+                <div class="pattern-card-body">
+                  <div style="background:var(--hv-success-soft);border:1px solid var(--hv-success);border-radius:var(--hv-radius-lg);padding:12px 16px;display:flex;align-items:center;gap:12px">
+                    <i class="ti ti-circle-check-filled" style="color:var(--hv-success);font-size:18px"></i>
+                    <div>
+                      <div style="font-size:14px;font-weight:500">Đã lưu cấu hình thành công</div>
+                      <div style="font-size:12px;color:var(--hv-text-secondary)">Thay đổi sẽ có hiệu lực sau 5 phút</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 5. SKELETON LOADERS -->
+          <div id="skeleton" class="pattern-section">
+            <div class="pattern-title"><i class="ti ti-layout-grid" style="color:var(--hv-info)"></i> Skeleton Loaders</div>
+            <div class="pattern-desc">KPI, table row, card, form input skeleton</div>
+            <div class="pattern-grid">
+              <div class="pattern-card">
+                <div class="pattern-card-header">KPI Card Skeleton</div>
+                <div class="pattern-card-body" style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+                  <div class="hv-skeleton hv-skeleton-kpi"></div>
+                  <div class="hv-skeleton hv-skeleton-kpi"></div>
+                </div>
+              </div>
+              <div class="pattern-card">
+                <div class="pattern-card-header">Table Row Skeleton</div>
+                <div class="pattern-card-body">
+                  <div class="hv-skeleton hv-skeleton-row" style="width:100%"></div>
+                  <div class="hv-skeleton hv-skeleton-row" style="width:100%"></div>
+                  <div class="hv-skeleton hv-skeleton-row" style="width:100%"></div>
+                  <div class="hv-skeleton hv-skeleton-row" style="width:100%"></div>
+                  <div class="hv-skeleton hv-skeleton-row" style="width:100%"></div>
+                </div>
+              </div>
+              <div class="pattern-card">
+                <div class="pattern-card-header">Text Skeleton</div>
+                <div class="pattern-card-body">
+                  <div class="hv-skeleton hv-skeleton-title"></div>
+                  <div class="hv-skeleton hv-skeleton-text" style="width:100%"></div>
+                  <div class="hv-skeleton hv-skeleton-text" style="width:90%"></div>
+                  <div class="hv-skeleton hv-skeleton-text" style="width:75%"></div>
+                  <div class="hv-skeleton hv-skeleton-text" style="width:60%"></div>
+                </div>
+              </div>
+              <div class="pattern-card">
+                <div class="pattern-card-header">Card Grid Skeleton</div>
+                <div class="pattern-card-body" style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+                  <div class="hv-skeleton hv-skeleton-card"></div>
+                  <div class="hv-skeleton hv-skeleton-card"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 6. PARTIAL SUCCESS -->
+          <div id="partial" class="pattern-section">
+            <div class="pattern-title"><i class="ti ti-alert-circle" style="color:var(--hv-warning)"></i> Partial Success</div>
+            <div class="pattern-desc">Bulk operations with mixed results</div>
+            <div class="pattern-grid">
+              <div class="pattern-card">
+                <div class="pattern-card-header">Bulk Issue — Partial</div>
+                <div class="pattern-card-body">
+                  <div style="background:var(--hv-warning-soft);border:1px solid var(--hv-warning);border-radius:var(--hv-radius-lg);padding:16px">
+                    <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+                      <i class="ti ti-alert-triangle" style="color:var(--hv-warning);font-size:20px"></i>
+                      <div>
+                        <div style="font-size:14px;font-weight:600">Phát hành batch: 28/30 thành công</div>
+                        <div style="font-size:12px;color:var(--hv-text-secondary)">2 hóa đơn bị lỗi cần xử lý</div>
+                      </div>
+                    </div>
+                    <div style="display:flex;gap:12px;font-size:13px;margin-bottom:12px">
+                      <span style="color:var(--hv-success)"><i class="ti ti-circle-check"></i> 28 thành công</span>
+                      <span style="color:var(--hv-danger)"><i class="ti ti-circle-x"></i> 2 lỗi</span>
+                    </div>
+                    <div class="hv-progress" style="margin-bottom:12px">
+                      <div class="hv-progress-bar success" style="width:93%"></div>
+                    </div>
+                    <div style="display:flex;gap:8px">
+                      <button class="hv-btn hv-btn-sm hv-btn-secondary">Xem 2 lỗi</button>
+                      <button class="hv-btn hv-btn-sm hv-btn-primary">Thử lại</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="pattern-card">
+                <div class="pattern-card-header">Email Delivery — Mixed</div>
+                <div class="pattern-card-body">
+                  <div style="background:var(--hv-info-soft);border:1px solid var(--hv-info);border-radius:var(--hv-radius-lg);padding:16px">
+                    <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+                      <i class="ti ti-mail" style="color:var(--hv-info);font-size:20px"></i>
+                      <div>
+                        <div style="font-size:14px;font-weight:600">Gửi email: 97/100 thành công</div>
+                        <div style="font-size:12px;color:var(--hv-text-secondary)">3 email bị bounce</div>
+                      </div>
+                    </div>
+                    <div style="display:flex;gap:8px">
+                      <button class="hv-btn hv-btn-sm hv-btn-secondary">Xem 3 bounce</button>
+                      <button class="hv-btn hv-btn-sm hv-btn-primary">Sửa địa chỉ</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 7. PENDING / PROGRESS -->
+          <div id="pending" class="pattern-section">
+            <div class="pattern-title"><i class="ti ti-clock" style="color:var(--hv-purple)"></i> Pending &amp; Progress</div>
+            <div class="pattern-desc">CQT pending, background job, signing wait</div>
+            <div class="pattern-grid">
+              <div class="pattern-card">
+                <div class="pattern-card-header">CQT Pending</div>
+                <div class="pattern-card-body">
+                  <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--hv-warning-soft);border-radius:var(--hv-radius-lg)">
+                    <div style="width:10px;height:10px;border-radius:50%;background:var(--hv-warning);animation:hv-pulse 1.5s infinite;flex-shrink:0"></div>
+                    <div>
+                      <div style="font-size:13px;font-weight:500">Đang chờ CQT phản hồi</div>
+                      <div style="font-size:12px;color:var(--hv-text-secondary)">HD-2026-0185 · Tự động kiểm tra sau 30s</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="pattern-card">
+                <div class="pattern-card-header">Background Job Progress</div>
+                <div class="pattern-card-body">
+                  <div style="padding:12px 16px;background:var(--hv-bg-soft);border-radius:var(--hv-radius-lg)">
+                    <div style="display:flex;justify-content:space-between;margin-bottom:8px">
+                      <span style="font-size:13px;font-weight:500">Đang phân loại AI...</span>
+                      <span style="font-size:12px;color:var(--hv-text-muted);font-family:var(--hv-font-mono)">12/30</span>
+                    </div>
+                    <div class="hv-progress">
+                      <div class="hv-progress-bar" style="width:40%"></div>
+                    </div>
+                    <div style="font-size:11px;color:var(--hv-text-muted);margin-top:6px">Chạy nền — bạn có thể tiếp tục làm việc khác</div>
+                  </div>
+                </div>
+              </div>
+              <div class="pattern-card">
+                <div class="pattern-card-header">Signing Wait</div>
+                <div class="pattern-card-body">
+                  <div style="padding:16px;background:var(--hv-purple-soft);border-radius:var(--hv-radius-lg);text-align:center">
+                    <i class="ti ti-certificate" style="font-size:28px;color:var(--hv-purple);margin-bottom:8px"></i>
+                    <div style="font-size:14px;font-weight:600;margin-bottom:4px">Đang chờ ký xác nhận</div>
+                    <div style="font-size:12px;color:var(--hv-text-secondary);margin-bottom:12px">Đã gửi yêu cầu qua Zalo OA cho khách hàng</div>
+                    <div style="font-size:20px;font-weight:700;color:var(--hv-purple);font-family:var(--hv-font-mono);margin-bottom:8px">02:45:30</div>
+                    <button class="hv-btn hv-btn-sm hv-btn-secondary"><i class="ti ti-send"></i> Gửi lại Zalo</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- BONUS: Diff Viewer -->
+          <div class="pattern-section">
+            <div class="pattern-title"><i class="ti ti-git-compare" style="color:var(--hv-success)"></i> Diff Viewer</div>
+            <div class="pattern-desc">Before/after comparison for adjustments</div>
+            <div class="pattern-card" style="max-width:600px">
+              <div class="pattern-card-header">So sánh thay đổi — HD-2026-0142</div>
+              <div class="pattern-card-body" style="padding:0">
+                <div class="hv-diff">
+                  <div class="hv-diff-line hv-diff-ctx"><span class="hv-diff-ln">1</span><span class="hv-diff-content">Tên người mua: Công ty TNHH Vinamilk</span></div>
+                  <div class="hv-diff-line hv-diff-del"><span class="hv-diff-ln">2</span><span class="hv-diff-content">Địa chi: 128 Hai Bà Trưng, Q1, TP.HCM</span></div>
+                  <div class="hv-diff-line hv-diff-add"><span class="hv-diff-ln">2</span><span class="hv-diff-content">Địa chỉ: 128 Hai Bà Trưng, Quận 1, TP. Hồ Chí Minh</span></div>
+                  <div class="hv-diff-line hv-diff-ctx"><span class="hv-diff-ln">3</span><span class="hv-diff-content">MST: 0301234567</span></div>
+                  <div class="hv-diff-line hv-diff-del"><span class="hv-diff-ln">4</span><span class="hv-diff-content">Tổng tiền: 12.450.000đ</span></div>
+                  <div class="hv-diff-line hv-diff-add"><span class="hv-diff-ln">4</span><span class="hv-diff-content">Tổng tiền: 13.750.000đ</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="assets/js/app-shell.js"></script>
+  <script>
+    function showSuccessModal() {
+      HV.modal({
+        title: '',
+        body: `
+          <div style="text-align:center">
+            <div style="width:64px;height:64px;border-radius:50%;background:var(--hv-success-soft);display:inline-flex;align-items:center;justify-content:center;margin-bottom:16px">
+              <i class="ti ti-circle-check" style="font-size:32px;color:var(--hv-success)"></i>
+            </div>
+            <h2 style="font-size:20px;font-weight:700;margin-bottom:6px">Phát hành thành công!</h2>
+            <p style="color:var(--hv-text-secondary);margin-bottom:16px">HD-2026-0185 đã được ký số và gửi đến CQT</p>
+            <div style="background:var(--hv-bg-soft);border-radius:var(--hv-radius-lg);padding:12px 16px;text-align:left;margin-bottom:16px">
+              <div style="display:flex;justify-content:space-between;padding:4px 0;font-size:13px"><span style="color:var(--hv-text-secondary)">Số hóa đơn</span><span style="font-weight:500;font-family:var(--hv-font-mono)">HD-2026-0185</span></div>
+              <div style="display:flex;justify-content:space-between;padding:4px 0;font-size:13px"><span style="color:var(--hv-text-secondary)">Mã CQT</span><span style="font-weight:500;font-family:var(--hv-font-mono)">C26XYZABC123</span></div>
+              <div style="display:flex;justify-content:space-between;padding:4px 0;font-size:13px"><span style="color:var(--hv-text-secondary)">Tổng tiền</span><span style="font-weight:600;font-family:var(--hv-font-mono)">7.320.470đ</span></div>
+            </div>
+            <div style="display:flex;gap:8px;justify-content:center;font-size:12px;margin-bottom:8px">
+              <span style="color:var(--hv-success)"><i class="ti ti-check"></i> Email đã gửi</span>
+              <span style="color:var(--hv-success)"><i class="ti ti-check"></i> Zalo OA đã gửi</span>
+              <span style="color:var(--hv-success)"><i class="ti ti-check"></i> Portal link</span>
+            </div>
+          </div>
+        `,
+        actions: [
+          { id: 'detail', label: 'Xem chi tiết', onClick: (bd) => { HV.closeModal(bd); } },
+          { id: 'pdf', label: 'Tải PDF', primary: true, onClick: (bd) => { HV.closeModal(bd); HV.toast('Đang tải PDF...','info'); } },
+        ],
+        size: 'sm'
+      });
+    }
+  </script>
+  <style>
+    @keyframes hv-pulse { 0%,100% { opacity:1; } 50% { opacity:0.4; } }
+  </style>
+</body>
+</html>

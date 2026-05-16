@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Automation Builder — Haravan Invoice</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <link rel="stylesheet" href="assets/css/design-system.css">
+  <script>window.HV_PAGE = { id: 'automation', title: 'Automation Builder' };</script>
+  <style>
+    /* === Automation Builder Layout === */
+    .auto-layout {
+      display: grid;
+      grid-template-columns: 1fr 300px;
+      gap: 20px;
+      align-items: start;
+    }
+
+    /* Header */
+    .auto-header { grid-column: 1 / -1; }
+    .auto-header-subtitle {
+      font-size: 14px;
+      color: var(--hv-text-secondary);
+      margin-top: 2px;
+    }
+
+    /* Templates */
+    .auto-templates { grid-column: 1 / -1; }
+    .auto-templates-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+    .auto-template-card {
+      background: var(--hv-bg-soft);
+      border: 1px solid var(--hv-border);
+      border-radius: var(--hv-radius-md);
+      padding: 14px 16px;
+      cursor: pointer;
+      transition: all 150ms ease;
+    }
+    .auto-template-card:hover {
+      border-color: var(--hv-primary);
+      background: var(--hv-bg-primary-soft);
+      box-shadow: var(--hv-shadow-sm);
+    }
+    .auto-template-card-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--hv-text-primary);
+      margin-bottom: 4px;
+    }
+    .auto-template-card-desc {
+      font-size: 12px;
+      color: var(--hv-text-secondary);
+      line-height: 16px;
+    }
+
+    /* Collapsible */
+    .auto-collapse-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      user-select: none;
+    }
+    .auto-collapse-header .ti {
+      transition: transform 200ms ease;
+      color: var(--hv-text-muted);
+    }
+    .auto-collapse-header.collapsed .ti-chevron-down {
+      transform: rotate(-90deg);
+    }
+    .auto-collapse-body {
+      overflow: hidden;
+      transition: max-height 200ms ease;
+      max-height: 600px;
+    }
+    .auto-collapse-body.collapsed {
+      max-height: 0;
+    }
+
+    /* Canvas */
+    .auto-canvas {
+      background: var(--hv-bg-soft);
+      border: 1px solid var(--hv-border);
+      border-radius: var(--hv-radius-lg);
+      padding: 32px;
+      min-height: 380px;
+      position: relative;
+      overflow-x: auto;
+    }
+
+    /* Flow */
+    .auto-flow {
+      display: flex;
+      align-items: flex-start;
+      gap: 0;
+      min-width: max-content;
+    }
+    .auto-flow-branch {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* Flow Node */
+    .auto-node {
+      background: var(--hv-bg-surface);
+      border: 1px solid var(--hv-border);
+      border-radius: var(--hv-radius-md);
+      padding: 12px 16px;
+      min-width: 200px;
+      max-width: 240px;
+      box-shadow: var(--hv-shadow-xs);
+      position: relative;
+    }
+    .auto-node-type {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 6px;
+    }
+    .auto-node-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--hv-text-primary);
+      margin-bottom: 2px;
+    }
+    .auto-node-desc {
+      font-size: 12px;
+      color: var(--hv-text-secondary);
+      line-height: 16px;
+    }
+    .auto-node-status {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+    }
+
+    /* Node types */
+    .auto-node-trigger { border-left: 3px solid var(--hv-primary); }
+    .auto-node-trigger .auto-node-type { color: var(--hv-primary); }
+    .auto-node-condition { border-left: 3px solid var(--hv-warning); }
+    .auto-node-condition .auto-node-type { color: var(--hv-warning-hover); }
+    .auto-node-action { border-left: 3px solid var(--hv-success); }
+    .auto-node-action .auto-node-type { color: var(--hv-success); }
+    .auto-node-notify { border-left: 3px solid var(--hv-purple); }
+    .auto-node-notify .auto-node-type { color: var(--hv-purple); }
+
+    /* Connector */
+    .auto-connector {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      min-height: 60px;
+      flex-shrink: 0;
+    }
+    .auto-connector-line {
+      width: 100%;
+      height: 2px;
+      background: var(--hv-border-strong);
+      position: relative;
+    }
+    .auto-connector-line::after {
+      content: '';
+      position: absolute;
+      right: -4px;
+      top: -4px;
+      width: 0;
+      height: 0;
+      border-top: 5px solid transparent;
+      border-bottom: 5px solid transparent;
+      border-left: 6px solid var(--hv-border-strong);
+    }
+
+    /* Branch connector */
+    .auto-branch-connector {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 40px;
+      position: relative;
+    }
+    .auto-branch-line {
+      width: 2px;
+      flex: 1;
+      background: var(--hv-border-strong);
+    }
+    .auto-branch-label {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--hv-text-muted);
+      padding: 2px 6px;
+      background: var(--hv-bg-surface);
+      border: 1px solid var(--hv-border);
+      border-radius: var(--hv-radius-xs);
+      margin: 4px 0;
+    }
+
+    /* Right Sidebar */
+    .auto-sidebar { position: sticky; top: 80px; }
+    .auto-sidebar-category {
+      margin-bottom: 16px;
+    }
+    .auto-sidebar-category-title {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--hv-text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      padding: 6px 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+    }
+    .auto-sidebar-category-title .ti {
+      font-size: 14px;
+      transition: transform 150ms ease;
+    }
+    .auto-sidebar-category-title.collapsed .ti {
+      transform: rotate(-90deg);
+    }
+    .auto-sidebar-items {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      overflow: hidden;
+      transition: max-height 200ms ease;
+      max-height: 500px;
+    }
+    .auto-sidebar-items.collapsed {
+      max-height: 0;
+    }
+    .auto-sidebar-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 10px;
+      font-size: 13px;
+      color: var(--hv-text-secondary);
+      border-radius: var(--hv-radius-sm);
+      cursor: grab;
+      transition: all 120ms ease;
+      border: 1px solid transparent;
+    }
+    .auto-sidebar-item:hover {
+      background: var(--hv-bg-surface-hover);
+      color: var(--hv-text-primary);
+      border-color: var(--hv-border);
+    }
+    .auto-sidebar-item:active {
+      cursor: grabbing;
+      border-color: var(--hv-primary);
+      background: var(--hv-primary-soft);
+    }
+    .auto-sidebar-item i {
+      font-size: 16px;
+      width: 16px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+    .auto-sidebar-item-trigger i { color: var(--hv-primary); }
+    .auto-sidebar-item-condition i { color: var(--hv-warning-hover); }
+    .auto-sidebar-item-action i { color: var(--hv-success); }
+    .auto-sidebar-item-notify i { color: var(--hv-purple); }
+
+    /* Run History */
+    .auto-history { grid-column: 1 / -1; }
+
+    /* Empty State */
+    .auto-empty {
+      text-align: center;
+      padding: 48px 24px;
+    }
+    .auto-empty-icon {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: var(--hv-primary-soft);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 16px;
+    }
+    .auto-empty-icon i {
+      font-size: 28px;
+      color: var(--hv-primary);
+    }
+    .auto-empty-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--hv-text-primary);
+      margin-bottom: 6px;
+    }
+    .auto-empty-desc {
+      font-size: 14px;
+      color: var(--hv-text-secondary);
+    }
+
+    /* Running state indicators */
+    .auto-node-status-success {
+      background: var(--hv-success-soft);
+      color: var(--hv-success);
+    }
+    .auto-node-status-running {
+      background: var(--hv-warning-soft);
+      color: var(--hv-warning-hover);
+      animation: pulse 1.2s infinite;
+    }
+    .auto-node-status-error {
+      background: var(--hv-danger-soft);
+      color: var(--hv-danger);
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    /* Responsive */
+    @media (max-width: 1023px) {
+      .auto-layout {
+        grid-template-columns: 1fr;
+      }
+      .auto-templates-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    @media (max-width: 767px) {
+      .hv-content { padding: 12px; }
+      .auto-canvas { padding: 16px; min-height: 200px; }
+      .auto-flow { flex-direction: column; align-items: center; min-width: unset; }
+      .auto-connector { width: 60px; min-height: 30px; transform: rotate(90deg); }
+      .auto-node { min-width: 160px; max-width: 200px; }
+      .auto-templates-grid { grid-template-columns: 1fr; }
+      .hv-content-header { flex-direction: column; align-items: flex-start; gap: 12px; }
+      .hv-content-header .hv-flex { width: 100%; }
+      .hv-content-header .hv-btn { flex: 1; }
+    }
+    @media (max-width: 480px) {
+      .hv-content { padding: 10px; }
+      .auto-sidebar { position: static; }
+    }
+  </style>
+</head>
+<body>
+
+<aside class="hv-sidebar" aria-label="Điều hướng chính"></aside>
+<div class="hv-topbar" aria-label="Thanh công cụ"></div>
+
+<div class="hv-content">
+  <div class="auto-layout">
+
+    <!-- Header -->
+    <div class="auto-header hv-content-header">
+      <div>
+        <h1>Automation Builder</h1>
+        <p class="auto-header-subtitle">Tạo quy trình tự động không cần code</p>
+      </div>
+      <div class="hv-flex hv-gap-3">
+        <button class="hv-btn hv-btn-secondary"><i class="ti ti-device-floppy"></i> Lưu nháp</button>
+        <button class="hv-btn hv-btn-primary"><i class="ti ti-player-play"></i> Kích hoạt</button>
+      </div>
+    </div>
+
+    <!-- Templates Section -->
+    <div class="auto-templates hv-card" id="templatesSection">
+      <div class="auto-collapse-header" onclick="toggleCollapse('templates')">
+        <div class="hv-card-header" style="margin-bottom:0">
+          <span class="hv-card-title"><i class="ti ti-layout-grid" style="margin-right:6px;font-size:18px"></i>Mẫu có sẵn</span>
+        </div>
+        <i class="ti ti-chevron-down" style="font-size:18px"></i>
+      </div>
+      <div class="auto-collapse-body" id="templatesBody" style="margin-top:16px">
+        <div class="auto-templates-grid">
+          <div class="auto-template-card" tabindex="0" role="button" aria-label="Tự phát hành khi thanh toán">
+            <div class="auto-template-card-title"><i class="ti ti-player-play" style="color:var(--hv-primary);margin-right:4px"></i>Tự phát hành khi thanh toán</div>
+            <div class="auto-template-card-desc">Khi đơn hàng Web paid → Phát hành HĐ tự động</div>
+          </div>
+          <div class="auto-template-card" tabindex="0" role="button" aria-label="Gộp đơn cuối ngày">
+            <div class="auto-template-card-title"><i class="ti ti-stack-2" style="color:var(--hv-warning-hover);margin-right:4px"></i>Gộp đơn cuối ngày</div>
+            <div class="auto-template-card-desc">Lịch 23:30 → Tổng hợp giao dịch lẻ → Phát hành HĐ</div>
+          </div>
+          <div class="auto-template-card" tabindex="0" role="button" aria-label="Thông báo Zalo OA">
+            <div class="auto-template-card-title"><i class="ti ti-bell" style="color:var(--hv-purple);margin-right:4px"></i>Thông báo Zalo OA</div>
+            <div class="auto-template-card-desc">Khi HĐ phát hành → Gửi Zalo cho khách</div>
+          </div>
+          <div class="auto-template-card" tabindex="0" role="button" aria-label="Xử lý hoàn trả">
+            <div class="auto-template-card-title"><i class="ti ti-receipt-refund" style="color:var(--hv-danger);margin-right:4px"></i>Xử lý hoàn trả</div>
+            <div class="auto-template-card-desc">Khi đơn trả → Tạo HĐ điều chỉnh giảm</div>
+          </div>
+          <div class="auto-template-card" tabindex="0" role="button" aria-label="Cảnh báo nợ">
+            <div class="auto-template-card-title"><i class="ti ti-alert-triangle" style="color:var(--hv-warning);margin-right:4px"></i>Cảnh báo nợ</div>
+            <div class="auto-template-card-desc">Khi HĐ quá hạn 30 ngày → Gửi email nhắc nhở</div>
+          </div>
+          <div class="auto-template-card" tabindex="0" role="button" aria-label="Phân loại AI">
+            <div class="auto-template-card-title"><i class="ti ti-brain" style="color:var(--hv-info);margin-right:4px"></i>Phân loại AI</div>
+            <div class="auto-template-card-desc">Khi HĐ đến → AI phân loại → Ghi kế toán</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Canvas + Sidebar Row -->
+    <div class="auto-canvas-area">
+
+      <!-- Canvas -->
+      <div class="auto-canvas" id="autoCanvas">
+        <!-- Default: Sample workflow -->
+        <div id="canvasDefault">
+          <div class="auto-flow">
+            <!-- Trigger -->
+            <div class="auto-node auto-node-trigger">
+              <div class="auto-node-type"><i class="ti ti-player-play"></i> Trigger</div>
+              <div class="auto-node-title">Order.paid</div>
+              <div class="auto-node-desc">Đơn hàng thanh toán thành công</div>
+            </div>
+
+            <!-- Connector -->
+            <div class="auto-connector"><div class="auto-connector-line"></div></div>
+
+            <!-- Condition -->
+            <div class="auto-node auto-node-condition">
+              <div class="auto-node-type"><i class="ti ti-git-branch"></i> Điều kiện</div>
+              <div class="auto-node-title">MST tồn tại?</div>
+              <div class="auto-node-desc">Kiểm tra khách có mã số thuế</div>
+            </div>
+
+            <!-- Branch -->
+            <div style="display:flex;flex-direction:column;gap:20px">
+              <!-- Yes branch -->
+              <div class="auto-flex" style="display:flex;align-items:center;gap:0">
+                <div class="auto-branch-connector">
+                  <div class="auto-branch-label" style="color:var(--hv-success)">Có</div>
+                  <div class="auto-branch-line" style="background:var(--hv-success);height:2px;width:40px"></div>
+                </div>
+                <div class="auto-node auto-node-action">
+                  <div class="auto-node-type"><i class="ti ti-checkbox"></i> Hành động</div>
+                  <div class="auto-node-title">Phát hành HĐ</div>
+                  <div class="auto-node-desc">Tạo và phát hành hóa đơn điện tử</div>
+                </div>
+                <div class="auto-connector"><div class="auto-connector-line"></div></div>
+                <div class="auto-node auto-node-notify">
+                  <div class="auto-node-type"><i class="ti ti-bell"></i> Thông báo</div>
+                  <div class="auto-node-title">Zalo OA</div>
+                  <div class="auto-node-desc">Gửi thông báo qua Zalo cho khách</div>
+                </div>
+              </div>
+
+              <!-- No branch -->
+              <div class="auto-flex" style="display:flex;align-items:center;gap:0">
+                <div class="auto-branch-connector">
+                  <div class="auto-branch-label" style="color:var(--hv-danger)">Không</div>
+                  <div class="auto-branch-line" style="background:var(--hv-danger);height:2px;width:40px"></div>
+                </div>
+                <div class="auto-node auto-node-action">
+                  <div class="auto-node-type"><i class="ti ti-checkbox"></i> Hành động</div>
+                  <div class="auto-node-title">Tạo nháp</div>
+                  <div class="auto-node-desc">Lưu hóa đơn ở trạng thái nháp</div>
+                </div>
+                <div class="auto-connector"><div class="auto-connector-line"></div></div>
+                <div class="auto-node auto-node-notify">
+                  <div class="auto-node-type"><i class="ti ti-bell"></i> Thông báo</div>
+                  <div class="auto-node-title">In-app</div>
+                  <div class="auto-node-desc">Thông báo trong ứng dụng</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Empty State -->
+        <div id="canvasEmpty" class="auto-empty hv-hidden">
+          <div class="auto-empty-icon"><i class="ti ti-player-play"></i></div>
+          <div class="auto-empty-title">Chưa có automation</div>
+          <div class="auto-empty-desc">Bắt đầu từ mẫu hoặc tạo mới</div>
+        </div>
+
+        <!-- Running State (overlay) -->
+        <div id="canvasRunning" class="hv-hidden" style="position:absolute;inset:0;background:rgba(255,255,255,0.85);border-radius:var(--hv-radius-lg);display:flex;align-items:center;justify-content:center;z-index:10">
+          <div style="text-align:center">
+            <div class="auto-node-status auto-node-status-running" style="width:48px;height:48px;margin:0 auto 12px;font-size:20px">
+              <i class="ti ti-loader-2" style="animation:spin 1s linear infinite"></i>
+            </div>
+            <div style="font-size:14px;font-weight:600;color:var(--hv-text-primary)">Đang chạy thử...</div>
+            <div style="font-size:12px;color:var(--hv-text-secondary);margin-top:4px">Order #1235 → Kiểm tra MST</div>
+          </div>
+        </div>
+        <style>@keyframes spin { to { transform: rotate(360deg); } }</style>
+      </div>
+
+      <!-- Run History -->
+      <div class="auto-history hv-card" style="margin-top:20px">
+        <div class="hv-card-header">
+          <span class="hv-card-title"><i class="ti ti-clock" style="margin-right:6px;font-size:18px"></i>Lịch sử chạy</span>
+          <button class="hv-btn hv-btn-sm hv-btn-tertiary">Xem tất cả</button>
+        </div>
+        <table class="hv-table" role="table" aria-label="Lịch sử chạy automation">
+          <thead>
+            <tr>
+              <th scope="col">Thời gian</th>
+              <th scope="col">Trigger</th>
+              <th scope="col">Kết quả</th>
+              <th scope="col">Chi tiết</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="text-mono">15/05/2026 09:15</span></td>
+              <td>Order #1234 paid</td>
+              <td><span class="hv-badge hv-badge-success"><i class="ti ti-check" style="font-size:12px"></i> Thành công</span></td>
+              <td>HĐ 2025/00001234 đã phát hành</td>
+            </tr>
+            <tr>
+              <td><span class="text-mono">15/05/2026 09:10</span></td>
+              <td>Order #1233 paid</td>
+              <td><span class="hv-badge hv-badge-success"><i class="ti ti-check" style="font-size:12px"></i> Thành công</span></td>
+              <td>HĐ 2025/00001233 đã phát hành</td>
+            </tr>
+            <tr>
+              <td><span class="text-mono">15/05/2026 08:45</span></td>
+              <td>Order #1232 paid</td>
+              <td><span class="hv-badge hv-badge-danger"><i class="ti ti-x" style="font-size:12px"></i> Thất bại</span></td>
+              <td>MST không hợp lệ → Tạo nháp</td>
+            </tr>
+            <tr>
+              <td><span class="text-mono">14/05/2026 23:30</span></td>
+              <td>Lịch gộp đơn</td>
+              <td><span class="hv-badge hv-badge-success"><i class="ti ti-check" style="font-size:12px"></i> Thành công</span></td>
+              <td>48 giao dịch → 1 HĐ</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Right Sidebar -->
+    <div class="auto-sidebar">
+      <div class="hv-card">
+        <div class="hv-card-header">
+          <span class="hv-card-title"><i class="ti ti-plus" style="margin-right:6px;font-size:18px"></i>Thêm bước</span>
+        </div>
+
+        <!-- Trigger -->
+        <div class="auto-sidebar-category">
+          <div class="auto-sidebar-category-title" onclick="toggleSidebarCategory(this)">
+            <span><i class="ti ti-player-play" style="color:var(--hv-primary);margin-right:4px;font-size:14px"></i> Trigger</span>
+            <i class="ti ti-chevron-down"></i>
+          </div>
+          <div class="auto-sidebar-items">
+            <div class="auto-sidebar-item auto-sidebar-item-trigger" draggable="true" tabindex="0"><i class="ti ti-shopping-cart"></i> Đơn hàng thanh toán</div>
+            <div class="auto-sidebar-item auto-sidebar-item-trigger" draggable="true" tabindex="0"><i class="ti ti-receipt"></i> HĐ phát hành</div>
+            <div class="auto-sidebar-item auto-sidebar-item-trigger" draggable="true" tabindex="0"><i class="ti ti-user-plus"></i> Khách mới</div>
+            <div class="auto-sidebar-item auto-sidebar-item-trigger" draggable="true" tabindex="0"><i class="ti ti-calendar-event"></i> Lịch</div>
+            <div class="auto-sidebar-item auto-sidebar-item-trigger" draggable="true" tabindex="0"><i class="ti ti-webhook"></i> Webhook</div>
+            <div class="auto-sidebar-item auto-sidebar-item-trigger" draggable="true" tabindex="0"><i class="ti ti-hand-click"></i> Thủ công</div>
+            <div class="auto-sidebar-item auto-sidebar-item-trigger" draggable="true" tabindex="0"><i class="ti ti-receipt-inbound"></i> HĐ đến</div>
+            <div class="auto-sidebar-item auto-sidebar-item-trigger" draggable="true" tabindex="0"><i class="ti ti-credit-card"></i> Thanh toán</div>
+          </div>
+        </div>
+
+        <!-- Condition -->
+        <div class="auto-sidebar-category">
+          <div class="auto-sidebar-category-title" onclick="toggleSidebarCategory(this)">
+            <span><i class="ti ti-git-branch" style="color:var(--hv-warning-hover);margin-right:4px;font-size:14px"></i> Điều kiện</span>
+            <i class="ti ti-chevron-down"></i>
+          </div>
+          <div class="auto-sidebar-items">
+            <div class="auto-sidebar-item auto-sidebar-item-condition" draggable="true" tabindex="0"><i class="ti ti-arrows-split"></i> Nếu/Thì</div>
+            <div class="auto-sidebar-item auto-sidebar-item-condition" draggable="true" tabindex="0"><i class="ti ti-repeat"></i> Lặp</div>
+            <div class="auto-sidebar-item auto-sidebar-item-condition" draggable="true" tabindex="0"><i class="ti ti-hourglass"></i> Chờ</div>
+            <div class="auto-sidebar-item auto-sidebar-item-condition" draggable="true" tabindex="0"><i class="ti ti-arrows-split-2"></i> Song song</div>
+          </div>
+        </div>
+
+        <!-- Action -->
+        <div class="auto-sidebar-category">
+          <div class="auto-sidebar-category-title" onclick="toggleSidebarCategory(this)">
+            <span><i class="ti ti-checkbox" style="color:var(--hv-success);margin-right:4px;font-size:14px"></i> Hành động</span>
+            <i class="ti ti-chevron-down"></i>
+          </div>
+          <div class="auto-sidebar-items">
+            <div class="auto-sidebar-item auto-sidebar-item-action" draggable="true" tabindex="0"><i class="ti ti-receipt"></i> Phát hành HĐ</div>
+            <div class="auto-sidebar-item auto-sidebar-item-action" draggable="true" tabindex="0"><i class="ti ti-edit-circle"></i> Điều chỉnh</div>
+            <div class="auto-sidebar-item auto-sidebar-item-action" draggable="true" tabindex="0"><i class="ti ti-bell-ringing"></i> Gửi thông báo</div>
+            <div class="auto-sidebar-item auto-sidebar-item-action" draggable="true" tabindex="0"><i class="ti ti-api"></i> Gọi API</div>
+            <div class="auto-sidebar-item auto-sidebar-item-action" draggable="true" tabindex="0"><i class="ti ti-brain"></i> AI phân loại</div>
+            <div class="auto-sidebar-item auto-sidebar-item-action" draggable="true" tabindex="0"><i class="ti ti-file-type-pdf"></i> Tạo PDF</div>
+            <div class="auto-sidebar-item auto-sidebar-item-action" draggable="true" tabindex="0"><i class="ti ti-file-export"></i> Export</div>
+            <div class="auto-sidebar-item auto-sidebar-item-action" draggable="true" tabindex="0"><i class="ti ti-clipboard-text"></i> Ghi log</div>
+            <div class="auto-sidebar-item auto-sidebar-item-action" draggable="true" tabindex="0"><i class="ti ti-arrow-up-circle"></i> Escalate</div>
+            <div class="auto-sidebar-item auto-sidebar-item-action" draggable="true" tabindex="0"><i class="ti ti-refresh"></i> Cập nhật trạng thái</div>
+            <div class="auto-sidebar-item auto-sidebar-item-action" draggable="true" tabindex="0"><i class="ti ti-receipt-refund"></i> Tạo đơn trả</div>
+            <div class="auto-sidebar-item auto-sidebar-item-action" draggable="true" tabindex="0"><i class="ti ti-mail"></i> Gửi email</div>
+          </div>
+        </div>
+
+        <!-- Notify -->
+        <div class="auto-sidebar-category">
+          <div class="auto-sidebar-category-title" onclick="toggleSidebarCategory(this)">
+            <span><i class="ti ti-bell" style="color:var(--hv-purple);margin-right:4px;font-size:14px"></i> Thông báo</span>
+            <i class="ti ti-chevron-down"></i>
+          </div>
+          <div class="auto-sidebar-items">
+            <div class="auto-sidebar-item auto-sidebar-item-notify" draggable="true" tabindex="0"><i class="ti ti-brand-zalo"></i> Zalo OA</div>
+            <div class="auto-sidebar-item auto-sidebar-item-notify" draggable="true" tabindex="0"><i class="ti ti-mail"></i> Email</div>
+            <div class="auto-sidebar-item auto-sidebar-item-notify" draggable="true" tabindex="0"><i class="ti ti-bell"></i> In-app</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script src="assets/js/app-shell.js"></script>
+<script>
+  function toggleCollapse(section) {
+    const header = document.querySelector(`#${section}Section .auto-collapse-header`) ||
+                   document.querySelector(`#${section}Body`)?.previousElementSibling;
+    const body = document.getElementById(`${section}Body`);
+    if (header && body) {
+      header.classList.toggle('collapsed');
+      body.classList.toggle('collapsed');
+    }
+  }
+
+  function toggleSidebarCategory(el) {
+    el.classList.toggle('collapsed');
+    const items = el.nextElementSibling;
+    if (items) items.classList.toggle('collapsed');
+  }
+
+  // State management for canvas
+  const originalInit = HV.initStateToggle.bind(HV);
+  HV.initStateToggle = function() {
+    const states = ['default', 'empty', 'running'];
+    const params = new URLSearchParams(window.location.search);
+    let currentState = params.get('state') || 'default';
+
+    const toggle = document.createElement('div');
+    toggle.style.cssText = 'position:fixed;bottom:16px;right:16px;z-index:9999;display:flex;gap:4px;background:var(--hv-bg-surface);border:1px solid var(--hv-border);border-radius:var(--hv-radius-lg);padding:4px;box-shadow:var(--hv-shadow-md)';
+
+    states.forEach(s => {
+      const btn = document.createElement('button');
+      btn.textContent = s;
+      btn.style.cssText = `padding:4px 10px;font-size:11px;font-weight:500;border-radius:6px;border:none;cursor:pointer;font-family:inherit;transition:all 150ms;${s === currentState ? 'background:var(--hv-primary);color:white' : 'background:transparent;color:var(--hv-text-secondary)'}`;
+      btn.addEventListener('click', () => {
+        const url = new URL(window.location);
+        if (s === 'default') url.searchParams.delete('state');
+        else url.searchParams.set('state', s);
+        window.location = url;
+      });
+      toggle.appendChild(btn);
+    });
+
+    document.body.appendChild(toggle);
+
+    // Apply state
+    const defaultCanvas = document.getElementById('canvasDefault');
+    const emptyCanvas = document.getElementById('canvasEmpty');
+    const runningOverlay = document.getElementById('canvasRunning');
+
+    if (currentState === 'empty') {
+      defaultCanvas.classList.add('hv-hidden');
+      emptyCanvas.classList.remove('hv-hidden');
+      runningOverlay.classList.add('hv-hidden');
+    } else if (currentState === 'running') {
+      defaultCanvas.classList.remove('hv-hidden');
+      emptyCanvas.classList.add('hv-hidden');
+      runningOverlay.classList.remove('hv-hidden');
+    } else {
+      defaultCanvas.classList.remove('hv-hidden');
+      emptyCanvas.classList.add('hv-hidden');
+      runningOverlay.classList.add('hv-hidden');
+    }
+
+    // Template card clicks
+    document.querySelectorAll('.auto-template-card').forEach(card => {
+      card.addEventListener('click', () => {
+        HV.toast('Đang tải mẫu automation...', 'info');
+        setTimeout(() => HV.toast('Đã áp dụng mẫu thành công!', 'success'), 1000);
+      });
+    });
+
+    // Save button
+    document.querySelectorAll('.hv-btn-primary').forEach(btn => {
+      if (btn.textContent.includes('Lưu') || btn.textContent.includes('Kích hoạt')) {
+        btn.addEventListener('click', () => {
+          HV.btnLoading(btn, true);
+          setTimeout(() => {
+            HV.btnLoading(btn, false);
+            HV.toast('Đã lưu và kích hoạt automation!', 'success');
+          }, 1500);
+        });
+      }
+    });
+  };
+</script>
+</body>
+</html>

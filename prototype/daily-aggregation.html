@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gộp đơn cuối ngày — Haravan Invoice</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <link rel="stylesheet" href="assets/css/design-system.css">
+  <script>window.HV_PAGE = { id: 'aggregation', title: 'Gộp đơn cuối ngày' };</script>
+  <style>
+    /* === KPI Grid === */
+    .agg-kpi-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
+    .agg-kpi-sub { font-size: 13px; color: var(--hv-text-secondary); margin-top: 4px; }
+
+    /* === Rules Form === */
+    .agg-form-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+    .agg-form-full { grid-column: 1 / -1; }
+    .agg-form-group { display: flex; flex-direction: column; gap: 6px; }
+    .agg-chip-list { display: flex; flex-wrap: wrap; gap: 8px; }
+    .agg-chip-remove { cursor: pointer; margin-left: 2px; font-size: 14px; opacity: 0.6; }
+    .agg-chip-remove:hover { opacity: 1; }
+    .agg-checkbox-group { display: flex; gap: 20px; }
+    .agg-checkbox-label { display: inline-flex; align-items: center; gap: 6px; font-size: 14px; cursor: pointer; color: var(--hv-text-primary); }
+    .agg-checkbox-label input[type="checkbox"] { width: 16px; height: 16px; accent-color: var(--hv-primary); cursor: pointer; }
+
+    /* === Toggle Switch === */
+    .agg-toggle-row { display: flex; align-items: center; justify-content: space-between; padding: 16px 0; border-top: 1px solid var(--hv-border); margin-top: 20px; }
+    .agg-toggle-label { font-size: 14px; font-weight: 500; color: var(--hv-text-primary); }
+    .agg-toggle { position: relative; width: 44px; height: 24px; }
+    .agg-toggle input { opacity: 0; width: 0; height: 0; }
+    .agg-toggle-slider { position: absolute; inset: 0; background: var(--hv-border-strong); border-radius: 12px; cursor: pointer; transition: 200ms; }
+    .agg-toggle-slider::before { content: ''; position: absolute; width: 18px; height: 18px; left: 3px; top: 3px; background: white; border-radius: 50%; transition: 200ms; }
+    .agg-toggle input:checked + .agg-toggle-slider { background: var(--hv-primary); }
+    .agg-toggle input:checked + .agg-toggle-slider::before { transform: translateX(20px); }
+    .agg-toggle input:focus-visible + .agg-toggle-slider { box-shadow: var(--hv-shadow-focus); }
+
+    /* === Table Controls === */
+    .agg-table-controls { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+    .agg-filter-row { display: flex; align-items: center; gap: 12px; }
+
+    /* === Expand Row === */
+    .agg-expand-row { display: none; }
+    .agg-expand-row.open { display: table-row; }
+    .agg-expand-cell { padding: 0 16px 16px 16px; background: var(--hv-bg-soft); }
+    .agg-expand-inner { padding: 16px; background: var(--hv-bg-surface); border: 1px solid var(--hv-border); border-radius: var(--hv-radius-md); }
+    .agg-expand-title { font-size: 12px; font-weight: 600; color: var(--hv-text-secondary); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 12px; }
+    .agg-txn-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }
+    .agg-txn-card { padding: 12px; border: 1px solid var(--hv-border); border-radius: var(--hv-radius-md); background: var(--hv-bg-soft); }
+    .agg-txn-card dt { font-size: 11px; font-weight: 500; color: var(--hv-text-muted); margin-bottom: 2px; }
+    .agg-txn-card dd { font-size: 13px; color: var(--hv-text-primary); margin: 0 0 8px; }
+    .agg-txn-card dd:last-child { margin-bottom: 0; }
+    .agg-txn-amount { font-weight: 600; color: var(--hv-primary); }
+
+    /* === View Button === */
+    .agg-view-btn { background: none; border: none; color: var(--hv-text-link); font-size: 13px; font-weight: 500; cursor: pointer; padding: 0; font-family: inherit; display: inline-flex; align-items: center; gap: 4px; }
+    .agg-view-btn:hover { text-decoration: underline; }
+    .agg-view-btn i { font-size: 16px; transition: transform 200ms; }
+    .agg-view-btn.open i { transform: rotate(90deg); }
+
+    /* === Modal === */
+    .agg-modal-title { font-size: 20px; font-weight: 600; color: var(--hv-text-primary); margin-bottom: 20px; }
+    .agg-modal-form { display: flex; flex-direction: column; gap: 16px; }
+    .agg-preview-table { margin-top: 12px; max-height: 240px; overflow-y: auto; border: 1px solid var(--hv-border); border-radius: var(--hv-radius-md); }
+    .agg-preview-table .hv-table th { position: sticky; top: 0; }
+    .agg-modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--hv-border); }
+
+    /* === Empty / Processing States === */
+    .agg-state { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 64px 24px; text-align: center; }
+    .agg-state-icon { font-size: 48px; color: var(--hv-text-muted); margin-bottom: 16px; }
+    .agg-state-title { font-size: 16px; font-weight: 600; color: var(--hv-text-primary); margin-bottom: 8px; }
+    .agg-state-desc { font-size: 14px; color: var(--hv-text-secondary); max-width: 360px; }
+
+    /* === Spinner === */
+    .agg-spinner { width: 36px; height: 36px; border: 3px solid var(--hv-border); border-top-color: var(--hv-primary); border-radius: 50%; animation: agg-spin 700ms linear infinite; margin-bottom: 16px; }
+    @keyframes agg-spin { to { transform: rotate(360deg); } }
+
+    /* === Compliance Ref === */
+    .agg-compliance { margin-top: 24px; padding: 12px 16px; background: var(--hv-bg-soft); border: 1px solid var(--hv-border); border-radius: var(--hv-radius-md); font-size: 12px; color: var(--hv-text-secondary); display: flex; align-items: center; gap: 8px; }
+    .agg-compliance i { color: var(--hv-info); font-size: 16px; }
+
+    /* === Responsive === */
+    @media (max-width: 767px) {
+      .agg-kpi-grid { grid-template-columns: 1fr; }
+      .agg-form-grid { grid-template-columns: 1fr; }
+      .agg-txn-grid { grid-template-columns: 1fr; }
+      .agg-table-controls { flex-direction: column; gap: 12px; align-items: stretch; }
+      .agg-filter-row { flex-direction: column; align-items: stretch; }
+      .agg-filter-row .hv-input { width: 100%; }
+      .hv-content { padding: 12px; }
+      .hv-content-header { flex-direction: column; align-items: flex-start; gap: 12px; }
+      .hv-content-header .hv-flex { width: 100%; }
+      .hv-content-header .hv-btn { flex: 1; }
+      #history-table { min-width: 700px; }
+    }
+
+    @media (max-width: 480px) {
+      .hv-content { padding: 10px; }
+      .agg-checkbox-group { flex-direction: column; gap: 8px; }
+    }
+  </style>
+</head>
+<body>
+
+  <aside class="hv-sidebar" aria-label="Điều hướng chính"></aside>
+  <div class="hv-topbar" aria-label="Thanh công cụ"></div>
+
+  <div class="hv-content">
+    <div class="hv-content-max">
+
+      <!-- ======== DEFAULT STATE ======== -->
+      <div id="state-default">
+
+        <!-- Header -->
+        <div class="hv-content-header">
+          <div>
+            <h1>Gộp đơn cuối ngày</h1>
+            <p style="font-size:14px;color:var(--hv-text-secondary);margin-top:4px">Tổng hợp giao dịch lẻ thành hóa đơn theo TT 78/TT 32</p>
+          </div>
+          <div class="hv-flex hv-gap-3">
+            <button class="hv-btn hv-btn-secondary" onclick="openConfigCard()" aria-label="Cấu hình quy tắc gộp đơn">
+              <i class="ti ti-settings"></i> Cấu hình
+            </button>
+            <button class="hv-btn hv-btn-primary" onclick="openManualModal()" aria-label="Gộp đơn thủ công ngay">
+              <i class="ti ti-stack-2"></i> Gộp ngay
+            </button>
+          </div>
+        </div>
+
+        <!-- KPI Cards -->
+        <div class="agg-kpi-grid">
+          <div class="hv-kpi">
+            <div class="hv-kpi-label">Chờ gộp</div>
+            <div class="hv-kpi-value">45</div>
+            <div class="agg-kpi-sub">giao dịch · 2.350.000đ</div>
+          </div>
+          <div class="hv-kpi">
+            <div class="hv-kpi-label">Đã gộp hôm nay</div>
+            <div class="hv-kpi-value">3</div>
+            <div class="agg-kpi-sub">hóa đơn · 1.890.000đ</div>
+          </div>
+          <div class="hv-kpi">
+            <div class="hv-kpi-label">Tổng tháng này</div>
+            <div class="hv-kpi-value">92</div>
+            <div class="agg-kpi-sub">hóa đơn · 58.400.000đ</div>
+          </div>
+        </div>
+
+        <!-- Rules Configuration Card -->
+        <div class="hv-card" id="rules-card" style="margin-bottom:24px">
+          <div class="hv-card-header">
+            <div class="hv-card-title">Quy tắc gộp đơn</div>
+          </div>
+          <form id="rules-form" onsubmit="saveRules(event)">
+            <div class="agg-form-grid">
+
+              <div class="agg-form-group">
+                <label class="hv-label" for="rule-time">Thời gian gộp</label>
+                <select class="hv-select" id="rule-time">
+                  <option value="23:30" selected>23:30 hàng ngày</option>
+                  <option value="00:00">00:00 hàng ngày</option>
+                  <option value="custom">Tùy chọn</option>
+                </select>
+              </div>
+
+              <div class="agg-form-group">
+                <label class="hv-label" for="rule-threshold">Ngưỡng số tiền</label>
+                <div style="position:relative">
+                  <input type="text" class="hv-input" id="rule-threshold" value="50.000đ" aria-describedby="threshold-hint">
+                </div>
+                <span id="threshold-hint" style="font-size:12px;color:var(--hv-text-muted)">Giao dịch dưới ngưỡng này sẽ gộp chung</span>
+              </div>
+
+              <div class="agg-form-group">
+                <label class="hv-label" for="rule-group">Nhóm theo</label>
+                <select class="hv-select" id="rule-group">
+                  <option value="sku">SKU</option>
+                  <option value="category">Danh mục</option>
+                  <option value="tax" selected>Thuế suất</option>
+                </select>
+              </div>
+
+              <div class="agg-form-group">
+                <label class="hv-label">Kênh áp dụng</label>
+                <div class="agg-checkbox-group">
+                  <label class="agg-checkbox-label"><input type="checkbox" checked> POS</label>
+                  <label class="agg-checkbox-label"><input type="checkbox" checked> Web</label>
+                  <label class="agg-checkbox-label"><input type="checkbox"> Marketplace</label>
+                </div>
+              </div>
+
+              <div class="agg-form-group agg-form-full">
+                <label class="hv-label">Loại trừ</label>
+                <div class="agg-chip-list" id="exclude-chips">
+                  <span class="hv-tag hv-tag-active">Chi nhánh 2 <span class="agg-chip-remove" onclick="removeChip(this)" role="button" tabindex="0" aria-label="Xóa Chi nhánh 2">&times;</span></span>
+                  <span class="hv-tag hv-tag-active">Marketplace Shopee <span class="agg-chip-remove" onclick="removeChip(this)" role="button" tabindex="0" aria-label="Xóa Marketplace Shopee">&times;</span></span>
+                  <button type="button" class="hv-tag" onclick="addExcludeChip()" aria-label="Thêm mục loại trừ">+ Thêm</button>
+                </div>
+              </div>
+
+            </div>
+
+            <div class="agg-toggle-row">
+              <span class="agg-toggle-label">Tự động gộp hàng ngày</span>
+              <label class="agg-toggle" aria-label="Bật tự động gộp hàng ngày">
+                <input type="checkbox" checked>
+                <span class="agg-toggle-slider"></span>
+              </label>
+            </div>
+
+            <div style="margin-top:20px;display:flex;justify-content:flex-end">
+              <button type="submit" class="hv-btn hv-btn-primary">Lưu quy tắc</button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Aggregation History Table -->
+        <div class="hv-card">
+          <div class="hv-card-header">
+            <div class="hv-card-title">Lịch sử gộp đơn</div>
+          </div>
+
+          <div class="agg-table-controls">
+            <div class="agg-filter-row">
+              <label class="hv-label" for="history-from" style="margin-bottom:0">Từ</label>
+              <input type="date" class="hv-input" id="history-from" value="2026-05-01" style="width:150px">
+              <label class="hv-label" for="history-to" style="margin-bottom:0">Đến</label>
+              <input type="date" class="hv-input" id="history-to" value="2026-05-15" style="width:150px">
+            </div>
+            <span style="font-size:12px;color:var(--hv-text-muted)">Hiển thị 15 kết quả</span>
+          </div>
+
+          <div style="overflow-x:auto">
+            <table class="hv-table" id="history-table">
+              <thead>
+                <tr>
+                  <th>Ngày</th>
+                  <th>Số giao dịch</th>
+                  <th class="hv-text-right">Tổng tiền</th>
+                  <th>Hóa đơn</th>
+                  <th>Trạng thái</th>
+                  <th>Chi tiết</th>
+                </tr>
+              </thead>
+              <tbody id="history-body">
+                <!-- Rows rendered by JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Compliance Reference -->
+        <div class="agg-compliance">
+          <i class="ti ti-info-circle"></i>
+          <span>Áp dụng theo Thông tư 78/2021/TT-BTC và Thông tư 32/2025/TT-BTC về hóa đơn điện tử gộp giao dịch cuối ngày.</span>
+        </div>
+
+      </div>
+
+      <!-- ======== EMPTY STATE ======== -->
+      <div id="state-empty" class="hv-hidden">
+        <div class="agg-state" style="min-height:60vh">
+          <div class="agg-state-icon"><i class="ti ti-stack-2"></i></div>
+          <div class="agg-state-title">Chưa có giao dịch nào chờ gộp</div>
+          <div class="agg-state-desc">Các giao dịch lẻ từ POS, Web sẽ được tổng hợp tại đây khi đến thời gian gộp hàng ngày.</div>
+        </div>
+      </div>
+
+      <!-- ======== PROCESSING STATE ======== -->
+      <div id="state-loading" class="hv-hidden">
+        <div class="agg-state" style="min-height:60vh">
+          <div class="agg-spinner"></div>
+          <div class="agg-state-title">Đang tổng hợp giao dịch...</div>
+          <div class="agg-state-desc">Vui lòng chờ trong giây lát. Quá trình này có thể mất vài phút.</div>
+        </div>
+      </div>
+
+      <!-- ======== ERROR STATE ======== -->
+      <div id="state-error" class="hv-hidden">
+        <div class="agg-state" style="min-height:60vh">
+          <div class="agg-state-icon"><i class="ti ti-alert-triangle"></i></div>
+          <div class="agg-state-title">Không thể tổng hợp giao dịch</div>
+          <div class="agg-state-desc">Đã xảy ra lỗi khi kết nối hệ thống. Vui lòng thử lại hoặc liên hệ hỗ trợ.</div>
+          <button class="hv-btn hv-btn-primary" style="margin-top:20px" onclick="location.reload()">
+            <i class="ti ti-refresh"></i> Thử lại
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ======== MANUAL AGGREGATION MODAL ======== -->
+  <div class="hv-backdrop hv-hidden" id="manual-modal" role="dialog" aria-modal="true" aria-label="Gộp đơn thủ công">
+    <div class="hv-modal" style="max-width:640px">
+      <div class="agg-modal-title">Gộp đơn thủ công</div>
+      <div class="agg-modal-form">
+        <div class="agg-form-group">
+          <label class="hv-label" for="manual-date">Chọn ngày</label>
+          <input type="date" class="hv-input" id="manual-date" style="width:200px">
+          <span style="font-size:12px;color:var(--hv-text-muted)">Chỉ cho phép chọn ngày quá khứ</span>
+        </div>
+        <div>
+          <button class="hv-btn hv-btn-secondary" onclick="previewManual()" aria-label="Xem trước giao dịch">
+            <i class="ti ti-eye"></i> Xem trước
+          </button>
+        </div>
+        <div id="manual-preview" class="hv-hidden">
+          <div style="font-size:13px;font-weight:500;color:var(--hv-text-secondary);margin-bottom:8px">Giao dịch sẽ được gộp:</div>
+          <div class="agg-preview-table">
+            <table class="hv-table">
+              <thead>
+                <tr>
+                  <th>Số HĐ POS</th>
+                  <th>Thời gian</th>
+                  <th>Thu ngân</th>
+                  <th class="hv-text-right">Số tiền</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>POS-20260514-001</td><td>08:15</td><td>Nguyễn Thị C</td><td class="hv-text-right">85.000đ</td></tr>
+                <tr><td>POS-20260514-002</td><td>09:02</td><td>Trần Văn D</td><td class="hv-text-right">120.000đ</td></tr>
+                <tr><td>POS-20260514-003</td><td>10:30</td><td>Nguyễn Thị C</td><td class="hv-text-right">45.000đ</td></tr>
+                <tr><td>POS-20260514-004</td><td>11:15</td><td>Lê Minh E</td><td class="hv-text-right">67.000đ</td></tr>
+                <tr><td>POS-20260514-005</td><td>13:45</td><td>Trần Văn D</td><td class="hv-text-right">95.000đ</td></tr>
+                <tr><td>POS-20260514-006</td><td>14:20</td><td>Nguyễn Thị C</td><td class="hv-text-right">38.000đ</td></tr>
+                <tr><td>POS-20260514-007</td><td>15:00</td><td>Lê Minh E</td><td class="hv-text-right">112.000đ</td></tr>
+                <tr><td>POS-20260514-008</td><td>16:30</td><td>Trần Văn D</td><td class="hv-text-right">55.000đ</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div style="margin-top:12px;font-size:13px;color:var(--hv-text-secondary)">
+            Tổng: <strong style="color:var(--hv-text-primary)">8 giao dịch · 617.000đ</strong>
+          </div>
+        </div>
+      </div>
+      <div class="agg-modal-actions">
+        <button class="hv-btn hv-btn-secondary" onclick="closeManualModal()">Hủy</button>
+        <button class="hv-btn hv-btn-primary" id="btn-confirm-merge" disabled onclick="confirmManual()">
+          <i class="ti ti-stack-2"></i> Xác nhận gộp
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======== TOAST ======== -->
+  <div class="hv-toast hv-hidden" id="toast" role="status" aria-live="polite">
+    <i class="ti ti-check" style="color:var(--hv-success);font-size:18px"></i>
+    <span id="toast-msg">Đã lưu quy tắc thành công</span>
+  </div>
+
+  <script src="assets/js/app-shell.js"></script>
+  <script>
+    /* === History Data === */
+    const HISTORY_DATA = [
+      { date: '14/05/2026', txns: 48, total: 2450000, invoice: '2025/G0001234', status: 'issued' },
+      { date: '13/05/2026', txns: 52, total: 2890000, invoice: '2025/G0001233', status: 'issued' },
+      { date: '12/05/2026', txns: 41, total: 1780000, invoice: '2025/G0001232', status: 'issued' },
+      { date: '11/05/2026', txns: 55, total: 3120000, invoice: '2025/G0001231', status: 'pending' },
+      { date: '10/05/2026', txns: 38, total: 1650000, invoice: '2025/G0001230', status: 'issued' },
+      { date: '09/05/2026', txns: 44, total: 2100000, invoice: '2025/G0001229', status: 'issued' },
+      { date: '08/05/2026', txns: 50, total: 2750000, invoice: '2025/G0001228', status: 'issued' },
+      { date: '07/05/2026', txns: 36, total: 1420000, invoice: '2025/G0001227', status: 'issued' },
+      { date: '06/05/2026', txns: 61, total: 3480000, invoice: '2025/G0001226', status: 'issued' },
+      { date: '05/05/2026', txns: 47, total: 2310000, invoice: '2025/G0001225', status: 'issued' },
+      { date: '04/05/2026', txns: 39, total: 1890000, invoice: '2025/G0001224', status: 'issued' },
+      { date: '03/05/2026', txns: 58, total: 3250000, invoice: '2025/G0001223', status: 'issued' },
+      { date: '02/05/2026', txns: 43, total: 2080000, invoice: '2025/G0001222', status: 'issued' },
+      { date: '01/05/2026', txns: 35, total: 1560000, invoice: '2025/G0001221', status: 'issued' },
+      { date: '30/04/2026', txns: 52, total: 2940000, invoice: '2025/G0001220', status: 'issued' },
+    ];
+
+    /* === Sample expanded transactions === */
+    const SAMPLE_TXNS = [
+      { cashier: 'Nguyễn Thị C', posId: 'POS-20260514-001', time: '14/05/2026 08:15', amount: 85000, items: 'Cà phê sữa đá x2' },
+      { cashier: 'Trần Văn D', posId: 'POS-20260514-002', time: '14/05/2026 09:02', amount: 120000, items: 'Bánh mì thịt x3, Trà đào x1' },
+      { cashier: 'Nguyễn Thị C', posId: 'POS-20260514-003', time: '14/05/2026 10:30', amount: 45000, items: 'Cà phê đen x1' },
+      { cashier: 'Lê Minh E', posId: 'POS-20260514-004', time: '14/05/2026 11:15', amount: 67000, items: 'Sinh tố bơ x1, Nước cam x1' },
+      { cashier: 'Trần Văn D', posId: 'POS-20260514-005', time: '14/05/2026 13:45', amount: 95000, items: 'Cơm trưa văn phòng x1' },
+    ];
+
+    /* === Render History Table === */
+    function renderHistory() {
+      const tbody = document.getElementById('history-body');
+      if (!tbody) return;
+      let html = '';
+      HISTORY_DATA.forEach((row, idx) => {
+        const statusBadge = row.status === 'issued'
+          ? '<span class="hv-badge hv-badge-success">Đã phát hành</span>'
+          : '<span class="hv-badge hv-badge-warning">Chờ xử lý</span>';
+        html += `
+          <tr data-row="${idx}">
+            <td>${row.date}</td>
+            <td>${row.txns}</td>
+            <td class="hv-text-right">${HV.formatVND(row.total)}</td>
+            <td><code class="text-mono">${row.invoice}</code></td>
+            <td>${statusBadge}</td>
+            <td>
+              <button class="agg-view-btn" onclick="toggleExpand(${idx})" aria-expanded="false" aria-label="Xem chi tiết giao dịch ngày ${row.date}">
+                <i class="ti ti-chevron-right"></i> Xem
+              </button>
+            </td>
+          </tr>
+          <tr class="agg-expand-row" id="expand-${idx}">
+            <td colspan="6" class="agg-expand-cell">
+              <div class="agg-expand-inner">
+                <div class="agg-expand-title">Giao dịch gốc (POS)</div>
+                <div class="agg-txn-grid">
+                  ${SAMPLE_TXNS.map(t => `
+                    <div class="agg-txn-card">
+                      <dl>
+                        <dt>Số HĐ POS</dt><dd><code class="text-mono">${t.posId}</code></dd>
+                        <dt>Thu ngân</dt><dd>${t.cashier}</dd>
+                        <dt>Thời gian</dt><dd>${t.time}</dd>
+                        <dt>Số tiền</dt><dd class="agg-txn-amount">${HV.formatVND(t.amount)}</dd>
+                        <dt>Mặt hàng</dt><dd>${t.items}</dd>
+                      </dl>
+                    </div>
+                  `).join('')}
+                </div>
+              </div>
+            </td>
+          </tr>`;
+      });
+      tbody.innerHTML = html;
+    }
+
+    /* === Toggle Expand Row === */
+    function toggleExpand(idx) {
+      const row = document.getElementById('expand-' + idx);
+      const btn = row.previousElementSibling.querySelector('.agg-view-btn');
+      const isOpen = row.classList.contains('open');
+      // Close all
+      document.querySelectorAll('.agg-expand-row').forEach(r => r.classList.remove('open'));
+      document.querySelectorAll('.agg-view-btn').forEach(b => { b.classList.remove('open'); b.setAttribute('aria-expanded', 'false'); });
+      if (!isOpen) {
+        row.classList.add('open');
+        btn.classList.add('open');
+        btn.setAttribute('aria-expanded', 'true');
+      }
+    }
+
+    /* === Manual Modal === */
+    function openManualModal() {
+      const modal = document.getElementById('manual-modal');
+      modal.classList.remove('hv-hidden');
+      const dateInput = document.getElementById('manual-date');
+      const today = new Date();
+      dateInput.max = today.toISOString().split('T')[0];
+      dateInput.value = today.toISOString().split('T')[0];
+      document.getElementById('manual-preview').classList.add('hv-hidden');
+      document.getElementById('btn-confirm-merge').disabled = true;
+      dateInput.focus();
+    }
+
+    function closeManualModal() {
+      document.getElementById('manual-modal').classList.add('hv-hidden');
+    }
+
+    function previewManual() {
+      const preview = document.getElementById('manual-preview');
+      preview.classList.remove('hv-hidden');
+      document.getElementById('btn-confirm-merge').disabled = false;
+    }
+
+    function confirmManual() {
+      closeManualModal();
+      showToast('Đã gộp 8 giao dịch thành công');
+    }
+
+    /* === Config Card Scroll === */
+    function openConfigCard() {
+      const card = document.getElementById('rules-card');
+      card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      card.style.boxShadow = 'var(--hv-shadow-focus)';
+      setTimeout(() => { card.style.boxShadow = ''; }, 2000);
+    }
+
+    /* === Save Rules === */
+    function saveRules(e) {
+      e.preventDefault();
+      showToast('Đã lưu quy tắc thành công');
+    }
+
+    /* === Remove Chip === */
+    function removeChip(el) {
+      el.parentElement.remove();
+    }
+
+    /* === Add Exclude Chip === */
+    function addExcludeChip() {
+      const name = prompt('Nhập tên chi nhánh hoặc kênh cần loại trừ:');
+      if (!name || !name.trim()) return;
+      const chipList = document.getElementById('exclude-chips');
+      const addBtn = chipList.querySelector('button');
+      const chip = document.createElement('span');
+      chip.className = 'hv-tag hv-tag-active';
+      chip.innerHTML = name.trim() + ' <span class="agg-chip-remove" onclick="removeChip(this)" role="button" tabindex="0" aria-label="Xóa ' + name.trim() + '">&times;</span>';
+      chipList.insertBefore(chip, addBtn);
+    }
+
+    /* === Toast === */
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      document.getElementById('toast-msg').textContent = msg;
+      toast.classList.remove('hv-hidden');
+      setTimeout(() => toast.classList.add('hv-hidden'), 3000);
+    }
+
+    /* === State Management === */
+    function applyState(state) {
+      ['default', 'empty', 'loading', 'error'].forEach(s => {
+        const el = document.getElementById('state-' + s);
+        if (el) el.classList.toggle('hv-hidden', s !== state);
+      });
+    }
+
+    /* === Init === */
+    document.addEventListener('DOMContentLoaded', () => {
+      renderHistory();
+      // Modal close on backdrop click
+      document.getElementById('manual-modal').addEventListener('click', (e) => {
+        if (e.target === e.currentTarget) closeManualModal();
+      });
+      // Modal close on Escape
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeManualModal();
+      });
+      // Apply state from URL
+      const params = new URLSearchParams(window.location.search);
+      const state = params.get('state') || 'default';
+      applyState(state);
+
+      // Aggregate button handler
+      document.querySelectorAll('.hv-btn-primary').forEach(btn => {
+        if (btn.textContent.includes('Gộp đơn') || btn.textContent.includes('Thực hiện')) {
+          btn.addEventListener('click', () => {
+            HV.btnLoading(btn, true);
+            setTimeout(() => {
+              HV.btnLoading(btn, false);
+              HV.toast('Đã gộp đơn thành công! 42 hóa đơn lẻ → 3 hóa đơn tổng hợp.', 'success');
+            }, 2000);
+          });
+        }
+      });
+
+      // Auto-aggregation toggle
+      const toggle = document.querySelector('.agg-toggle input');
+      if (toggle) {
+        toggle.addEventListener('change', () => {
+          const label = toggle.closest('.agg-toggle-row')?.querySelector('.agg-toggle-label');
+          if (toggle.checked) {
+            HV.toast('Đã bật gộp đơn tự động cuối ngày', 'success');
+          } else {
+            HV.toast('Đã tắt gộp đơn tự động', 'info');
+          }
+        });
+      }
+    });
+  </script>
+
+</body>
+</html>

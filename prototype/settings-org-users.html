@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thông tin doanh nghiệp — Haravan Invoice</title>
+  <link rel="stylesheet" href="assets/css/design-system.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script>window.HV_PAGE = { id: 'settings-org', title: 'Thông tin doanh nghiệp' };</script>
+</head>
+<body>
+  <div class="hv-skip-link"><a href="#main-content">Chuyển đến nội dung</a></div>
+  <aside class="hv-sidebar" aria-label="Điều hướng chính"></aside>
+  <header class="hv-topbar" aria-label="Thanh công cụ"></header>
+  <main class="hv-content" id="main-content">
+    <div class="hv-content-max">
+
+      <!-- HEADER -->
+      <div class="hv-content-header">
+        <div>
+          <nav class="hv-breadcrumb" style="margin-bottom:4px">
+            <a href="dashboard.html" style="color:var(--hv-text-secondary)">Cài đặt</a>
+            <i class="ti ti-chevron-right" style="color:var(--hv-text-muted);font-size:12px"></i>
+            <span style="color:var(--hv-text-primary);font-weight:500">Thông tin doanh nghiệp</span>
+          </nav>
+          <h1>Thông tin doanh nghiệp & Người dùng</h1>
+        </div>
+      </div>
+
+      <!-- TABS -->
+      <div class="hv-tabs" style="margin-bottom:20px">
+        <button class="hv-tab hv-tab-active" onclick="switchSettingsTab(this,'org')">Thông tin doanh nghiệp</button>
+        <button class="hv-tab" onclick="switchSettingsTab(this,'users')">Người dùng & Phân quyền</button>
+        <button class="hv-tab" onclick="switchSettingsTab(this,'security')">Bảo mật</button>
+      </div>
+
+      <!-- TAB: Organization Info -->
+      <div id="tab-org" class="hv-tab-panel">
+        <div class="hv-card">
+          <div class="hv-card-header">
+            <span class="hv-card-title">Thông tin đơn vị</span>
+            <button class="hv-btn hv-btn-secondary hv-btn-sm"><i class="ti ti-pencil"></i> Chỉnh sửa</button>
+          </div>
+          <div class="hv-card-section">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+              <div>
+                <label class="hv-label">Tên doanh nghiệp</label>
+                <input class="hv-input" value="Công ty TNHH Cà phê Trung Nguyên Legend" readonly style="background:var(--hv-bg-soft)">
+                <div class="hv-help-text">Không thể thay đổi sau khi đăng ký</div>
+              </div>
+              <div>
+                <label class="hv-label">Mã số thuế</label>
+                <input class="hv-input hv-mono" value="0312345678" readonly style="background:var(--hv-bg-soft)">
+                <div class="hv-help-text">Cố định theo đăng ký kinh doanh</div>
+              </div>
+              <div>
+                <label class="hv-label">Địa chỉ trụ sở</label>
+                <input class="hv-input" value="12 Nguyễn Văn Trí, Phường 7, Quận Phú Nhuận, TP. Hồ Chí Minh">
+              </div>
+              <div>
+                <label class="hv-label">Điện thoại</label>
+                <input class="hv-input" value="028 3999 8888">
+              </div>
+              <div>
+                <label class="hv-label">Email</label>
+                <input class="hv-input" value="info@trungnguyenlegend.com">
+              </div>
+              <div>
+                <label class="hv-label">Website</label>
+                <input class="hv-input" value="https://trungnguyenlegend.com">
+              </div>
+              <div>
+                <label class="hv-label">Số tài khoản ngân hàng</label>
+                <input class="hv-input hv-mono" value="1234567890123">
+              </div>
+              <div>
+                <label class="hv-label">Tên ngân hàng</label>
+                <input class="hv-input" value="Ngân hàng TMCP Ngoại thương Việt Nam (Vietcombank)">
+              </div>
+              <div>
+                <label class="hv-label">Người liên hệ</label>
+                <input class="hv-input" value="Lê Tody">
+              </div>
+              <div>
+                <label class="hv-label">SĐT người liên hệ</label>
+                <input class="hv-input" value="0901 234 567">
+              </div>
+            </div>
+          </div>
+          <div style="padding:16px 20px;border-top:1px solid var(--hv-border);display:flex;justify-content:flex-end;gap:8px">
+            <button class="hv-btn hv-btn-secondary">Hủy</button>
+            <button class="hv-btn hv-btn-primary" onclick="HV.toast('Đã lưu thông tin doanh nghiệp','success')"><i class="ti ti-check"></i> Lưu thay đổi</button>
+          </div>
+        </div>
+
+        <!-- Publishing Organization -->
+        <div class="hv-card" style="margin-top:16px">
+          <div class="hv-card-header">
+            <span class="hv-card-title">Đơn vị phát hành</span>
+          </div>
+          <div class="hv-card-section">
+            <p style="font-size:13px;color:var(--hv-text-secondary);margin-bottom:12px">Chọn đơn vị phát hành hóa đơn (áp dụng cho mô hình công ty mẹ/con)</p>
+            <select class="hv-select">
+              <option selected>Công ty TNHH Cà phê Trung Nguyên Legend (0312345678)</option>
+              <option>Chi nhánh Q1 — Trung Nguyen Legend Coffee (0312345678-001)</option>
+              <option>Chi nhánh Q3 — Trung Nguyen Legend Coffee (0312345678-002)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB: Users & RBAC -->
+      <div id="tab-users" class="hv-tab-panel" style="display:none">
+        <div class="hv-card hv-card-flush">
+          <div class="hv-card-header" style="padding:16px 20px">
+            <span class="hv-card-title">Danh sách người dùng</span>
+            <button class="hv-btn hv-btn-primary" onclick="showAddUserModal()"><i class="ti ti-plus"></i> Thêm người dùng</button>
+          </div>
+          <table class="hv-table">
+            <thead>
+              <tr>
+                <th>Người dùng</th>
+                <th>Email</th>
+                <th>Vai trò</th>
+                <th>Trạng thái</th>
+                <th>Đăng nhập cuối</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <div class="hv-flex hv-items-center hv-gap-3">
+                    <div style="width:32px;height:32px;border-radius:50%;background:var(--hv-primary);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600">LT</div>
+                    <div>
+                      <div style="font-weight:500">Lê Tody</div>
+                      <div style="font-size:12px;color:var(--hv-text-muted)">Chủ sở hữu</div>
+                    </div>
+                  </div>
+                </td>
+                <td>tody@trungnguyenlegend.com</td>
+                <td><span class="hv-badge hv-badge-primary hv-badge-solid">Admin</span></td>
+                <td><span class="hv-badge hv-badge-success">Hoạt động</span></td>
+                <td style="font-size:13px;color:var(--hv-text-secondary)">Hôm nay, 14:32</td>
+                <td><button class="hv-btn hv-btn-sm hv-btn-tertiary"><i class="ti ti-dots-vertical"></i></button></td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="hv-flex hv-items-center hv-gap-3">
+                    <div style="width:32px;height:32px;border-radius:50%;background:var(--hv-success);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600">NT</div>
+                    <div>
+                      <div style="font-weight:500">Nguyễn Thị Mai</div>
+                      <div style="font-size:12px;color:var(--hv-text-muted)">Kế toán trưởng</div>
+                    </div>
+                  </div>
+                </td>
+                <td>mai@trungnguyenlegend.com</td>
+                <td><span class="hv-badge hv-badge-info hv-badge-solid">Kế toán viên</span></td>
+                <td><span class="hv-badge hv-badge-success">Hoạt động</span></td>
+                <td style="font-size:13px;color:var(--hv-text-secondary)">Hôm nay, 11:05</td>
+                <td><button class="hv-btn hv-btn-sm hv-btn-tertiary"><i class="ti ti-dots-vertical"></i></button></td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="hv-flex hv-items-center hv-gap-3">
+                    <div style="width:32px;height:32px;border-radius:50%;background:var(--hv-warning);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600">PH</div>
+                    <div>
+                      <div style="font-weight:500">Phạm Hoàng</div>
+                      <div style="font-size:12px;color:var(--hv-text-muted)">Thu ngân POS</div>
+                    </div>
+                  </div>
+                </td>
+                <td>hoang@trungnguyenlegend.com</td>
+                <td><span class="hv-badge hv-badge-warning hv-badge-solid">Bán hàng</span></td>
+                <td><span class="hv-badge hv-badge-success">Hoạt động</span></td>
+                <td style="font-size:13px;color:var(--hv-text-secondary)">Hôm qua, 18:45</td>
+                <td><button class="hv-btn hv-btn-sm hv-btn-tertiary"><i class="ti ti-dots-vertical"></i></button></td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="hv-flex hv-items-center hv-gap-3">
+                    <div style="width:32px;height:32px;border-radius:50%;background:var(--hv-border-strong);color:var(--hv-text-muted);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600">TL</div>
+                    <div>
+                      <div style="font-weight:500">Trần Linh</div>
+                      <div style="font-size:12px;color:var(--hv-text-muted)">API Caller</div>
+                    </div>
+                  </div>
+                </td>
+                <td>api@trungnguyenlegend.com</td>
+                <td><span class="hv-badge hv-badge-neutral hv-badge-solid">Gọi API</span></td>
+                <td><span class="hv-badge hv-badge-warning">Bị khóa</span></td>
+                <td style="font-size:13px;color:var(--hv-text-secondary)">10/05/2026</td>
+                <td><button class="hv-btn hv-btn-sm hv-btn-tertiary"><i class="ti ti-dots-vertical"></i></button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- RBAC Roles -->
+        <div class="hv-card" style="margin-top:16px">
+          <div class="hv-card-header">
+            <span class="hv-card-title">Vai trò & Phân quyền</span>
+            <button class="hv-btn hv-btn-secondary hv-btn-sm"><i class="ti ti-plus"></i> Tạo vai trò</button>
+          </div>
+          <div class="hv-card-section">
+            <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px">
+              <div style="padding:14px;border:1px solid var(--hv-border);border-radius:var(--hv-radius-lg)">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+                  <span style="font-weight:600">Admin</span>
+                  <span class="hv-badge hv-badge-primary hv-badge-solid" style="font-size:10px">Toàn quyền</span>
+                </div>
+                <div style="font-size:12px;color:var(--hv-text-secondary)">Tìm kiếm, thêm, sửa, xóa, phát hành, in, quản lý người dùng, cấu hình hệ thống</div>
+              </div>
+              <div style="padding:14px;border:1px solid var(--hv-border);border-radius:var(--hv-radius-lg)">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+                  <span style="font-weight:600">Kế toán viên</span>
+                  <span class="hv-badge hv-badge-info hv-badge-solid" style="font-size:10px">Nghiệp vụ</span>
+                </div>
+                <div style="font-size:12px;color:var(--hv-text-secondary)">Tìm kiếm, thêm, sửa, phát hành, in hóa đơn. Xem báo cáo. Không xóa.</div>
+              </div>
+              <div style="padding:14px;border:1px solid var(--hv-border);border-radius:var(--hv-radius-lg)">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+                  <span style="font-weight:600">Bán hàng</span>
+                  <span class="hv-badge hv-badge-warning hv-badge-solid" style="font-size:10px">Hạn chế</span>
+                </div>
+                <div style="font-size:12px;color:var(--hv-text-secondary)">Tìm kiếm, phát hành hóa đơn từ POS. Không sửa/xóa. Không xem báo cáo.</div>
+              </div>
+              <div style="padding:14px;border:1px solid var(--hv-border);border-radius:var(--hv-radius-lg)">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+                  <span style="font-weight:600">Gọi API</span>
+                  <span class="hv-badge hv-badge-neutral hv-badge-solid" style="font-size:10px">Tự động</span>
+                </div>
+                <div style="font-size:12px;color:var(--hv-text-secondary)">Phát hành, truy vấn hóa đơn qua API. Không truy cập giao diện.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB: Security -->
+      <div id="tab-security" class="hv-tab-panel" style="display:none">
+        <div class="hv-card">
+          <div class="hv-card-header">
+            <span class="hv-card-title">Bảo mật tài khoản</span>
+          </div>
+          <div class="hv-card-section">
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--hv-border-table)">
+              <div>
+                <div style="font-weight:500">Đổi mật khẩu</div>
+                <div style="font-size:12px;color:var(--hv-text-secondary)">Cập nhật lần cuối: 01/05/2026</div>
+              </div>
+              <button class="hv-btn hv-btn-secondary hv-btn-sm">Đổi mật khẩu</button>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--hv-border-table)">
+              <div>
+                <div style="font-weight:500">Xác thực 2 yếu tố (2FA)</div>
+                <div style="font-size:12px;color:var(--hv-text-secondary)">Bảo vệ tài khoản bằng mã OTP</div>
+              </div>
+              <label class="hv-switch">
+                <input type="checkbox" checked>
+                <span class="hv-switch-slider"></span>
+              </label>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--hv-border-table)">
+              <div>
+                <div style="font-weight:500">Phiên làm việc</div>
+                <div style="font-size:12px;color:var(--hv-text-secondary)">Thời gian hết hạn: 8 giờ</div>
+              </div>
+              <button class="hv-btn hv-btn-danger-outline hv-btn-sm">Đăng xuất tất cả</button>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 0">
+              <div>
+                <div style="font-weight:500">Khóa tài khoản sau 5 lần sai</div>
+                <div style="font-size:12px;color:var(--hv-text-secondary)">Tự động khóa 30 phút sau 5 lần nhập sai mật khẩu</div>
+              </div>
+              <label class="hv-switch">
+                <input type="checkbox" checked>
+                <span class="hv-switch-slider"></span>
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <script src="assets/js/app-shell.js"></script>
+  <script>
+    function switchSettingsTab(btn, tabId) {
+      document.querySelectorAll('.hv-tab').forEach(t => t.classList.remove('hv-tab-active'));
+      btn.classList.add('hv-tab-active');
+      document.querySelectorAll('.hv-tab-panel').forEach(p => p.style.display = 'none');
+      document.getElementById('tab-' + tabId).style.display = '';
+    }
+
+    function showAddUserModal() {
+      HV.modal({
+        title: 'Thêm người dùng mới',
+        body: `
+          <div style="display:flex;flex-direction:column;gap:12px">
+            <div><label class="hv-label">Họ tên</label><input class="hv-input" placeholder="Nhập họ tên"></div>
+            <div><label class="hv-label">Email</label><input class="hv-input" type="email" placeholder="email@example.com"></div>
+            <div><label class="hv-label">Mật khẩu</label><input class="hv-input" type="password" placeholder="Tối thiểu 8 ký tự"></div>
+            <div><label class="hv-label">Vai trò</label>
+              <select class="hv-select">
+                <option>Admin</option>
+                <option selected>Kế toán viên</option>
+                <option>Bán hàng</option>
+                <option>Gọi API</option>
+              </select>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px">
+              <input type="checkbox" class="hv-checkbox" checked>
+              <span style="font-size:13px">Kích hoạt tài khoản ngay</span>
+            </div>
+          </div>
+        `,
+        actions: [
+          { id: 'cancel', label: 'Hủy' },
+          { id: 'save', label: 'Tạo người dùng', primary: true, onClick: (bd) => { HV.closeModal(bd); HV.toast('Đã tạo người dùng mới','success'); } }
+        ]
+      });
+    }
+  </script>
+</body>
+</html>

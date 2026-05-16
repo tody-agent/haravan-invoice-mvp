@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Báo cáo hóa đơn xóa bỏ — Haravan Invoice</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <link rel="stylesheet" href="assets/css/design-system.css">
+  <script>window.HV_PAGE = { id: 'report-deleted', title: 'Hóa đơn xóa bỏ', breadcrumb: [{ label: 'Báo cáo', href: 'reports.html' }, { label: 'Hóa đơn xóa bỏ' }] };</script>
+  <style>
+    .hv-content-max > * + * { margin-top: 20px; }
+    .report-filters {
+      display: flex;
+      align-items: flex-end;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+    .report-filter-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .report-filter-group .hv-label { margin-bottom: 0; }
+    .report-preview {
+      background: var(--hv-bg-surface);
+      border: 1px solid var(--hv-border);
+      border-radius: var(--hv-radius-md);
+      overflow: hidden;
+    }
+    .report-preview-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--hv-border);
+    }
+    .report-preview-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--hv-text-primary);
+    }
+    .report-preview-actions {
+      display: flex;
+      gap: 6px;
+    }
+    .report-summary {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .report-summary-item {
+      background: var(--hv-bg-surface);
+      border: 1px solid var(--hv-border);
+      border-radius: var(--hv-radius-md);
+      padding: 14px 18px;
+      flex: 1;
+      min-width: 140px;
+    }
+    .report-summary-label {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--hv-text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 4px;
+    }
+    .report-summary-value {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--hv-text-primary);
+    }
+  </style>
+</head>
+<body>
+  <a href="#main-content" class="hv-skip-link">Chuyển đến nội dung chính</a>
+
+  <aside class="hv-sidebar" aria-label="Điều hướng chính"></aside>
+  <header class="hv-topbar"></header>
+
+  <main id="main-content" class="hv-content">
+    <div class="hv-content-max">
+
+      <div class="hv-content-header">
+        <h1><i class="ti ti-trash" style="color:var(--hv-danger);margin-right:8px"></i>Báo cáo hóa đơn xóa bỏ</h1>
+        <a href="reports.html" class="hv-btn hv-btn-secondary hv-btn-sm"><i class="ti ti-arrow-left"></i> Quay lại</a>
+      </div>
+
+      <div class="report-filters">
+        <div class="report-filter-group">
+          <label class="hv-label" for="rd-from">Từ ngày</label>
+          <input type="date" class="hv-input" id="rd-from" value="2026-04-16" style="width:150px">
+        </div>
+        <div class="report-filter-group">
+          <label class="hv-label" for="rd-to">Đến ngày</label>
+          <input type="date" class="hv-input" id="rd-to" value="2026-05-16" style="width:150px">
+        </div>
+        <div class="report-filter-group">
+          <label class="hv-label" for="rd-user">Người thực hiện</label>
+          <select class="hv-select" id="rd-user" style="width:160px">
+            <option value="">Tất cả</option>
+            <option>Demo Haravan</option>
+            <option>Nguyễn Văn A</option>
+          </select>
+        </div>
+        <button class="hv-btn hv-btn-primary hv-btn-sm">
+          <i class="ti ti-search"></i> Xem báo cáo
+        </button>
+      </div>
+
+      <div class="report-summary">
+        <div class="report-summary-item">
+          <div class="report-summary-label">Tổng HĐ xóa</div>
+          <div class="report-summary-value" style="color:var(--hv-danger)">3</div>
+        </div>
+        <div class="report-summary-item">
+          <div class="report-summary-label">Tổng tiền</div>
+          <div class="report-summary-value">3,705,000</div>
+        </div>
+        <div class="report-summary-item">
+          <div class="report-summary-label">Người thực hiện</div>
+          <div class="report-summary-value" style="font-size:16px">2 người</div>
+        </div>
+      </div>
+
+      <div class="report-preview">
+        <div class="report-preview-header">
+          <span class="report-preview-title">Hóa đơn xóa bỏ — 16/04 – 16/05/2026</span>
+          <div class="report-preview-actions">
+            <button class="hv-btn hv-btn-secondary hv-btn-sm"><i class="ti ti-file-spreadsheet"></i></button>
+          </div>
+        </div>
+        <div class="hv-table-wrap">
+          <table class="hv-table">
+            <thead>
+              <tr>
+                <th>Số HĐ</th>
+                <th>Ký hiệu</th>
+                <th>Ngày lập</th>
+                <th>Khách hàng</th>
+                <th class="num">Tổng tiền</th>
+                <th>Người xóa</th>
+                <th>Thời gian xóa</th>
+                <th>Lý do</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="hv-mono">00000098</td>
+                <td class="hv-mono">AA/200E</td>
+                <td>02/05/2026</td>
+                <td>Khách lẻ</td>
+                <td class="num">120,000</td>
+                <td>Demo Haravan</td>
+                <td>02/05/2026 14:32</td>
+                <td style="color:var(--hv-text-secondary)">Nhập sai thông tin</td>
+              </tr>
+              <tr>
+                <td class="hv-mono">00000076</td>
+                <td class="hv-mono">AA/200E</td>
+                <td>18/04/2026</td>
+                <td>Cty TNHH XYZ</td>
+                <td class="num">3,500,000</td>
+                <td>Nguyễn Văn A</td>
+                <td>18/04/2026 09:15</td>
+                <td style="color:var(--hv-text-secondary)">Hủy giao dịch</td>
+              </tr>
+              <tr>
+                <td class="hv-mono">00000071</td>
+                <td class="hv-mono">AA/200E</td>
+                <td>15/04/2026</td>
+                <td>Khách lẻ</td>
+                <td class="num">85,000</td>
+                <td>Demo Haravan</td>
+                <td>15/04/2026 16:48</td>
+                <td style="color:var(--hv-text-secondary)">Khách trả lại hàng</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <script src="assets/js/app-shell.js"></script>
+</body>
+</html>

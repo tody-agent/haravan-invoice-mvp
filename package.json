@@ -1,0 +1,28 @@
+{
+  "name": "haravan-invoice-mvp",
+  "private": true,
+  "scripts": {
+    "dev": "pnpm --filter @haravan/api dev",
+    "dev:portal": "pnpm --filter @haravan/portal dev",
+    "dev:all": "pnpm -r --parallel dev",
+    "build": "pnpm run --parallel build",
+    "test": "pnpm run --parallel test",
+    "test:run": "vitest run",
+    "lint": "pnpm run --parallel lint",
+    "typecheck": "pnpm run --parallel typecheck"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20250403.0",
+    "@vitest/coverage-v8": "^4.1.6",
+    "mermaid": "^11.15.0",
+    "typescript": "^5.7.0",
+    "vitepress": "^1.6.4",
+    "vitepress-plugin-mermaid": "^2.0.17",
+    "vitest": "^3.1.1",
+    "wrangler": "^4.14.0"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "packageManager": "pnpm@9.0.0"
+}

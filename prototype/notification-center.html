@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thông báo — Haravan Invoice</title>
+  <link rel="stylesheet" href="assets/css/design-system.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script>window.HV_PAGE = { id: 'notifications', title: 'Thông báo' };</script>
+</head>
+<body>
+  <div class="hv-skip-link"><a href="#main-content">Chuyển đến nội dung</a></div>
+  <aside class="hv-sidebar" aria-label="Điều hướng chính"></aside>
+  <header class="hv-topbar" aria-label="Thanh công cụ"></header>
+  <main class="hv-content" id="main-content">
+    <div class="hv-content-max">
+
+      <!-- HEADER -->
+      <div class="hv-content-header">
+        <div>
+          <h1>Thông báo</h1>
+          <p style="font-size:13px;color:var(--hv-text-secondary);margin-top:4px">Quản lý tất cả thông báo hệ thống, tuân thủ và tác vụ</p>
+        </div>
+        <div class="hv-flex hv-gap-2">
+          <button class="hv-btn hv-btn-secondary" onclick="HV.toast('Đã đánh dấu tất cả đã đọc','success')">
+            <i class="ti ti-check-all"></i> Đọc tất cả
+          </button>
+          <button class="hv-btn hv-btn-secondary">
+            <i class="ti ti-settings"></i> Cài đặt
+          </button>
+        </div>
+      </div>
+
+      <!-- LAYOUT: 3-col sidebar + 9-col content -->
+      <div class="hv-grid-sidebar" style="display:grid;gap:20px">
+
+        <!-- LEFT SIDEBAR FILTERS -->
+        <div>
+          <div class="hv-card" style="position:sticky;top:80px">
+            <div class="hv-card-header">
+              <span class="hv-card-title">Bộ lọc</span>
+            </div>
+            <div class="hv-card-section">
+              <label class="hv-label" style="font-weight:600;margin-bottom:8px">Loại thông báo</label>
+              <div style="display:flex;flex-direction:column;gap:6px">
+                <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer">
+                  <input type="checkbox" class="hv-checkbox" checked> Quy định <span style="color:var(--hv-text-muted)">(3)</span>
+                </label>
+                <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer">
+                  <input type="checkbox" class="hv-checkbox" checked> Tuân thủ <span style="color:var(--hv-text-muted)">(5)</span>
+                </label>
+                <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer">
+                  <input type="checkbox" class="hv-checkbox" checked> Kết quả tác vụ <span style="color:var(--hv-text-muted)">(12)</span>
+                </label>
+                <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer">
+                  <input type="checkbox" class="hv-checkbox" checked> Phản hồi KH <span style="color:var(--hv-text-muted)">(4)</span>
+                </label>
+                <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer">
+                  <input type="checkbox" class="hv-checkbox" checked> CQT <span style="color:var(--hv-text-muted)">(12)</span>
+                </label>
+                <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer">
+                  <input type="checkbox" class="hv-checkbox" checked> Rủi ro/AI <span style="color:var(--hv-text-muted)">(3)</span>
+                </label>
+                <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer">
+                  <input type="checkbox" class="hv-checkbox" checked> Gói dịch vụ <span style="color:var(--hv-text-muted)">(2)</span>
+                </label>
+              </div>
+            </div>
+            <div class="hv-card-section">
+              <label class="hv-label" style="font-weight:600;margin-bottom:8px">Mức độ</label>
+              <div style="display:flex;flex-direction:column;gap:6px">
+                <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer">
+                  <input type="radio" name="severity" class="hv-radio" checked> Tất cả
+                </label>
+                <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer">
+                  <input type="radio" name="severity" class="hv-radio"> <span class="hv-badge hv-badge-danger" style="font-size:10px;height:18px">Quan trọng</span>
+                </label>
+                <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer">
+                  <input type="radio" name="severity" class="hv-radio"> <span class="hv-badge hv-badge-warning" style="font-size:10px;height:18px">Bình thường</span>
+                </label>
+                <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer">
+                  <input type="radio" name="severity" class="hv-radio"> <span class="hv-badge hv-badge-info" style="font-size:10px;height:18px">Thông tin</span>
+                </label>
+              </div>
+            </div>
+            <div class="hv-card-section">
+              <label class="hv-label" style="font-weight:600;margin-bottom:8px">Thời gian</label>
+              <div style="display:flex;flex-direction:column;gap:6px">
+                <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer">
+                  <input type="radio" name="time" class="hv-radio" checked> 7 ngày qua
+                </label>
+                <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer">
+                  <input type="radio" name="time" class="hv-radio"> 30 ngày qua
+                </label>
+                <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer">
+                  <input type="radio" name="time" class="hv-radio"> 90 ngày qua
+                </label>
+              </div>
+            </div>
+            <div class="hv-card-section">
+              <label class="hv-label" style="font-weight:600;margin-bottom:8px">Trạng thái</label>
+              <div style="display:flex;flex-direction:column;gap:6px">
+                <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer">
+                  <input type="checkbox" class="hv-checkbox" checked> Chưa đọc <span style="color:var(--hv-text-muted)">(8)</span>
+                </label>
+                <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer">
+                  <input type="checkbox" class="hv-checkbox" checked> Đã đọc <span style="color:var(--hv-text-muted)">(35)</span>
+                </label>
+                <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer">
+                  <input type="checkbox" class="hv-checkbox"> Đã xử lý <span style="color:var(--hv-text-muted)">(4)</span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT CONTENT -->
+        <div>
+          <!-- Search + Sort -->
+          <div class="hv-flex hv-items-center hv-justify-between" style="margin-bottom:16px">
+            <div style="position:relative;width:320px">
+              <i class="ti ti-search" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--hv-text-muted);font-size:16px"></i>
+              <input class="hv-input" placeholder="Tìm thông báo..." style="padding-left:36px">
+            </div>
+            <div class="hv-flex hv-items-center hv-gap-2">
+              <select class="hv-select" style="width:auto;height:32px;font-size:13px">
+                <option>Mới nhất</option>
+                <option>Cũ nhất</option>
+                <option>Quan trọng</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- NOTIFICATION LIST -->
+          <div class="hv-card hv-card-flush">
+            <!-- Notification: Regulation -->
+            <div class="hv-notif-item unread" style="padding:16px 20px;border-bottom:1px solid var(--hv-border-table)">
+              <div class="hv-notif-icon" style="background:var(--hv-warning-soft);color:var(--hv-warning)">
+                <i class="ti ti-alert-triangle"></i>
+              </div>
+              <div class="hv-notif-body" style="flex:1">
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+                  <span class="hv-notif-title" style="font-size:14px;font-weight:600">NĐ 70/2025 + TT 32/2025 có hiệu lực</span>
+                  <span class="hv-badge hv-badge-warning" style="font-size:10px;height:18px">Quan trọng</span>
+                  <span class="hv-badge hv-badge-primary hv-badge-solid" style="font-size:10px;height:18px">Quy định</span>
+                </div>
+                <div class="hv-notif-desc" style="font-size:13px">Từ 01/06/2025: Bỏ thủ tục hủy hóa đơn, chỉ điều chỉnh/thay thế. Doanh nghiệp ≥1 tỷ doanh thu phải kết nối máy tính tiền theo NĐ 70/2025 §1+§11.</div>
+                <div style="display:flex;align-items:center;gap:12px;margin-top:8px">
+                  <span class="hv-notif-time">2 giờ trước</span>
+                  <a href="compliance-center.html" class="hv-btn-link" style="font-size:12px">Xem chi tiết →</a>
+                </div>
+              </div>
+            </div>
+
+            <!-- Notification: CQT Reject -->
+            <div class="hv-notif-item unread" style="padding:16px 20px;border-bottom:1px solid var(--hv-border-table)">
+              <div class="hv-notif-icon" style="background:var(--hv-danger-soft);color:var(--hv-danger)">
+                <i class="ti ti-circle-x"></i>
+              </div>
+              <div class="hv-notif-body" style="flex:1">
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+                  <span class="hv-notif-title" style="font-size:14px;font-weight:600">CQT từ chối HD-2026-0130</span>
+                  <span class="hv-badge hv-badge-danger" style="font-size:10px;height:18px">Quan trọng</span>
+                  <span class="hv-badge hv-badge-info hv-badge-solid" style="font-size:10px;height:18px">CQT</span>
+                </div>
+                <div class="hv-notif-desc" style="font-size:13px">Lý do: MST người mua không hợp lệ (Mã lỗi M042). Cần mở wizard xử lý để điều chỉnh hoặc thay thế hóa đơn.</div>
+                <div style="display:flex;align-items:center;gap:12px;margin-top:8px">
+                  <span class="hv-notif-time">3 giờ trước</span>
+                  <a href="correction-wizard.html" class="hv-btn hv-btn-sm hv-btn-danger-outline" style="font-size:12px;height:26px;padding:0 10px">
+                    <i class="ti ti-wand"></i> Mở wizard
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            <!-- Notification: Batch success -->
+            <div class="hv-notif-item unread" style="padding:16px 20px;border-bottom:1px solid var(--hv-border-table)">
+              <div class="hv-notif-icon" style="background:var(--hv-success-soft);color:var(--hv-success)">
+                <i class="ti ti-circle-check"></i>
+              </div>
+              <div class="hv-notif-body" style="flex:1">
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+                  <span class="hv-notif-title" style="font-size:14px;font-weight:600">Batch phát hành thành công 28/30</span>
+                  <span class="hv-badge hv-badge-warning" style="font-size:10px;height:18px">Bình thường</span>
+                  <span class="hv-badge hv-badge-success hv-badge-solid" style="font-size:10px;height:18px">Tác vụ</span>
+                </div>
+                <div class="hv-notif-desc" style="font-size:13px">28 hóa đơn đã phát hành thành công qua Hilo. 2 hóa đơn bị lỗi (MST không hợp lệ). Xem chi tiết để xử lý.</div>
+                <div style="display:flex;align-items:center;gap:12px;margin-top:8px">
+                  <span class="hv-notif-time">5 giờ trước</span>
+                  <a href="invoice-list.html" class="hv-btn-link" style="font-size:12px">Xem danh sách →</a>
+                </div>
+              </div>
+            </div>
+
+            <!-- Notification: Customer MST -->
+            <div class="hv-notif-item unread" style="padding:16px 20px;border-bottom:1px solid var(--hv-border-table)">
+              <div class="hv-notif-icon" style="background:var(--hv-primary-soft);color:var(--hv-primary)">
+                <i class="ti ti-user-check"></i>
+              </div>
+              <div class="hv-notif-body" style="flex:1">
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+                  <span class="hv-notif-title" style="font-size:14px;font-weight:600">Khách hàng mới cập nhật MST</span>
+                  <span class="hv-badge hv-badge-info" style="font-size:10px;height:18px">Thông tin</span>
+                  <span class="hv-badge hv-badge-primary hv-badge-solid" style="font-size:10px;height:18px">KH</span>
+                </div>
+                <div class="hv-notif-desc" style="font-size:13px">Công ty TNHH ABC (0312345678) đã xác thực MST qua CQT. Thông tin đã được cập nhật tự động vào hồ sơ khách hàng.</div>
+                <div style="display:flex;align-items:center;gap:12px;margin-top:8px">
+                  <span class="hv-notif-time">Hôm qua</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Notification: Supplier Risk -->
+            <div class="hv-notif-item unread" style="padding:16px 20px;border-bottom:1px solid var(--hv-border-table)">
+              <div class="hv-notif-icon" style="background:var(--hv-danger-soft);color:var(--hv-danger)">
+                <i class="ti ti-shield-alert"></i>
+              </div>
+              <div class="hv-notif-body" style="flex:1">
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+                  <span class="hv-notif-title" style="font-size:14px;font-weight:600">Cảnh báo rủi ro NCC — FPT Digital Retail</span>
+                  <span class="hv-badge hv-badge-danger" style="font-size:10px;height:18px">Quan trọng</span>
+                  <span class="hv-badge hv-badge-solid" style="font-size:10px;height:18px;background:var(--hv-purple-soft);color:var(--hv-purple)">AI</span>
+                </div>
+                <div class="hv-notif-desc" style="font-size:13px">AI phát hiện dấu hiệu rủi ro thuế từ FPT Digital Retail (score: 0.72). Nên kiểm tra kỹ hóa đơn đầu vào từ nhà cung cấp này.</div>
+                <div style="display:flex;align-items:center;gap:12px;margin-top:8px">
+                  <span class="hv-notif-time">Hôm qua</span>
+                  <a href="inbound-workbench.html" class="hv-btn-link" style="font-size:12px">Xem hóa đơn đến →</a>
+                </div>
+              </div>
+            </div>
+
+            <!-- Notification: Cert expiry -->
+            <div class="hv-notif-item unread" style="padding:16px 20px;border-bottom:1px solid var(--hv-border-table)">
+              <div class="hv-notif-icon" style="background:var(--hv-warning-soft);color:var(--hv-warning)">
+                <i class="ti ti-certificate"></i>
+              </div>
+              <div class="hv-notif-body" style="flex:1">
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+                  <span class="hv-notif-title" style="font-size:14px;font-weight:600">Chứng thư số sắp hết hạn</span>
+                  <span class="hv-badge hv-badge-warning" style="font-size:10px;height:18px">Bình thường</span>
+                  <span class="hv-badge hv-badge-neutral hv-badge-solid" style="font-size:10px;height:18px">Cài đặt</span>
+                </div>
+                <div class="hv-notif-desc" style="font-size:13px">VTC-Sign CTS-2025-AB12CD hết hạn sau 63 ngày (18/07/2026). Gia hạn online qua VTC để không gián đoạn phát hành.</div>
+                <div style="display:flex;align-items:center;gap:12px;margin-top:8px">
+                  <span class="hv-notif-time">2 ngày trước</span>
+                  <a href="tvan-connections.html" class="hv-btn-link" style="font-size:12px">Quản lý chứng thư →</a>
+                </div>
+              </div>
+            </div>
+
+            <!-- Notification: Plan -->
+            <div class="hv-notif-item unread" style="padding:16px 20px;border-bottom:1px solid var(--hv-border-table)">
+              <div class="hv-notif-icon" style="background:var(--hv-info-soft);color:var(--hv-info)">
+                <i class="ti ti-credit-card"></i>
+              </div>
+              <div class="hv-notif-body" style="flex:1">
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+                  <span class="hv-notif-title" style="font-size:14px;font-weight:600">Gói Pro sắp hết dung lượng</span>
+                  <span class="hv-badge hv-badge-info" style="font-size:10px;height:18px">Thông tin</span>
+                  <span class="hv-badge hv-badge-solid" style="font-size:10px;height:18px;background:var(--hv-indigo-soft);color:var(--hv-purple)">Gói</span>
+                </div>
+                <div class="hv-notif-desc" style="font-size:13px">Còn 8.234 hóa đơn trong tháng (82% đã sử dụng). Nâng cấp gói để tiếp tục phát hành không giới hạn.</div>
+                <div style="display:flex;align-items:center;gap:12px;margin-top:8px">
+                  <span class="hv-notif-time">3 ngày trước</span>
+                  <button class="hv-btn hv-btn-sm hv-btn-primary" style="font-size:12px;height:26px;padding:0 10px">Nâng cấp</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Notification: Security -->
+            <div class="hv-notif-item unread" style="padding:16px 20px;border-bottom:1px solid var(--hv-border-table)">
+              <div class="hv-notif-icon" style="background:var(--hv-purple-soft);color:var(--hv-purple)">
+                <i class="ti ti-key"></i>
+              </div>
+              <div class="hv-notif-body" style="flex:1">
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+                  <span class="hv-notif-title" style="font-size:14px;font-weight:600">Đăng nhập từ thiết bị mới</span>
+                  <span class="hv-badge hv-badge-warning" style="font-size:10px;height:18px">Bình thường</span>
+                  <span class="hv-badge hv-badge-solid" style="font-size:10px;height:18px;background:var(--hv-purple-soft);color:var(--hv-purple)">Bảo mật</span>
+                </div>
+                <div class="hv-notif-desc" style="font-size:13px">Chrome trên macOS — TP.HCM, 14/05/2026 09:32. Nếu không phải bạn, hãy đổi mật khẩu ngay.</div>
+                <div style="display:flex;align-items:center;gap:12px;margin-top:8px">
+                  <span class="hv-notif-time">3 ngày trước</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Read notifications (lighter) -->
+            <div class="hv-notif-item" style="padding:16px 20px;border-bottom:1px solid var(--hv-border-table);opacity:0.7">
+              <div class="hv-notif-icon" style="background:var(--hv-success-soft);color:var(--hv-success)">
+                <i class="ti ti-circle-check"></i>
+              </div>
+              <div class="hv-notif-body" style="flex:1">
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+                  <span class="hv-notif-title" style="font-size:14px;font-weight:500">CQT chấp nhận HD-2026-0128</span>
+                  <span class="hv-badge hv-badge-success hv-badge-solid" style="font-size:10px;height:18px">CQT</span>
+                </div>
+                <div class="hv-notif-desc" style="font-size:13px">Hóa đơn HD-2026-0128 đã được CQT chấp nhận. Mã nhận: C26XYZ789DEF.</div>
+                <span class="hv-notif-time">4 ngày trước</span>
+              </div>
+            </div>
+
+            <div class="hv-notif-item" style="padding:16px 20px;border-bottom:1px solid var(--hv-border-table);opacity:0.7">
+              <div class="hv-notif-icon" style="background:var(--hv-success-soft);color:var(--hv-success)">
+                <i class="ti ti-mail-check"></i>
+              </div>
+              <div class="hv-notif-body" style="flex:1">
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+                  <span class="hv-notif-title" style="font-size:14px;font-weight:500">Email gửi thành công 100/100</span>
+                  <span class="hv-badge hv-badge-success hv-badge-solid" style="font-size:10px;height:18px">Tác vụ</span>
+                </div>
+                <div class="hv-notif-desc" style="font-size:13px">Batch email hóa đơn đã được gửi thành công đến 100 khách hàng.</div>
+                <span class="hv-notif-time">5 ngày trước</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Pagination -->
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-top:16px">
+            <span style="font-size:13px;color:var(--hv-text-muted)">Hiển thị 1-10 trong 47 thông báo</span>
+            <div style="display:flex;gap:4px">
+              <button class="hv-btn hv-btn-sm hv-btn-secondary" disabled><i class="ti ti-chevron-left"></i></button>
+              <button class="hv-btn hv-btn-sm hv-btn-primary">1</button>
+              <button class="hv-btn hv-btn-sm hv-btn-secondary">2</button>
+              <button class="hv-btn hv-btn-sm hv-btn-secondary">3</button>
+              <button class="hv-btn hv-btn-sm hv-btn-secondary">4</button>
+              <button class="hv-btn hv-btn-sm hv-btn-secondary">5</button>
+              <button class="hv-btn hv-btn-sm hv-btn-secondary"><i class="ti ti-chevron-right"></i></button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <script src="assets/js/app-shell.js"></script>
+</body>
+</html>

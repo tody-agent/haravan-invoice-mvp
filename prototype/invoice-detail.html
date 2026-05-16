@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chi tiết hóa đơn — Haravan Invoice</title>
+  <link rel="stylesheet" href="assets/css/design-system.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <script>window.HV_PAGE = { id: 'invoices', title: 'Chi tiết hóa đơn' };</script>
+  <style>
+    .hv-breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      color: var(--hv-text-muted);
+      margin-bottom: 12px;
+    }
+    .hv-breadcrumb a {
+      color: var(--hv-text-secondary);
+      text-decoration: none;
+      transition: color 150ms;
+    }
+    .hv-breadcrumb a:hover { color: var(--hv-primary); }
+    .hv-breadcrumb-sep { color: var(--hv-border-strong); }
+
+    .hv-detail-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    .hv-detail-header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .hv-detail-header-left h2 {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--hv-text-primary);
+      letter-spacing: -0.01em;
+    }
+    .hv-detail-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .hv-stepper-card {
+      background: var(--hv-bg-surface);
+      border: 1px solid var(--hv-border);
+      border-radius: var(--hv-radius-lg);
+      padding: 20px 24px;
+      margin-bottom: 20px;
+      box-shadow: var(--hv-shadow-xs);
+    }
+    .hv-stepper-card .hv-stepper {
+      justify-content: space-between;
+    }
+    .hv-step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      min-width: 100px;
+    }
+    .hv-step-content {
+      text-align: center;
+    }
+    .hv-step-time {
+      font-size: 11px;
+      color: var(--hv-text-muted);
+      margin-top: 2px;
+      font-family: var(--hv-font-mono);
+      font-size: 11px;
+    }
+    .hv-step-done .hv-step-time,
+    .hv-step-active .hv-step-time { color: var(--hv-text-secondary); }
+    .hv-step-meta {
+      font-size: 11px;
+      color: var(--hv-text-muted);
+      margin-top: 1px;
+    }
+    .hv-step-line {
+      flex: 1;
+      height: 2px;
+      background: var(--hv-border);
+      margin: 0 8px;
+      min-width: 32px;
+      align-self: flex-start;
+      margin-top: 14px;
+    }
+    .hv-step-line-done {
+      background: var(--hv-success);
+    }
+
+    .hv-detail-grid {
+      display: grid;
+      grid-template-columns: 3fr 2fr;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    .hv-info-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .hv-info-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+    }
+    .hv-info-label {
+      font-size: 13px;
+      color: var(--hv-text-secondary);
+      flex-shrink: 0;
+      min-width: 100px;
+    }
+    .hv-info-value {
+      font-size: 13px;
+      color: var(--hv-text-primary);
+      font-weight: 500;
+      text-align: right;
+      word-break: break-word;
+    }
+
+    .hv-summary-total {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding-top: 14px;
+      margin-top: 14px;
+      border-top: 2px solid var(--hv-border);
+    }
+    .hv-summary-total-label {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--hv-text-primary);
+    }
+    .hv-summary-total-value {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--hv-primary);
+      letter-spacing: -0.02em;
+    }
+
+    .hv-table-footer {
+      display: flex;
+      justify-content: flex-end;
+      padding: 14px 20px;
+      background: var(--hv-bg-soft);
+      border-radius: 0 0 var(--hv-radius-lg) var(--hv-radius-lg);
+      border: 1px solid var(--hv-border);
+      border-top: none;
+      gap: 40px;
+    }
+    .hv-table-footer-item {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+    }
+    .hv-table-footer-label {
+      font-size: 12px;
+      color: var(--hv-text-secondary);
+      margin-bottom: 2px;
+    }
+    .hv-table-footer-value {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--hv-text-primary);
+    }
+    .hv-table-footer-total .hv-table-footer-value {
+      font-size: 16px;
+      color: var(--hv-primary);
+    }
+
+    .hv-audit-timeline {
+      position: relative;
+      padding-left: 32px;
+    }
+    .hv-audit-timeline::before {
+      content: '';
+      position: absolute;
+      left: 11px;
+      top: 8px;
+      bottom: 8px;
+      width: 2px;
+      background: var(--hv-border);
+    }
+    .hv-audit-item {
+      position: relative;
+      padding-bottom: 20px;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+    .hv-audit-item:last-child { padding-bottom: 0; }
+    .hv-audit-dot {
+      position: absolute;
+      left: -32px;
+      top: 2px;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--hv-bg-surface);
+      border: 2px solid var(--hv-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1;
+    }
+    .hv-audit-item:first-child .hv-audit-dot {
+      border-color: var(--hv-success);
+      background: var(--hv-success-soft);
+    }
+    .hv-audit-dot i {
+      font-size: 11px;
+      color: var(--hv-text-muted);
+    }
+    .hv-audit-item:first-child .hv-audit-dot i { color: var(--hv-success); }
+    .hv-audit-body {
+      flex: 1;
+    }
+    .hv-audit-time {
+      font-size: 12px;
+      color: var(--hv-text-muted);
+      font-family: var(--hv-font-mono);
+      margin-bottom: 2px;
+    }
+    .hv-audit-action {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--hv-text-primary);
+      margin-bottom: 2px;
+    }
+    .hv-audit-actor {
+      font-size: 12px;
+      color: var(--hv-text-secondary);
+    }
+
+    .hv-error-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 80px 24px;
+      text-align: center;
+    }
+    .hv-error-icon {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: var(--hv-danger-soft);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+    .hv-error-icon i {
+      font-size: 32px;
+      color: var(--hv-danger);
+    }
+    .hv-error-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--hv-text-primary);
+      margin-bottom: 6px;
+    }
+    .hv-error-desc {
+      font-size: 14px;
+      color: var(--hv-text-secondary);
+      margin-bottom: 20px;
+    }
+
+    @media (max-width: 1023px) {
+      .hv-detail-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 767px) {
+      .hv-detail-header { flex-direction: column; align-items: flex-start; }
+      .hv-detail-actions { width: 100%; flex-wrap: wrap; }
+      .hv-detail-actions .hv-btn { flex: 1; min-width: 0; }
+      .hv-table-footer { flex-direction: column; gap: 12px; }
+      .hv-stepper-card .hv-stepper { flex-direction: column; gap: 12px; }
+      .hv-step-line { display: none; }
+      .hv-breadcrumb { flex-wrap: wrap; font-size: 12px; }
+      .hv-content { padding: 12px; }
+    }
+    @media (max-width: 480px) {
+      .hv-content { padding: 10px; }
+      .hv-detail-header-left h2 { font-size: 18px; }
+      .hv-summary-total-value { font-size: 18px; }
+    }
+  </style>
+</head>
+<body>
+
+  <aside class="hv-sidebar" aria-label="Điều hướng chính"></aside>
+  <div class="hv-topbar" aria-label="Thanh công cụ"></div>
+
+  <div class="hv-content">
+    <div class="hv-content-max">
+
+      <!-- === DEFAULT STATE === -->
+      <div id="state-default">
+        <nav class="hv-breadcrumb" aria-label="Điều hướng">
+          <a href="invoice-list.html">Danh sách hóa đơn</a>
+          <span class="hv-breadcrumb-sep">/</span>
+          <span aria-current="page">2025/00001234</span>
+        </nav>
+
+        <div class="hv-detail-header">
+          <div class="hv-detail-header-left">
+            <h2>Hóa đơn 2025/00001234</h2>
+            <span class="hv-badge hv-badge-success">
+              <i class="ti ti-circle-check" style="font-size:12px"></i>
+              Đã phát hành
+            </span>
+          </div>
+          <div class="hv-detail-actions">
+            <button class="hv-btn hv-btn-secondary">
+              <i class="ti ti-printer"></i>
+              In hóa đơn
+            </button>
+            <button class="hv-btn hv-btn-secondary">
+              <i class="ti ti-download"></i>
+              Tải PDF
+            </button>
+            <button class="hv-btn hv-btn-secondary">
+              <i class="ti ti-edit"></i>
+              Điều chỉnh
+            </button>
+            <button class="hv-btn hv-btn-secondary">
+              <i class="ti ti-refresh"></i>
+              Thay thế
+            </button>
+          </div>
+        </div>
+
+        <div class="hv-stepper-card">
+          <div class="hv-stepper" role="list" aria-label="Trạng thái hóa đơn">
+            <div class="hv-step hv-step-done" role="listitem">
+              <div class="hv-step-circle"><i class="ti ti-check" style="font-size:14px"></i></div>
+              <div class="hv-step-content">
+                <div class="hv-step-label">Tạo nháp</div>
+                <div class="hv-step-time">15/05 08:30</div>
+              </div>
+            </div>
+            <div class="hv-step-line hv-step-line-done" aria-hidden="true"></div>
+            <div class="hv-step hv-step-done" role="listitem">
+              <div class="hv-step-circle"><i class="ti ti-check" style="font-size:14px"></i></div>
+              <div class="hv-step-content">
+                <div class="hv-step-label">Phát hành</div>
+                <div class="hv-step-time">15/05 08:31</div>
+              </div>
+            </div>
+            <div class="hv-step-line hv-step-line-done" aria-hidden="true"></div>
+            <div class="hv-step hv-step-done" role="listitem">
+              <div class="hv-step-circle"><i class="ti ti-check" style="font-size:14px"></i></div>
+              <div class="hv-step-content">
+                <div class="hv-step-label">CQT chấp nhận</div>
+                <div class="hv-step-time">15/05 09:15</div>
+              </div>
+            </div>
+            <div class="hv-step-line hv-step-line-done" aria-hidden="true"></div>
+            <div class="hv-step hv-step-done" role="listitem">
+              <div class="hv-step-circle"><i class="ti ti-check" style="font-size:14px"></i></div>
+              <div class="hv-step-content">
+                <div class="hv-step-label">Đã gửi khách</div>
+                <div class="hv-step-time">15/05 09:16</div>
+                <div class="hv-step-meta">qua Zalo OA</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="hv-detail-grid">
+          <div class="hv-flex-col hv-gap-4">
+            <div class="hv-card">
+              <div class="hv-card-header">
+                <h3 class="hv-card-title">Thông tin hóa đơn</h3>
+              </div>
+              <div class="hv-info-list">
+                <div class="hv-info-row">
+                  <span class="hv-info-label">Số hóa đơn</span>
+                  <span class="hv-info-value text-mono">2025/00001234</span>
+                </div>
+                <div class="hv-info-row">
+                  <span class="hv-info-label">Ký hiệu</span>
+                  <span class="hv-info-value text-mono">AA/25E</span>
+                </div>
+                <div class="hv-info-row">
+                  <span class="hv-info-label">Mẫu số</span>
+                  <span class="hv-info-value text-mono">01GTKT0/001</span>
+                </div>
+                <div class="hv-info-row">
+                  <span class="hv-info-label">Ngày phát hành</span>
+                  <span class="hv-info-value">15/05/2026 08:31</span>
+                </div>
+                <div class="hv-info-row">
+                  <span class="hv-info-label">Loại</span>
+                  <span class="hv-info-value">Hóa đơn gốc</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="hv-card">
+              <div class="hv-card-header">
+                <h3 class="hv-card-title">Thông tin người bán</h3>
+              </div>
+              <div class="hv-info-list">
+                <div class="hv-info-row">
+                  <span class="hv-info-label">Tên</span>
+                  <span class="hv-info-value">Công ty TNHH Thương mại ABC</span>
+                </div>
+                <div class="hv-info-row">
+                  <span class="hv-info-label">MST</span>
+                  <span class="hv-info-value text-mono">0312345678</span>
+                </div>
+                <div class="hv-info-row">
+                  <span class="hv-info-label">Địa chỉ</span>
+                  <span class="hv-info-value">12 Nguyễn Văn Trỗi, Phường 12, Quận Phú Nhuận, TP. HCM</span>
+                </div>
+                <div class="hv-info-row">
+                  <span class="hv-info-label">Điện thoại</span>
+                  <span class="hv-info-value">(028) 3845 6789</span>
+                </div>
+                <div class="hv-info-row">
+                  <span class="hv-info-label">Email</span>
+                  <span class="hv-info-value">info@abc-company.vn</span>
+                </div>
+                <div class="hv-info-row">
+                  <span class="hv-info-label">STK</span>
+                  <span class="hv-info-value">1234567890 tại Vietcombank CN TP.HCM</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="hv-card">
+              <div class="hv-card-header">
+                <h3 class="hv-card-title">Thông tin người mua</h3>
+              </div>
+              <div class="hv-info-list">
+                <div class="hv-info-row">
+                  <span class="hv-info-label">Tên</span>
+                  <span class="hv-info-value">Công ty TNHH Cà phê Trung Nguyên Legend</span>
+                </div>
+                <div class="hv-info-row">
+                  <span class="hv-info-label">MST</span>
+                  <span class="hv-info-value text-mono">0312345678</span>
+                </div>
+                <div class="hv-info-row">
+                  <span class="hv-info-label">Địa chỉ</span>
+                  <span class="hv-info-value">191 Nguyễn Đình Chiểu, Phường 6, Quận 3, TP. HCM</span>
+                </div>
+                <div class="hv-info-row">
+                  <span class="hv-info-label">Điện thoại</span>
+                  <span class="hv-info-value">(028) 3930 6666</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="hv-flex-col hv-gap-4">
+            <div class="hv-card">
+              <div class="hv-card-header">
+                <h3 class="hv-card-title">Tóm tắt thanh toán</h3>
+              </div>
+              <div class="hv-info-list">
+                <div class="hv-info-row">
+                  <span class="hv-info-label">Tiền hàng</span>
+                  <span class="hv-info-value">1.000.000đ</span>
+                </div>
+                <div class="hv-info-row">
+                  <span class="hv-info-label">Thuế GTGT (10%)</span>
+                  <span class="hv-info-value">100.000đ</span>
+                </div>
+              </div>
+              <div class="hv-summary-total">
+                <span class="hv-summary-total-label">Tổng cộng</span>
+                <span class="hv-summary-total-value">1.100.000đ</span>
+              </div>
+              <div class="hv-info-list" style="margin-top:14px">
+                <div class="hv-info-row">
+                  <span class="hv-info-label">Trạng thái</span>
+                  <span class="hv-info-value">
+                    <span class="hv-badge hv-badge-success">Đã thanh toán</span>
+                  </span>
+                </div>
+                <div class="hv-info-row">
+                  <span class="hv-info-label">Phương thức</span>
+                  <span class="hv-info-value">Chuyển khoản</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="hv-card">
+              <div class="hv-card-header">
+                <h3 class="hv-card-title">Thông tin giao nhận</h3>
+              </div>
+              <div class="hv-info-list">
+                <div class="hv-info-row">
+                  <span class="hv-info-label">Gửi qua</span>
+                  <span class="hv-info-value">Zalo OA</span>
+                </div>
+                <div class="hv-info-row">
+                  <span class="hv-info-label">Trạng thái</span>
+                  <span class="hv-info-value">
+                    <span class="hv-badge hv-badge-info">Đã xem</span>
+                  </span>
+                </div>
+                <div class="hv-info-row">
+                  <span class="hv-info-label">Thời gian</span>
+                  <span class="hv-info-value">15/05/2026 09:16</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="hv-card" style="padding:0; margin-bottom:20px; overflow:hidden">
+          <div class="hv-card-header" style="padding:16px 20px 0">
+            <h3 class="hv-card-title">Chi tiết hàng hóa</h3>
+          </div>
+          <div style="overflow-x:auto">
+            <table class="hv-table" aria-label="Chi tiết hàng hóa">
+              <thead>
+                <tr>
+                  <th style="width:48px">STT</th>
+                  <th>Tên hàng hóa</th>
+                  <th style="width:72px">ĐVT</th>
+                  <th style="width:56px" class="hv-text-right">SL</th>
+                  <th style="width:110px" class="hv-text-right">Đơn giá</th>
+                  <th style="width:120px" class="hv-text-right">Thành tiền</th>
+                  <th style="width:80px" class="hv-text-right">Thuế suất</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>1</td>
+                  <td>Cà phê Robusta Đắk Lắk 500g</td>
+                  <td>Gói</td>
+                  <td class="hv-text-right">5</td>
+                  <td class="hv-text-right">120.000đ</td>
+                  <td class="hv-text-right">600.000đ</td>
+                  <td class="hv-text-right">10%</td>
+                </tr>
+                <tr>
+                  <td>2</td>
+                  <td>Trà Sen Tây Hồ hộp 200g</td>
+                  <td>Hộp</td>
+                  <td class="hv-text-right">3</td>
+                  <td class="hv-text-right">80.000đ</td>
+                  <td class="hv-text-right">240.000đ</td>
+                  <td class="hv-text-right">10%</td>
+                </tr>
+                <tr>
+                  <td>3</td>
+                  <td>Bánh Bao Nhân Thịt (hộp 10)</td>
+                  <td>Hộp</td>
+                  <td class="hv-text-right">2</td>
+                  <td class="hv-text-right">80.000đ</td>
+                  <td class="hv-text-right">160.000đ</td>
+                  <td class="hv-text-right">10%</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="hv-table-footer">
+            <div class="hv-table-footer-item">
+              <span class="hv-table-footer-label">Tổng tiền hàng</span>
+              <span class="hv-table-footer-value">1.000.000đ</span>
+            </div>
+            <div class="hv-table-footer-item">
+              <span class="hv-table-footer-label">Thuế</span>
+              <span class="hv-table-footer-value">100.000đ</span>
+            </div>
+            <div class="hv-table-footer-item hv-table-footer-total">
+              <span class="hv-table-footer-label">Tổng thanh toán</span>
+              <span class="hv-table-footer-value">1.100.000đ</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="hv-card">
+          <div class="hv-card-header">
+            <h3 class="hv-card-title">Lịch sử thay đổi</h3>
+          </div>
+          <div class="hv-audit-timeline" role="list" aria-label="Lịch sử thay đổi">
+            <div class="hv-audit-item" role="listitem">
+              <div class="hv-audit-dot"><i class="ti ti-send"></i></div>
+              <div class="hv-audit-body">
+                <div class="hv-audit-time">15/05/2026 09:16</div>
+                <div class="hv-audit-action">Gửi hóa đơn qua Zalo OA</div>
+                <div class="hv-audit-actor">Hệ thống</div>
+              </div>
+            </div>
+            <div class="hv-audit-item" role="listitem">
+              <div class="hv-audit-dot"><i class="ti ti-shield-check"></i></div>
+              <div class="hv-audit-body">
+                <div class="hv-audit-time">15/05/2026 09:15</div>
+                <div class="hv-audit-action">CQT chấp nhận</div>
+                <div class="hv-audit-actor">Hệ thống</div>
+              </div>
+            </div>
+            <div class="hv-audit-item" role="listitem">
+              <div class="hv-audit-dot"><i class="ti ti-receipt"></i></div>
+              <div class="hv-audit-body">
+                <div class="hv-audit-time">15/05/2026 08:31</div>
+                <div class="hv-audit-action">Phát hành hóa đơn</div>
+                <div class="hv-audit-actor">Nguyễn Văn A (Kế toán)</div>
+              </div>
+            </div>
+            <div class="hv-audit-item" role="listitem">
+              <div class="hv-audit-dot"><i class="ti ti-file-plus"></i></div>
+              <div class="hv-audit-body">
+                <div class="hv-audit-time">15/05/2026 08:30</div>
+                <div class="hv-audit-action">Tạo nháp</div>
+                <div class="hv-audit-actor">Nguyễn Văn A (Kế toán)</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- === ERROR STATE === -->
+      <div id="state-error" class="hv-hidden">
+        <nav class="hv-breadcrumb" aria-label="Điều hướng">
+          <a href="invoice-list.html">Danh sách hóa đơn</a>
+          <span class="hv-breadcrumb-sep">/</span>
+          <span aria-current="page">Không xác định</span>
+        </nav>
+        <div class="hv-error-state">
+          <div class="hv-error-icon">
+            <i class="ti ti-file-x"></i>
+          </div>
+          <h2 class="hv-error-title">Không tìm thấy hóa đơn</h2>
+          <p class="hv-error-desc">Hóa đơn này không tồn tại hoặc đã bị xóa. Vui lòng kiểm tra lại.</p>
+          <a href="invoice-list.html" class="hv-btn hv-btn-primary">
+            <i class="ti ti-arrow-left"></i>
+            Quay lại danh sách
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="assets/js/app-shell.js"></script>
+  <script>
+    (function() {
+      const params = new URLSearchParams(window.location.search);
+      const state = params.get('state') || 'default';
+      const invoiceId = params.get('id') || '2025/00001234';
+      const defaultEl = document.getElementById('state-default');
+      const errorEl = document.getElementById('state-error');
+
+      // Check for invoice data
+      const invoice = HV.data.getInvoiceById(invoiceId);
+
+      if (state === 'error' || !invoice) {
+        defaultEl.classList.add('hv-hidden');
+        errorEl.classList.remove('hv-hidden');
+        return;
+      }
+
+      // Update page title and header with invoice ID
+      document.title = `Hóa đơn ${invoiceId} — Haravan Invoice`;
+      const headerH2 = defaultEl.querySelector('.hv-detail-header-left h2');
+      if (headerH2) headerH2.textContent = `Hóa đơn ${invoiceId}`;
+
+      // Update breadcrumb
+      const breadcrumbCurrent = defaultEl.querySelector('.hv-breadcrumb span[aria-current]');
+      if (breadcrumbCurrent) breadcrumbCurrent.textContent = invoiceId;
+
+      // Update buyer info from invoice data
+      const infoRows = defaultEl.querySelectorAll('.hv-info-row');
+      infoRows.forEach(row => {
+        const label = row.querySelector('.hv-info-label');
+        const value = row.querySelector('.hv-info-value');
+        if (!label || !value) return;
+        const labelText = label.textContent.trim();
+        if (labelText === 'Tên' && row.closest('.hv-card')?.querySelector('.hv-card-title')?.textContent.includes('người mua')) {
+          value.textContent = invoice.customer;
+        }
+        if (labelText === 'MST' && row.closest('.hv-card')?.querySelector('.hv-card-title')?.textContent.includes('người mua')) {
+          value.textContent = invoice.mst || '—';
+        }
+      });
+
+      // Update total
+      const totalValue = defaultEl.querySelector('.hv-summary-total-value');
+      if (totalValue) totalValue.textContent = HV.formatVND(invoice.total);
+
+      // Update items table from invoice data
+      if (invoice.items) {
+        const tbody = defaultEl.querySelector('.hv-table tbody');
+        if (tbody) {
+          tbody.innerHTML = invoice.items.map((item, i) => `
+            <tr>
+              <td>${i + 1}</td>
+              <td>${item.name}</td>
+              <td>${item.unit}</td>
+              <td class="hv-text-right">${item.qty}</td>
+              <td class="hv-text-right">${HV.formatVND(item.price)}</td>
+              <td class="hv-text-right">${HV.formatVND(item.qty * item.price)}</td>
+              <td class="hv-text-right">${item.tax}%</td>
+            </tr>
+          `).join('');
+
+          // Update footer totals
+          const subtotal = invoice.items.reduce((s, it) => s + it.qty * it.price, 0);
+          const taxTotal = invoice.items.reduce((s, it) => s + Math.round(it.qty * it.price * it.tax / 100), 0);
+          const footerValues = defaultEl.querySelectorAll('.hv-table-footer-value');
+          if (footerValues[0]) footerValues[0].textContent = HV.formatVND(subtotal);
+          if (footerValues[1]) footerValues[1].textContent = HV.formatVND(taxTotal);
+          if (footerValues[2]) footerValues[2].textContent = HV.formatVND(subtotal + taxTotal);
+        }
+      }
+
+      // Update payment status badge
+      const paymentBadge = defaultEl.querySelector('.hv-info-row .hv-badge-success');
+      if (paymentBadge && invoice.payment) {
+        const pMap = HV.data.paymentMap[invoice.payment];
+        if (pMap) {
+          paymentBadge.className = `hv-badge ${pMap.cls}`;
+          paymentBadge.textContent = pMap.label;
+        }
+      }
+
+      // Update CQT status in stepper
+      const cqtMap = HV.data.cqtMap[invoice.cqt];
+
+      // === ACTION BUTTONS ===
+      const actions = defaultEl.querySelector('.hv-detail-actions');
+      if (actions) {
+        // Print
+        const printBtn = actions.querySelector('button:nth-child(1)');
+        if (printBtn) {
+          printBtn.addEventListener('click', () => {
+            HV.toast('Đang chuẩn bị in hóa đơn...', 'info');
+          });
+        }
+
+        // Download PDF
+        const pdfBtn = actions.querySelector('button:nth-child(2)');
+        if (pdfBtn) {
+          pdfBtn.addEventListener('click', () => {
+            HV.modal({
+              title: 'Xem trước hóa đơn PDF',
+              body: `
+                <div style="background:#fff;border:1px solid var(--hv-border);border-radius:var(--hv-radius-md);padding:40px;max-width:595px;margin:0 auto;font-size:13px;line-height:1.6">
+                  <div style="text-align:center;margin-bottom:24px">
+                    <div style="font-size:16px;font-weight:700">CÔNG TY TNHH ABC</div>
+                    <div style="color:var(--hv-text-secondary)">Mã số thuế: 0312345678</div>
+                  </div>
+                  <div style="text-align:center;margin-bottom:24px">
+                    <div style="font-size:18px;font-weight:700;color:var(--hv-primary)">HÓA ĐƠN GIÁ TRỊ GIA TĂNG</div>
+                    <div style="color:var(--hv-text-secondary);margin-top:4px">Số: ${invoiceId}</div>
+                    <div style="color:var(--hv-text-secondary)">Ngày: ${invoice.date}</div>
+                  </div>
+                  <div style="margin-bottom:16px;padding:12px;background:var(--hv-bg-soft);border-radius:var(--hv-radius-sm)">
+                    <div><strong>Họ tên người mua:</strong> ${invoice.customer}</div>
+                    <div><strong>MST:</strong> ${invoice.mst || '—'}</div>
+                  </div>
+                  ${invoice.items ? `
+                  <table style="width:100%;border-collapse:collapse;margin-bottom:16px;font-size:12px">
+                    <thead>
+                      <tr style="background:var(--hv-bg-soft)">
+                        <th style="padding:8px;text-align:left;border:1px solid var(--hv-border-table)">STT</th>
+                        <th style="padding:8px;text-align:left;border:1px solid var(--hv-border-table)">Tên hàng</th>
+                        <th style="padding:8px;text-align:right;border:1px solid var(--hv-border-table)">SL</th>
+                        <th style="padding:8px;text-align:right;border:1px solid var(--hv-border-table)">Đơn giá</th>
+                        <th style="padding:8px;text-align:right;border:1px solid var(--hv-border-table)">Thành tiền</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      ${invoice.items.map((it, i) => `
+                        <tr>
+                          <td style="padding:8px;border:1px solid var(--hv-border-table)">${i + 1}</td>
+                          <td style="padding:8px;border:1px solid var(--hv-border-table)">${it.name}</td>
+                          <td style="padding:8px;text-align:right;border:1px solid var(--hv-border-table)">${it.qty}</td>
+                          <td style="padding:8px;text-align:right;border:1px solid var(--hv-border-table)">${HV.formatVND(it.price)}</td>
+                          <td style="padding:8px;text-align:right;border:1px solid var(--hv-border-table)">${HV.formatVND(it.qty * it.price)}</td>
+                        </tr>
+                      `).join('')}
+                    </tbody>
+                  </table>` : ''}
+                  <div style="text-align:right;font-size:16px;font-weight:700;color:var(--hv-primary);border-top:2px solid var(--hv-text-primary);padding-top:8px">
+                    TỔNG CỘNG: ${HV.formatVND(invoice.total)}
+                  </div>
+                </div>
+              `,
+              actions: [
+                { id: 'close', label: 'Đóng' },
+                { id: 'download', label: 'Tải PDF', primary: true, icon: 'ti ti-download', onClick: (bd) => { HV.closeModal(bd); HV.toast('Đang tải PDF...', 'info'); } },
+              ],
+              size: 'lg',
+            });
+          });
+        }
+
+        // Adjust
+        const adjustBtn = actions.querySelector('button:nth-child(3)');
+        if (adjustBtn) {
+          adjustBtn.addEventListener('click', () => {
+            HV.navigate('correction-wizard.html', { id: invoiceId });
+          });
+        }
+
+        // Replace
+        const replaceBtn = actions.querySelector('button:nth-child(4)');
+        if (replaceBtn) {
+          replaceBtn.addEventListener('click', () => {
+            HV.confirm('Bạn có chắc muốn thay thế hóa đơn này? Hóa đơn gốc sẽ bị đánh dấu "Đã thay thế".', {
+              title: 'Thay thế hóa đơn',
+              confirmLabel: 'Thay thế',
+              type: 'warning'
+            }).then(ok => {
+              if (ok) HV.toast(`Hóa đơn ${invoiceId} đã được đánh dấu thay thế`, 'success');
+            });
+          });
+        }
+      }
+
+      // Back link from error state
+      const backLink = errorEl.querySelector('a');
+      if (backLink) {
+        backLink.addEventListener('click', (e) => {
+          e.preventDefault();
+          HV.navigate('invoice-list.html');
+        });
+      }
+    })();
+  </script>
+</body>
+</html>

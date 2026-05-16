@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Báo cáo sử dụng HĐĐT theo quý — Haravan Invoice</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <link rel="stylesheet" href="assets/css/design-system.css">
+  <script>window.HV_PAGE = { id: 'report-quarterly', title: 'Sử dụng HĐĐT theo quý', breadcrumb: [{ label: 'Báo cáo', href: 'reports.html' }, { label: 'Sử dụng HĐĐT theo quý' }] };</script>
+  <style>
+    .hv-content-max > * + * { margin-top: 20px; }
+    .report-filters {
+      display: flex;
+      align-items: flex-end;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+    .report-filter-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .report-filter-group .hv-label { margin-bottom: 0; }
+    .report-summary {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .report-summary-item {
+      background: var(--hv-bg-surface);
+      border: 1px solid var(--hv-border);
+      border-radius: var(--hv-radius-md);
+      padding: 14px 18px;
+      flex: 1;
+      min-width: 140px;
+    }
+    .report-summary-label {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--hv-text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 4px;
+    }
+    .report-summary-value {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--hv-text-primary);
+    }
+    .report-preview {
+      background: var(--hv-bg-surface);
+      border: 1px solid var(--hv-border);
+      border-radius: var(--hv-radius-md);
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+    .report-preview-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--hv-border);
+    }
+    .report-preview-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--hv-text-primary);
+    }
+    .report-preview-actions {
+      display: flex;
+      gap: 6px;
+    }
+  </style>
+</head>
+<body>
+  <a href="#main-content" class="hv-skip-link">Chuyển đến nội dung chính</a>
+
+  <aside class="hv-sidebar" aria-label="Điều hướng chính"></aside>
+  <header class="hv-topbar"></header>
+
+  <main id="main-content" class="hv-content">
+    <div class="hv-content-max">
+
+      <div class="hv-content-header">
+        <h1><i class="ti ti-chart-bar" style="color:var(--hv-primary);margin-right:8px"></i>Báo cáo sử dụng HĐĐT theo quý</h1>
+        <a href="reports.html" class="hv-btn hv-btn-secondary hv-btn-sm"><i class="ti ti-arrow-left"></i> Quay lại</a>
+      </div>
+
+      <!-- Filters -->
+      <div class="report-filters">
+        <div class="report-filter-group">
+          <label class="hv-label" for="rq-quarter">Quý</label>
+          <select class="hv-select" id="rq-quarter" style="width:120px">
+            <option>Quý 1</option>
+            <option selected>Quý 2</option>
+            <option>Quý 3</option>
+            <option>Quý 4</option>
+          </select>
+        </div>
+        <div class="report-filter-group">
+          <label class="hv-label" for="rq-year">Năm</label>
+          <select class="hv-select" id="rq-year" style="width:100px">
+            <option>2025</option>
+            <option selected>2026</option>
+          </select>
+        </div>
+        <button class="hv-btn hv-btn-primary hv-btn-sm">
+          <i class="ti ti-search"></i> Xem báo cáo
+        </button>
+      </div>
+
+      <!-- Summary Q2/2026 -->
+      <div class="report-summary">
+        <div class="report-summary-item">
+          <div class="report-summary-label">Đã sử dụng</div>
+          <div class="report-summary-value" style="color:var(--hv-success)">1,247</div>
+        </div>
+        <div class="report-summary-item">
+          <div class="report-summary-label">Đã xóa</div>
+          <div class="report-summary-value" style="color:var(--hv-danger)">3</div>
+        </div>
+        <div class="report-summary-item">
+          <div class="report-summary-label">Đã thay thế</div>
+          <div class="report-summary-value" style="color:var(--hv-warning)">8</div>
+        </div>
+        <div class="report-summary-item">
+          <div class="report-summary-label">Đã điều chỉnh</div>
+          <div class="report-summary-value" style="color:var(--hv-info)">5</div>
+        </div>
+      </div>
+
+      <!-- Q2/2026 -->
+      <div class="report-preview">
+        <div class="report-preview-header">
+          <span class="report-preview-title">Kết quả — Quý 2/2026</span>
+          <div class="report-preview-actions">
+            <button class="hv-btn hv-btn-secondary hv-btn-sm"><i class="ti ti-printer"></i></button>
+            <button class="hv-btn hv-btn-secondary hv-btn-sm"><i class="ti ti-file-spreadsheet"></i></button>
+            <button class="hv-btn hv-btn-secondary hv-btn-sm"><i class="ti ti-file-code-2"></i></button>
+          </div>
+        </div>
+        <div class="hv-table-wrap">
+          <table class="hv-table">
+            <thead>
+              <tr>
+                <th>Mẫu số</th>
+                <th>Ký hiệu</th>
+                <th class="num">Đã sử dụng</th>
+                <th class="num">Đã xóa</th>
+                <th class="num">Đã thay thế</th>
+                <th class="num">Đã điều chỉnh</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>01GTKT0/001</td>
+                <td class="hv-mono">AA/200E</td>
+                <td class="num">1,247</td>
+                <td class="num" style="color:var(--hv-danger)">3</td>
+                <td class="num" style="color:var(--hv-warning)">8</td>
+                <td class="num" style="color:var(--hv-info)">5</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Q1/2026 -->
+      <div class="report-preview">
+        <div class="report-preview-header">
+          <span class="report-preview-title">Kết quả — Quý 1/2026</span>
+          <div class="report-preview-actions">
+            <button class="hv-btn hv-btn-secondary hv-btn-sm"><i class="ti ti-printer"></i></button>
+            <button class="hv-btn hv-btn-secondary hv-btn-sm"><i class="ti ti-file-spreadsheet"></i></button>
+            <button class="hv-btn hv-btn-secondary hv-btn-sm"><i class="ti ti-file-code-2"></i></button>
+          </div>
+        </div>
+        <div class="hv-table-wrap">
+          <table class="hv-table">
+            <thead>
+              <tr>
+                <th>Mẫu số</th>
+                <th>Ký hiệu</th>
+                <th class="num">Đã sử dụng</th>
+                <th class="num">Đã xóa</th>
+                <th class="num">Đã thay thế</th>
+                <th class="num">Đã điều chỉnh</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>01GTKT0/001</td>
+                <td class="hv-mono">AA/200E</td>
+                <td class="num">2,891</td>
+                <td class="num" style="color:var(--hv-danger)">5</td>
+                <td class="num" style="color:var(--hv-warning)">12</td>
+                <td class="num" style="color:var(--hv-info)">8</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Q4/2025 -->
+      <div class="report-preview">
+        <div class="report-preview-header">
+          <span class="report-preview-title">Kết quả — Quý 4/2025</span>
+          <div class="report-preview-actions">
+            <button class="hv-btn hv-btn-secondary hv-btn-sm"><i class="ti ti-printer"></i></button>
+            <button class="hv-btn hv-btn-secondary hv-btn-sm"><i class="ti ti-file-spreadsheet"></i></button>
+            <button class="hv-btn hv-btn-secondary hv-btn-sm"><i class="ti ti-file-code-2"></i></button>
+          </div>
+        </div>
+        <div class="hv-table-wrap">
+          <table class="hv-table">
+            <thead>
+              <tr>
+                <th>Mẫu số</th>
+                <th>Ký hiệu</th>
+                <th class="num">Đã sử dụng</th>
+                <th class="num">Đã xóa</th>
+                <th class="num">Đã thay thế</th>
+                <th class="num">Đã điều chỉnh</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>01GTKT0/001</td>
+                <td class="hv-mono">AA/200E</td>
+                <td class="num">3,105</td>
+                <td class="num" style="color:var(--hv-danger)">7</td>
+                <td class="num" style="color:var(--hv-warning)">15</td>
+                <td class="num" style="color:var(--hv-info)">11</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <script src="assets/js/app-shell.js"></script>
+</body>
+</html>

@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Báo cáo hóa đơn thay thế — Haravan Invoice</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <link rel="stylesheet" href="assets/css/design-system.css">
+  <script>window.HV_PAGE = { id: 'report-replaced', title: 'Hóa đơn thay thế', breadcrumb: [{ label: 'Báo cáo', href: 'reports.html' }, { label: 'Hóa đơn thay thế' }] };</script>
+  <style>
+    .hv-content-max > * + * { margin-top: 20px; }
+    .report-filters {
+      display: flex;
+      align-items: flex-end;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+    .report-filter-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .report-filter-group .hv-label { margin-bottom: 0; }
+    .report-preview {
+      background: var(--hv-bg-surface);
+      border: 1px solid var(--hv-border);
+      border-radius: var(--hv-radius-md);
+      overflow: hidden;
+    }
+    .report-preview-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--hv-border);
+    }
+    .report-preview-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--hv-text-primary);
+    }
+    .report-preview-actions {
+      display: flex;
+      gap: 6px;
+    }
+    .report-summary {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .report-summary-item {
+      background: var(--hv-bg-surface);
+      border: 1px solid var(--hv-border);
+      border-radius: var(--hv-radius-md);
+      padding: 14px 18px;
+      flex: 1;
+      min-width: 140px;
+    }
+    .report-summary-label {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--hv-text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 4px;
+    }
+    .report-summary-value {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--hv-text-primary);
+    }
+  </style>
+</head>
+<body>
+  <a href="#main-content" class="hv-skip-link">Chuyển đến nội dung chính</a>
+
+  <aside class="hv-sidebar" aria-label="Điều hướng chính"></aside>
+  <header class="hv-topbar"></header>
+
+  <main id="main-content" class="hv-content">
+    <div class="hv-content-max">
+
+      <div class="hv-content-header">
+        <h1><i class="ti ti-repeat" style="color:#6366f1;margin-right:8px"></i>Báo cáo hóa đơn thay thế</h1>
+        <a href="reports.html" class="hv-btn hv-btn-secondary hv-btn-sm"><i class="ti ti-arrow-left"></i> Quay lại</a>
+      </div>
+
+      <div class="report-filters">
+        <div class="report-filter-group">
+          <label class="hv-label" for="rp-from">Từ ngày</label>
+          <input type="date" class="hv-input" id="rp-from" value="2026-04-16" style="width:150px">
+        </div>
+        <div class="report-filter-group">
+          <label class="hv-label" for="rp-to">Đến ngày</label>
+          <input type="date" class="hv-input" id="rp-to" value="2026-05-16" style="width:150px">
+        </div>
+        <div class="report-filter-group">
+          <label class="hv-label" for="rp-user">Người thực hiện</label>
+          <select class="hv-select" id="rp-user" style="width:160px">
+            <option value="">Tất cả</option>
+            <option>Demo Haravan</option>
+            <option>Nguyễn Văn A</option>
+          </select>
+        </div>
+        <button class="hv-btn hv-btn-primary hv-btn-sm">
+          <i class="ti ti-search"></i> Xem báo cáo
+        </button>
+      </div>
+
+      <div class="report-summary">
+        <div class="report-summary-item">
+          <div class="report-summary-label">Tổng HĐ thay thế</div>
+          <div class="report-summary-value" style="color:#6366f1">2</div>
+        </div>
+        <div class="report-summary-item">
+          <div class="report-summary-label">Tổng tiền cũ</div>
+          <div class="report-summary-value">3,620,000</div>
+        </div>
+        <div class="report-summary-item">
+          <div class="report-summary-label">Tổng tiền mới</div>
+          <div class="report-summary-value" style="color:var(--hv-success)">3,982,000</div>
+        </div>
+        <div class="report-summary-item">
+          <div class="report-summary-label">Chênh lệch</div>
+          <div class="report-summary-value" style="color:var(--hv-success)">+362,000</div>
+        </div>
+      </div>
+
+      <div class="report-preview">
+        <div class="report-preview-header">
+          <span class="report-preview-title">Hóa đơn thay thế — 16/04 – 16/05/2026</span>
+          <div class="report-preview-actions">
+            <button class="hv-btn hv-btn-secondary hv-btn-sm"><i class="ti ti-file-spreadsheet"></i></button>
+          </div>
+        </div>
+        <div class="hv-table-wrap">
+          <table class="hv-table">
+            <thead>
+              <tr>
+                <th rowspan="2">HĐ gốc</th>
+                <th colspan="3" style="text-align:center;background:var(--hv-danger-soft);color:var(--hv-danger)">Hóa đơn cũ (bị thay thế)</th>
+                <th rowspan="2">HĐ thay thế</th>
+                <th colspan="3" style="text-align:center;background:var(--hv-success-soft);color:var(--hv-success)">Hóa đơn mới</th>
+                <th rowspan="2">Người tạo</th>
+                <th rowspan="2">Thời gian</th>
+              </tr>
+              <tr>
+                <th style="background:var(--hv-danger-soft);font-size:11px">Khách hàng</th>
+                <th class="num" style="background:var(--hv-danger-soft);font-size:11px">Tổng tiền</th>
+                <th style="background:var(--hv-danger-soft);font-size:11px">Lý do</th>
+                <th style="background:var(--hv-success-soft);font-size:11px">Khách hàng</th>
+                <th class="num" style="background:var(--hv-success-soft);font-size:11px">Tổng tiền</th>
+                <th style="background:var(--hv-success-soft);font-size:11px">Trạng thái</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="hv-mono">00000098</td>
+                <td style="color:var(--hv-text-muted)">Khách lẻ</td>
+                <td class="num" style="color:var(--hv-text-muted)">120,000</td>
+                <td style="color:var(--hv-text-secondary);font-size:12px">Nhập sai thông tin</td>
+                <td class="hv-mono" style="color:var(--hv-success);font-weight:500">00000130</td>
+                <td style="font-weight:500">Khách lẻ</td>
+                <td class="num" style="font-weight:500">132,000</td>
+                <td><span class="hv-badge hv-badge-success">Chấp nhận</span></td>
+                <td>Demo Haravan</td>
+                <td>05/05/2026 10:15</td>
+              </tr>
+              <tr>
+                <td class="hv-mono">00000076</td>
+                <td style="color:var(--hv-text-muted)">Cty TNHH XYZ</td>
+                <td class="num" style="color:var(--hv-text-muted)">3,500,000</td>
+                <td style="color:var(--hv-text-secondary);font-size:12px">Sai thuế suất</td>
+                <td class="hv-mono" style="color:var(--hv-success);font-weight:500">00000131</td>
+                <td style="font-weight:500">Cty TNHH XYZ</td>
+                <td class="num" style="font-weight:500">3,850,000</td>
+                <td><span class="hv-badge hv-badge-success">Chấp nhận</span></td>
+                <td>Nguyễn Văn A</td>
+                <td>20/04/2026 15:30</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <script src="assets/js/app-shell.js"></script>
+</body>
+</html>

@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Dashboard Mobile — Haravan Invoice</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <link rel="stylesheet" href="assets/css/design-system.css">
+  <script>window.HV_PAGE = { id: 'mobile', title: 'Dashboard Mobile' };</script>
+  <style>
+    /* === MOBILE-OVERRIDE === */
+    *, *::before, *::after { box-sizing: border-box; }
+    html { -webkit-tap-highlight-color: transparent; }
+    body {
+      margin: 0;
+      background: var(--hv-bg-app);
+      overflow-x: hidden;
+      overscroll-behavior-y: contain;
+    }
+
+    /* --- Topbar (mobile) --- */
+    .hv-topbar {
+      left: 0 !important;
+      padding: 0 16px;
+      height: 52px;
+      backdrop-filter: blur(12px);
+      background: rgba(255,255,255,0.92);
+      z-index: 100;
+    }
+    .hv-topbar-logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--hv-text-primary);
+    }
+    .hv-topbar-logo i {
+      font-size: 22px;
+      color: var(--hv-primary);
+    }
+    .hv-topbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .hv-topbar-bell {
+      position: relative;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: var(--hv-radius-md);
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      font-size: 20px;
+      color: var(--hv-text-secondary);
+    }
+    .hv-topbar-bell:active { background: var(--hv-bg-soft); }
+    .hv-topbar-badge {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--hv-danger);
+      color: #fff;
+      font-size: 10px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid #fff;
+    }
+    .hv-topbar-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--hv-primary-soft);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--hv-primary);
+      cursor: pointer;
+    }
+
+    /* --- Period Selector --- */
+    .hv-period-scroll {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      padding: 2px 0;
+    }
+    .hv-period-scroll::-webkit-scrollbar { display: none; }
+    .hv-period-chip {
+      flex-shrink: 0;
+      height: 36px;
+      padding: 0 16px;
+      border-radius: var(--hv-radius-pill);
+      border: 1px solid var(--hv-border);
+      background: var(--hv-bg-surface);
+      color: var(--hv-text-secondary);
+      font-size: 13px;
+      font-weight: 500;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 150ms ease;
+      white-space: nowrap;
+    }
+    .hv-period-chip:active { transform: scale(0.96); }
+    .hv-period-chip-active {
+      background: var(--hv-primary);
+      border-color: var(--hv-primary);
+      color: #fff;
+    }
+
+    /* --- KPI Scroll --- */
+    .hv-kpi-scroll {
+      display: flex;
+      gap: 12px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      scroll-snap-type: x mandatory;
+      padding: 2px 0;
+    }
+    .hv-kpi-scroll::-webkit-scrollbar { display: none; }
+    .hv-kpi-card {
+      flex-shrink: 0;
+      width: 200px;
+      background: var(--hv-bg-surface);
+      border: 1px solid var(--hv-border);
+      border-radius: var(--hv-radius-lg);
+      padding: 16px;
+      box-shadow: var(--hv-shadow-xs);
+      scroll-snap-align: start;
+    }
+    .hv-kpi-card-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--hv-radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      margin-bottom: 12px;
+    }
+    .hv-kpi-card-label {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--hv-text-secondary);
+      margin-bottom: 4px;
+    }
+    .hv-kpi-card-value {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--hv-text-primary);
+      line-height: 1.2;
+    }
+    .hv-kpi-card-change {
+      display: inline-flex;
+      align-items: center;
+      gap: 2px;
+      font-size: 12px;
+      font-weight: 500;
+      margin-top: 6px;
+    }
+    .hv-kpi-card-change-up { color: var(--hv-success); }
+    .hv-kpi-card-change-down-good { color: var(--hv-success); }
+    .hv-kpi-card-change-down { color: var(--hv-danger); }
+
+    /* --- Quick Actions --- */
+    .hv-quick-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .hv-quick-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      height: 80px;
+      background: var(--hv-bg-surface);
+      border: 1px solid var(--hv-border);
+      border-radius: var(--hv-radius-lg);
+      cursor: pointer;
+      transition: all 150ms ease;
+      text-decoration: none;
+      font-family: inherit;
+    }
+    .hv-quick-btn:active { background: var(--hv-bg-surface-hover); transform: scale(0.97); }
+    .hv-quick-btn i {
+      font-size: 24px;
+      color: var(--hv-primary);
+    }
+    .hv-quick-btn span {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--hv-text-primary);
+    }
+
+    /* --- Revenue Chart --- */
+    .hv-chart-bars {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 6px;
+      height: 140px;
+      padding-top: 8px;
+    }
+    .hv-chart-col {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      height: 100%;
+      justify-content: flex-end;
+    }
+    .hv-chart-bar {
+      width: 100%;
+      max-width: 36px;
+      border-radius: var(--hv-radius-sm) var(--hv-radius-sm) 2px 2px;
+      background: var(--hv-border);
+      transition: height 400ms cubic-bezier(0.22, 1, 0.36, 1);
+      min-height: 4px;
+    }
+    .hv-chart-bar-today {
+      background: var(--hv-primary);
+    }
+    .hv-chart-label {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--hv-text-muted);
+    }
+    .hv-chart-value {
+      font-size: 10px;
+      font-weight: 500;
+      color: var(--hv-text-secondary);
+    }
+
+    /* --- Invoice List --- */
+    .hv-inv-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--hv-border-table);
+      cursor: pointer;
+      transition: background 100ms;
+    }
+    .hv-inv-row:last-child { border-bottom: none; }
+    .hv-inv-row:active { background: var(--hv-bg-soft); }
+    .hv-inv-left {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .hv-inv-number {
+      font-family: var(--hv-font-mono);
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--hv-text-primary);
+    }
+    .hv-inv-amount {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--hv-text-primary);
+    }
+
+    /* --- Alerts --- */
+    .hv-alert-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--hv-border-table);
+    }
+    .hv-alert-item:last-child { border-bottom: none; }
+    .hv-alert-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: var(--hv-radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .hv-alert-content {
+      flex: 1;
+      min-width: 0;
+    }
+    .hv-alert-text {
+      font-size: 13px;
+      line-height: 18px;
+      color: var(--hv-text-primary);
+      margin-bottom: 6px;
+    }
+    .hv-alert-action {
+      height: 32px;
+      padding: 0 12px;
+      font-size: 12px;
+      font-weight: 500;
+      border-radius: var(--hv-radius-md);
+      border: 1px solid var(--hv-border-strong);
+      background: var(--hv-bg-surface);
+      color: var(--hv-text-primary);
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 150ms;
+    }
+    .hv-alert-action:active { background: var(--hv-bg-soft); }
+
+    /* --- Bottom Nav --- */
+    .hv-bottomnav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 64px;
+      background: var(--hv-bg-surface);
+      border-top: 1px solid var(--hv-border);
+      display: flex;
+      align-items: stretch;
+      z-index: 100;
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+    }
+    .hv-bottomnav-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      text-decoration: none;
+      color: var(--hv-text-muted);
+      font-size: 10px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: color 150ms;
+      position: relative;
+      border: none;
+      background: none;
+      font-family: inherit;
+    }
+    .hv-bottomnav-item i { font-size: 22px; }
+    .hv-bottomnav-item:active { color: var(--hv-primary); }
+    .hv-bottomnav-active { color: var(--hv-primary); }
+    .hv-bottomnav-badge {
+      position: absolute;
+      top: 6px;
+      right: 50%;
+      margin-right: -18px;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--hv-danger);
+      color: #fff;
+      font-size: 10px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* --- Section Card --- */
+    .hv-section-card {
+      background: var(--hv-bg-surface);
+      border: 1px solid var(--hv-border);
+      border-radius: var(--hv-radius-lg);
+      box-shadow: var(--hv-shadow-xs);
+      padding: 16px;
+    }
+    .hv-section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+    .hv-section-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--hv-text-primary);
+    }
+    .hv-section-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 20px;
+      height: 20px;
+      padding: 0 6px;
+      border-radius: var(--hv-radius-pill);
+      background: var(--hv-danger-soft);
+      color: var(--hv-danger);
+      font-size: 11px;
+      font-weight: 600;
+      margin-left: 6px;
+    }
+
+    /* --- View All Button --- */
+    .hv-viewall {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 44px;
+      width: 100%;
+      margin-top: 12px;
+      border-radius: var(--hv-radius-md);
+      border: 1px solid var(--hv-border);
+      background: var(--hv-bg-surface);
+      color: var(--hv-primary-text);
+      font-size: 14px;
+      font-weight: 500;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 150ms;
+    }
+    .hv-viewall:active { background: var(--hv-primary-soft); }
+
+    /* --- Empty State --- */
+    .hv-empty {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 48px 24px;
+      text-align: center;
+    }
+    .hv-empty-icon {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: var(--hv-bg-soft);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      color: var(--hv-text-muted);
+      margin-bottom: 16px;
+    }
+    .hv-empty-text {
+      font-size: 14px;
+      line-height: 20px;
+      color: var(--hv-text-secondary);
+      max-width: 260px;
+    }
+
+    /* --- Skeleton --- */
+    .hv-skeleton {
+      background: linear-gradient(90deg, var(--hv-bg-soft) 25%, #e8ecf2 50%, var(--hv-bg-soft) 75%);
+      background-size: 200% 100%;
+      animation: skeleton-shimmer 1.5s infinite;
+      border-radius: var(--hv-radius-md);
+    }
+    @keyframes skeleton-shimmer {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    /* --- Scroll fade --- */
+    .hv-scroll-fade {
+      position: relative;
+    }
+    .hv-scroll-fade::after {
+      content: '';
+      position: absolute;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      width: 32px;
+      background: linear-gradient(to right, transparent, var(--hv-bg-surface));
+      pointer-events: none;
+      border-radius: 0 var(--hv-radius-lg) var(--hv-radius-lg) 0;
+    }
+
+    /* --- Responsive tweaks --- */
+    @media (min-width: 768px) {
+      .hv-topbar { padding: 0 24px; }
+      .hv-quick-grid { gap: 16px; }
+    }
+
+    @media (max-width: 480px) {
+      .hv-kpi-card { width: 170px; }
+      .hv-quick-btn { height: 72px; }
+      .hv-section-card { padding: 12px; }
+      .hv-chart-bars { height: 120px; }
+      .hv-bottomnav { padding-bottom: env(safe-area-inset-bottom, 0px); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===== TOPBAR (MOBILE) ===== -->
+  <div class="hv-topbar" id="topbar">
+    <div class="hv-topbar-logo">
+      <i class="ti ti-receipt-2"></i>
+      <span>Haravan Invoice</span>
+    </div>
+    <div class="hv-topbar-actions">
+      <button class="hv-topbar-bell" aria-label="Thông báo">
+        <i class="ti ti-bell"></i>
+        <span class="hv-topbar-badge">3</span>
+      </button>
+      <div class="hv-topbar-avatar" aria-label="Tài khoản">TN</div>
+    </div>
+  </div>
+
+  <!-- ===== MAIN CONTENT ===== -->
+  <div style="padding:16px;padding-top:68px;padding-bottom:80px;" id="main-content">
+
+    <!-- Period Selector -->
+    <div class="hv-period-scroll" id="period-selector" role="tablist" aria-label="Chọn thời gian">
+      <button class="hv-period-chip hv-period-chip-active" role="tab" aria-selected="true">Hôm nay</button>
+      <button class="hv-period-chip" role="tab" aria-selected="false">7 ngày</button>
+      <button class="hv-period-chip" role="tab" aria-selected="false">30 ngày</button>
+      <button class="hv-period-chip" role="tab" aria-selected="false">90 ngày</button>
+    </div>
+
+    <!-- KPI Cards (horizontal scroll) -->
+    <div class="hv-kpi-scroll" id="kpi-cards" style="margin-top:16px;" aria-label="Chỉ số KPI">
+      <div class="hv-kpi-card">
+        <div class="hv-kpi-card-icon" style="background:var(--hv-primary-soft);color:var(--hv-primary);">
+          <i class="ti ti-chart-line"></i>
+        </div>
+        <div class="hv-kpi-card-label">Doanh thu</div>
+        <div class="hv-kpi-card-value">12.450.000đ</div>
+        <div class="hv-kpi-card-change hv-kpi-card-change-up">
+          <i class="ti ti-trending-up"></i> 12.5% so tháng trước
+        </div>
+      </div>
+      <div class="hv-kpi-card">
+        <div class="hv-kpi-card-icon" style="background:var(--hv-success-soft);color:var(--hv-success);">
+          <i class="ti ti-receipt"></i>
+        </div>
+        <div class="hv-kpi-card-label">Hóa đơn</div>
+        <div class="hv-kpi-card-value">1.284</div>
+        <div class="hv-kpi-card-change hv-kpi-card-change-up">
+          <i class="ti ti-trending-up"></i> 8.3%
+        </div>
+      </div>
+      <div class="hv-kpi-card">
+        <div class="hv-kpi-card-icon" style="background:var(--hv-info-soft);color:var(--hv-info);">
+          <i class="ti ti-percentage"></i>
+        </div>
+        <div class="hv-kpi-card-label">Tỷ lệ HĐ/Đơn</div>
+        <div class="hv-kpi-card-value">78.5%</div>
+        <div class="hv-kpi-card-change hv-kpi-card-change-up">
+          <i class="ti ti-trending-up"></i> 2.1%
+        </div>
+      </div>
+      <div class="hv-kpi-card">
+        <div class="hv-kpi-card-icon" style="background:var(--hv-warning-soft);color:var(--hv-warning-hover);">
+          <i class="ti ti-alert-triangle"></i>
+        </div>
+        <div class="hv-kpi-card-label">Lỗi</div>
+        <div class="hv-kpi-card-value">1.2%</div>
+        <div class="hv-kpi-card-change hv-kpi-card-change-down-good">
+          <i class="ti ti-trending-down"></i> 0.5%
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div style="margin-top:20px;">
+      <div class="hv-quick-grid" id="quick-actions">
+        <a href="invoice-issue.html" class="hv-quick-btn" aria-label="Phát hành hóa đơn">
+          <i class="ti ti-receipt"></i>
+          <span>Phát hành HĐ</span>
+        </a>
+        <a href="invoice-list.html" class="hv-quick-btn" aria-label="Xem danh sách hóa đơn">
+          <i class="ti ti-list"></i>
+          <span>Xem danh sách</span>
+        </a>
+        <a href="correction-wizard.html" class="hv-quick-btn" aria-label="Xử lý sai sót">
+          <i class="ti ti-edit-circle"></i>
+          <span>Xử lý sai sót</span>
+        </a>
+        <a href="compliance-center.html" class="hv-quick-btn" aria-label="Compliance">
+          <i class="ti ti-shield-check"></i>
+          <span>Compliance</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Revenue Chart -->
+    <div class="hv-section-card" style="margin-top:20px;" id="revenue-chart">
+      <div class="hv-section-header">
+        <div class="hv-section-title">Doanh thu 7 ngày</div>
+      </div>
+      <div class="hv-chart-bars" id="chart-bars">
+        <div class="hv-chart-col">
+          <div class="hv-chart-value">450k</div>
+          <div class="hv-chart-bar" style="height:62%"></div>
+          <div class="hv-chart-label">T2</div>
+        </div>
+        <div class="hv-chart-col">
+          <div class="hv-chart-value">520k</div>
+          <div class="hv-chart-bar" style="height:72%"></div>
+          <div class="hv-chart-label">T3</div>
+        </div>
+        <div class="hv-chart-col">
+          <div class="hv-chart-value">380k</div>
+          <div class="hv-chart-bar" style="height:53%"></div>
+          <div class="hv-chart-label">T4</div>
+        </div>
+        <div class="hv-chart-col">
+          <div class="hv-chart-value">610k</div>
+          <div class="hv-chart-bar" style="height:85%"></div>
+          <div class="hv-chart-label">T5</div>
+        </div>
+        <div class="hv-chart-col">
+          <div class="hv-chart-value">490k</div>
+          <div class="hv-chart-bar" style="height:68%"></div>
+          <div class="hv-chart-label">T6</div>
+        </div>
+        <div class="hv-chart-col">
+          <div class="hv-chart-value">720k</div>
+          <div class="hv-chart-bar hv-chart-bar-today" style="height:100%"></div>
+          <div class="hv-chart-label" style="color:var(--hv-primary);font-weight:600;">T7</div>
+        </div>
+        <div class="hv-chart-col">
+          <div class="hv-chart-value">350k</div>
+          <div class="hv-chart-bar" style="height:49%"></div>
+          <div class="hv-chart-label">CN</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent Invoices -->
+    <div class="hv-section-card" style="margin-top:20px;" id="recent-invoices">
+      <div class="hv-section-header">
+        <div class="hv-section-title">Hóa đơn gần đây</div>
+      </div>
+      <div id="invoice-list">
+        <div class="hv-inv-row">
+          <div class="hv-inv-left">
+            <span class="hv-inv-number">2025/00001234</span>
+            <span class="hv-inv-amount">1.100.000đ</span>
+          </div>
+          <span class="hv-badge hv-badge-success">Đã phát hành</span>
+        </div>
+        <div class="hv-inv-row">
+          <div class="hv-inv-left">
+            <span class="hv-inv-number">2025/00001233</span>
+            <span class="hv-inv-amount">85.000đ</span>
+          </div>
+          <span class="hv-badge hv-badge-warning">Chờ xử lý</span>
+        </div>
+        <div class="hv-inv-row">
+          <div class="hv-inv-left">
+            <span class="hv-inv-number">2025/00001232</span>
+            <span class="hv-inv-amount">3.750.000đ</span>
+          </div>
+          <span class="hv-badge hv-badge-success">Đã phát hành</span>
+        </div>
+        <div class="hv-inv-row">
+          <div class="hv-inv-left">
+            <span class="hv-inv-number">2025/00001231</span>
+            <span class="hv-inv-amount">450.000đ</span>
+          </div>
+          <span class="hv-badge hv-badge-info">Đã điều chỉnh</span>
+        </div>
+        <div class="hv-inv-row">
+          <div class="hv-inv-left">
+            <span class="hv-inv-number">2025/00001230</span>
+            <span class="hv-inv-amount">890.000đ</span>
+          </div>
+          <span class="hv-badge hv-badge-neutral">Đã thay thế</span>
+        </div>
+      </div>
+      <a href="invoice-list.html" class="hv-viewall" aria-label="Xem tất cả hóa đơn">Xem tất cả</a>
+    </div>
+
+    <!-- Alerts -->
+    <div class="hv-section-card" style="margin-top:20px;" id="alerts-section">
+      <div class="hv-section-header">
+        <div class="hv-flex hv-items-center">
+          <span class="hv-section-title">Cảnh báo</span>
+          <span class="hv-section-badge">3</span>
+        </div>
+      </div>
+      <div id="alerts-list">
+        <div class="hv-alert-item">
+          <div class="hv-alert-icon" style="background:var(--hv-danger-soft);color:var(--hv-danger);">
+            <i class="ti ti-alert-triangle"></i>
+          </div>
+          <div class="hv-alert-content">
+            <div class="hv-alert-text">3 hóa đơn bị CQT từ chối — Cần xử lý</div>
+            <button class="hv-alert-action">Xem</button>
+          </div>
+        </div>
+        <div class="hv-alert-item">
+          <div class="hv-alert-icon" style="background:var(--hv-info-soft);color:var(--hv-info);">
+            <i class="ti ti-info-circle"></i>
+          </div>
+          <div class="hv-alert-content">
+            <div class="hv-alert-text">NĐ 70/2025 có hiệu lực từ 01/06 — Cập nhật quy trình</div>
+            <button class="hv-alert-action">Đọc</button>
+          </div>
+        </div>
+        <div class="hv-alert-item">
+          <div class="hv-alert-icon" style="background:var(--hv-warning-soft);color:var(--hv-warning-hover);">
+            <i class="ti ti-clock"></i>
+          </div>
+          <div class="hv-alert-content">
+            <div class="hv-alert-text">HĐ 2025/00001230 chưa gửi khách — 2 ngày</div>
+            <button class="hv-alert-action">Gửi ngay</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== BOTTOM NAVIGATION ===== -->
+  <nav class="hv-bottomnav" id="bottom-nav" aria-label="Điều hướng chính">
+    <button class="hv-bottomnav-item hv-bottomnav-active" aria-label="Dashboard" data-page="mobile">
+      <i class="ti ti-layout-dashboard"></i>
+      <span>Dashboard</span>
+    </button>
+    <button class="hv-bottomnav-item" aria-label="Hóa đơn" data-page="invoices">
+      <i class="ti ti-receipt"></i>
+      <span>Hóa đơn</span>
+    </button>
+    <button class="hv-bottomnav-item" aria-label="Cảnh báo" data-page="alerts">
+      <i class="ti ti-bell"></i>
+      <span class="hv-bottomnav-badge">3</span>
+      <span>Cảnh báo</span>
+    </button>
+    <button class="hv-bottomnav-item" aria-label="Cài đặt" data-page="settings">
+      <i class="ti ti-settings"></i>
+      <span>Cài đặt</span>
+    </button>
+  </nav>
+
+  <!-- ===== SCRIPTS ===== -->
+  <script src="assets/js/app-shell.js"></script>
+  <script>
+    /* === Mobile Owner Dashboard Controller === */
+    (function() {
+      'use strict';
+
+      /* --- Period Selector --- */
+      const periodChips = document.querySelectorAll('.hv-period-chip');
+      periodChips.forEach(chip => {
+        chip.addEventListener('click', () => {
+          periodChips.forEach(c => {
+            c.classList.remove('hv-period-chip-active');
+            c.setAttribute('aria-selected', 'false');
+          });
+          chip.classList.add('hv-period-chip-active');
+          chip.setAttribute('aria-selected', 'true');
+        });
+      });
+
+      /* --- Bottom Nav --- */
+      const navItems = document.querySelectorAll('.hv-bottomnav-item');
+      const navMap = {
+        'mobile': 'mobile-owner.html',
+        'invoices': 'invoice-list.html',
+        'alerts': 'compliance-center.html',
+        'settings': 'compliance-center.html'
+      };
+      navItems.forEach(item => {
+        item.addEventListener('click', () => {
+          const page = item.getAttribute('data-page');
+          if (navMap[page]) window.location.href = navMap[page];
+        });
+      });
+
+      /* --- Alert item clicks --- */
+      document.querySelectorAll('.hv-alert-item').forEach(item => {
+        const actionBtn = item.querySelector('.hv-btn');
+        if (actionBtn) {
+          actionBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const label = actionBtn.textContent.trim();
+            if (label.includes('Khắc phục') || label.includes('Xử lý')) {
+              HV.navigate('compliance-center.html');
+            } else {
+              HV.toast('Đã xử lý cảnh báo', 'success');
+            }
+          });
+        }
+      });
+
+      /* --- Quick action buttons --- */
+      document.querySelectorAll('.hv-quickaction-item, .hv-quick-action').forEach(item => {
+        item.addEventListener('click', () => {
+          const label = item.textContent.trim();
+          if (label.includes('Phát hành') || label.includes('Hóa đơn')) {
+            HV.navigate('invoice-issue.html');
+          } else if (label.includes('Danh sách') || label.includes('Xem HĐ')) {
+            HV.navigate('invoice-list.html');
+          } else if (label.includes('Dashboard') || label.includes('Tổng quan')) {
+            HV.navigate('dashboard.html');
+          }
+        });
+      });
+
+      /* --- Invoice row clicks --- */
+      document.querySelectorAll('.hv-inv-row').forEach(row => {
+        row.addEventListener('click', () => {
+          HV.navigate('invoice-detail.html', { id: '2025/00001234' });
+        });
+      });
+
+      /* --- State Management --- */
+      const params = new URLSearchParams(window.location.search);
+      const state = params.get('state') || 'default';
+      const mainContent = document.getElementById('main-content');
+
+      if (state === 'empty') {
+        renderEmpty();
+      } else if (state === 'loading') {
+        renderLoading();
+      }
+
+      function renderEmpty() {
+        const sections = ['kpi-cards', 'quick-actions', 'revenue-chart', 'recent-invoices', 'alerts-section'];
+        sections.forEach(id => {
+          const el = document.getElementById(id);
+          if (el) el.style.display = 'none';
+        });
+
+        const empty = document.createElement('div');
+        empty.className = 'hv-empty';
+        empty.style.marginTop = '40px';
+        empty.innerHTML = `
+          <div class="hv-empty-icon"><i class="ti ti-receipt-off"></i></div>
+          <div class="hv-empty-text">Chưa có dữ liệu. Bắt đầu bằng cách phát hành hóa đơn đầu tiên.</div>
+          <a href="invoice-issue.html" class="hv-btn hv-btn-primary hv-btn-lg" style="margin-top:20px;text-decoration:none">
+            <i class="ti ti-receipt"></i> Phát hành HĐ
+          </a>
+        `;
+        mainContent.appendChild(empty);
+      }
+
+      function renderLoading() {
+        const kpiContainer = document.getElementById('kpi-cards');
+        if (kpiContainer) {
+          kpiContainer.innerHTML = '';
+          for (let i = 0; i < 3; i++) {
+            const card = document.createElement('div');
+            card.className = 'hv-kpi-card';
+            card.innerHTML = `
+              <div class="hv-skeleton" style="width:40px;height:40px;border-radius:var(--hv-radius-md);margin-bottom:12px;"></div>
+              <div class="hv-skeleton" style="width:60px;height:12px;margin-bottom:8px;"></div>
+              <div class="hv-skeleton" style="width:120px;height:22px;margin-bottom:8px;"></div>
+              <div class="hv-skeleton" style="width:80px;height:12px;"></div>
+            `;
+            kpiContainer.appendChild(card);
+          }
+        }
+
+        const chartSection = document.getElementById('chart-bars');
+        if (chartSection) {
+          chartSection.innerHTML = '';
+          for (let i = 0; i < 7; i++) {
+            const col = document.createElement('div');
+            col.className = 'hv-chart-col';
+            col.innerHTML = `
+              <div class="hv-skeleton" style="width:24px;height:10px;margin-bottom:6px;"></div>
+              <div class="hv-skeleton" style="width:100%;max-width:36px;height:${40 + Math.random() * 60}%;border-radius:var(--hv-radius-sm) var(--hv-radius-sm) 2px 2px;"></div>
+              <div class="hv-skeleton" style="width:20px;height:11px;"></div>
+            `;
+            chartSection.appendChild(col);
+          }
+        }
+
+        const invoiceList = document.getElementById('invoice-list');
+        if (invoiceList) {
+          invoiceList.innerHTML = '';
+          for (let i = 0; i < 3; i++) {
+            const row = document.createElement('div');
+            row.className = 'hv-inv-row';
+            row.innerHTML = `
+              <div class="hv-inv-left">
+                <div class="hv-skeleton" style="width:110px;height:13px;margin-bottom:4px;"></div>
+                <div class="hv-skeleton" style="width:80px;height:14px;"></div>
+              </div>
+              <div class="hv-skeleton" style="width:80px;height:22px;border-radius:var(--hv-radius-pill);"></div>
+            `;
+            invoiceList.appendChild(row);
+          }
+        }
+
+        const alertsList = document.getElementById('alerts-list');
+        if (alertsList) {
+          alertsList.innerHTML = '';
+          for (let i = 0; i < 2; i++) {
+            const alert = document.createElement('div');
+            alert.className = 'hv-alert-item';
+            alert.innerHTML = `
+              <div class="hv-skeleton" style="width:32px;height:32px;border-radius:var(--hv-radius-md);flex-shrink:0;"></div>
+              <div style="flex:1;">
+                <div class="hv-skeleton" style="width:80%;height:13px;margin-bottom:8px;"></div>
+                <div class="hv-skeleton" style="width:60px;height:32px;border-radius:var(--hv-radius-md);"></div>
+              </div>
+            `;
+            alertsList.appendChild(alert);
+          }
+        }
+      }
+    })();
+  </script>
+</body>
+</html>

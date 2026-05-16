@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gói dịch vụ — Haravan Invoice</title>
+  <link rel="stylesheet" href="assets/css/design-system.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script>window.HV_PAGE = { id: 'settings-billing', title: 'Gói dịch vụ' };</script>
+  <style>
+    /* === Plan Banner === */
+    .hv-plan-banner {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      padding: 24px;
+      background: linear-gradient(135deg, var(--hv-primary) 0%, #0066cc 100%);
+      border-radius: var(--hv-radius-lg);
+      color: #fff;
+      margin-bottom: 16px;
+    }
+    .hv-plan-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: var(--hv-radius-lg);
+      background: rgba(255,255,255,0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      flex-shrink: 0;
+    }
+    .hv-plan-info { flex: 1; }
+    .hv-plan-name { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+    .hv-plan-meta { font-size: 14px; opacity: 0.85; }
+    .hv-plan-meta i { font-size: 14px; margin-right: 4px; }
+    .hv-plan-actions { display: flex; gap: 8px; flex-shrink: 0; }
+    .hv-plan-actions .hv-btn {
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.5);
+      color: #fff;
+    }
+    .hv-plan-actions .hv-btn:hover { background: rgba(255,255,255,0.15); border-color: rgba(255,255,255,0.8); }
+    .hv-plan-actions .hv-btn-primary { background: #fff; color: var(--hv-primary); border-color: #fff; }
+    .hv-plan-actions .hv-btn-primary:hover { background: rgba(255,255,255,0.9); }
+
+    /* === Usage Progress === */
+    .hv-usage-bar-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 12px;
+    }
+    .hv-usage-bar {
+      flex: 1;
+      height: 8px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .hv-usage-bar-fill {
+      height: 100%;
+      background: #fff;
+      border-radius: 4px;
+      transition: width 600ms ease;
+    }
+    .hv-usage-text { font-size: 13px; font-weight: 600; white-space: nowrap; }
+
+    /* === KPI Grid === */
+    .hv-grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 16px;
+    }
+    @media (max-width: 1199px) { .hv-grid-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+    @media (max-width: 560px)  { .hv-grid-4 { grid-template-columns: 1fr; } }
+
+    .hv-kpi {
+      position: relative;
+      overflow: hidden;
+      padding: 16px 18px;
+      cursor: default;
+      transition: background 150ms ease, box-shadow 150ms ease;
+      min-height: 110px;
+    }
+    .hv-kpi:hover {
+      background: var(--hv-bg-surface-hover);
+      box-shadow: var(--hv-shadow-sm);
+    }
+    .hv-kpi-icon {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      width: 34px;
+      height: 34px;
+      border-radius: var(--hv-radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 17px;
+    }
+    .hv-kpi-label { font-size: 13px; margin-bottom: 6px; padding-right: 44px; color: var(--hv-text-secondary); }
+    .hv-kpi-value { font-size: 24px; line-height: 1.2; font-weight: 700; letter-spacing: -0.01em; }
+    .hv-kpi-sub { font-size: 12px; margin-top: 6px; color: var(--hv-text-muted); }
+    .hv-kpi-icon-blue { background: var(--hv-primary-soft); color: var(--hv-primary); }
+    .hv-kpi-icon-green { background: var(--hv-success-soft); color: var(--hv-success); }
+    .hv-kpi-icon-purple { background: var(--hv-purple-soft); color: var(--hv-purple); }
+    .hv-kpi-icon-orange { background: var(--hv-warning-soft); color: var(--hv-warning); }
+
+    /* === Quota Progress in Table === */
+    .hv-quota-bar {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 120px;
+    }
+    .hv-quota-bar-track {
+      flex: 1;
+      height: 6px;
+      background: var(--hv-border);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .hv-quota-bar-fill {
+      height: 100%;
+      border-radius: 3px;
+      transition: width 400ms ease;
+    }
+    .hv-quota-bar-fill-low { background: var(--hv-success); }
+    .hv-quota-bar-fill-mid { background: var(--hv-warning); }
+    .hv-quota-bar-fill-high { background: var(--hv-danger); }
+    .hv-quota-pct { font-size: 12px; font-weight: 500; color: var(--hv-text-secondary); min-width: 36px; text-align: right; }
+
+    /* === Auto Renew Toggle === */
+    .hv-renew-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--hv-border-table);
+    }
+    .hv-renew-row:last-child { border-bottom: none; }
+    .hv-renew-label { font-weight: 500; }
+    .hv-renew-desc { font-size: 12px; color: var(--hv-text-secondary); margin-top: 2px; }
+
+    /* === Responsive === */
+    @media (max-width: 767px) {
+      .hv-plan-banner { flex-direction: column; align-items: flex-start; gap: 16px; }
+      .hv-plan-actions { width: 100%; }
+      .hv-plan-actions .hv-btn { flex: 1; justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+  <div class="hv-skip-link"><a href="#main-content">Chuyển đến nội dung</a></div>
+  <aside class="hv-sidebar" aria-label="Điều hướng chính"></aside>
+  <header class="hv-topbar" aria-label="Thanh công cụ"></header>
+  <main class="hv-content" id="main-content">
+    <div class="hv-content-max">
+
+      <!-- HEADER -->
+      <div class="hv-content-header">
+        <div>
+          <nav class="hv-breadcrumb" style="margin-bottom:4px">
+            <a href="dashboard.html" style="color:var(--hv-text-secondary)">Cài đặt</a>
+            <i class="ti ti-chevron-right" style="color:var(--hv-text-muted);font-size:12px"></i>
+            <span style="color:var(--hv-text-primary);font-weight:500">Gói dịch vụ</span>
+          </nav>
+          <h1>Gói dịch vụ</h1>
+        </div>
+      </div>
+
+      <!-- TABS -->
+      <div class="hv-tabs" style="margin-bottom:20px">
+        <button class="hv-tab hv-tab-active" onclick="switchTab(this,'overview')">Tổng quan</button>
+        <button class="hv-tab" onclick="switchTab(this,'service-history')">Lịch sử dịch vụ</button>
+        <button class="hv-tab" onclick="switchTab(this,'payment-history')">Lịch sử thanh toán</button>
+      </div>
+
+      <!-- ====== TAB 1: TỔNG QUAN ====== -->
+      <div id="tab-overview" class="hv-tab-panel">
+
+        <!-- Plan Banner -->
+        <div class="hv-plan-banner">
+          <div class="hv-plan-icon"><i class="ti ti-crown"></i></div>
+          <div class="hv-plan-info">
+            <div class="hv-plan-name">Gói Pro</div>
+            <div class="hv-plan-meta">
+              <i class="ti ti-receipt"></i> 50.000 hóa đơn/tháng &nbsp;·&nbsp;
+              <i class="ti ti-calendar"></i> Gia hạn: 15/06/2026 &nbsp;·&nbsp;
+              <span class="hv-badge" style="background:rgba(255,255,255,0.2);color:#fff;border:none;font-size:11px"><i class="ti ti-refresh" style="font-size:11px"></i> Tự động gia hạn</span>
+            </div>
+            <div class="hv-usage-bar-wrap">
+              <div class="hv-usage-bar"><div class="hv-usage-bar-fill" style="width:64.9%"></div></div>
+              <div class="hv-usage-text">32.456 / 50.000 (64.9%)</div>
+            </div>
+          </div>
+          <div class="hv-plan-actions">
+            <button class="hv-btn hv-btn-secondary hv-btn-sm" onclick="showUpgradeModal()"><i class="ti ti-arrow-up"></i> Nâng cấp</button>
+            <button class="hv-btn hv-btn-primary hv-btn-sm" onclick="showRenewModal()"><i class="ti ti-refresh"></i> Gia hạn</button>
+          </div>
+        </div>
+
+        <!-- KPI Cards -->
+        <div class="hv-grid-4" style="margin-bottom:16px">
+          <div class="hv-kpi hv-card">
+            <div class="hv-kpi-icon hv-kpi-icon-blue"><i class="ti ti-stack-2"></i></div>
+            <div class="hv-kpi-label">Tổng hóa đơn</div>
+            <div class="hv-kpi-value">50.000</div>
+            <div class="hv-kpi-sub">Quota theo gói hiện tại</div>
+          </div>
+          <div class="hv-kpi hv-card">
+            <div class="hv-kpi-icon hv-kpi-icon-green"><i class="ti ti-circle-check"></i></div>
+            <div class="hv-kpi-label">Đã phát hành</div>
+            <div class="hv-kpi-value">32.456</div>
+            <div class="hv-kpi-sub">Tính từ đầu chu kỳ</div>
+          </div>
+          <div class="hv-kpi hv-card">
+            <div class="hv-kpi-icon hv-kpi-icon-purple"><i class="ti ti-ticket"></i></div>
+            <div class="hv-kpi-label">Còn lại</div>
+            <div class="hv-kpi-value">17.544</div>
+            <div class="hv-kpi-sub">Còn 30 ngày nữa</div>
+          </div>
+          <div class="hv-kpi hv-card">
+            <div class="hv-kpi-icon hv-kpi-icon-orange"><i class="ti ti-percentage"></i></div>
+            <div class="hv-kpi-label">Tỷ lệ sử dụng</div>
+            <div class="hv-kpi-value">64,9%</div>
+            <div class="hv-kpi-sub">Đúng tiến độ</div>
+          </div>
+        </div>
+
+        <!-- Quota by Template -->
+        <div class="hv-card hv-card-flush">
+          <div class="hv-card-header" style="padding:16px 20px">
+            <span class="hv-card-title">Quota theo mẫu hóa đơn</span>
+          </div>
+          <table class="hv-table">
+            <thead>
+              <tr>
+                <th>Mẫu số</th>
+                <th>Ký hiệu</th>
+                <th>Loại hóa đơn</th>
+                <th style="text-align:right">Tổng</th>
+                <th style="text-align:right">Đã phát hành</th>
+                <th style="text-align:right">Còn lại</th>
+                <th style="min-width:160px">Sử dụng</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="hv-mono">01GTKT0/001</td>
+                <td class="hv-mono">AA/200E</td>
+                <td>Hóa đơn GTGT</td>
+                <td style="text-align:right;font-weight:500">30.000</td>
+                <td style="text-align:right">21.200</td>
+                <td style="text-align:right;font-weight:600;color:var(--hv-success)">8.800</td>
+                <td>
+                  <div class="hv-quota-bar">
+                    <div class="hv-quota-bar-track"><div class="hv-quota-bar-fill hv-quota-bar-fill-mid" style="width:70.7%"></div></div>
+                    <span class="hv-quota-pct">70,7%</span>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td class="hv-mono">02GTKT0/001</td>
+                <td class="hv-mono">AB/200E</td>
+                <td>Hóa đơn bán hàng</td>
+                <td style="text-align:right;font-weight:500">20.000</td>
+                <td style="text-align:right">11.256</td>
+                <td style="text-align:right;font-weight:600;color:var(--hv-success)">8.744</td>
+                <td>
+                  <div class="hv-quota-bar">
+                    <div class="hv-quota-bar-track"><div class="hv-quota-bar-fill hv-quota-bar-fill-low" style="width:56.3%"></div></div>
+                    <span class="hv-quota-pct">56,3%</span>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Settings Card -->
+        <div class="hv-card" style="margin-top:16px">
+          <div class="hv-card-header">
+            <span class="hv-card-title">Cài đặt gói dịch vụ</span>
+          </div>
+          <div class="hv-card-section">
+            <div class="hv-renew-row">
+              <div>
+                <div class="hv-renew-label">Tự động gia hạn</div>
+                <div class="hv-renew-desc">Tự động gia hạn gói khi hết hạn. Thanh toán qua thẻ đã lưu.</div>
+              </div>
+              <label class="hv-switch">
+                <input type="checkbox" checked>
+                <span class="hv-switch-slider"></span>
+              </label>
+            </div>
+            <div class="hv-renew-row">
+              <div>
+                <div class="hv-renew-label">Thông báo sắp hết hạn</div>
+                <div class="hv-renew-desc">Gửi email khi còn dưới 5.000 hóa đơn hoặc 7 ngày trước khi hết hạn.</div>
+              </div>
+              <label class="hv-switch">
+                <input type="checkbox" checked>
+                <span class="hv-switch-slider"></span>
+              </label>
+            </div>
+            <div class="hv-renew-row">
+              <div>
+                <div class="hv-renew-label">Tạm dừng khi hết quota</div>
+                <div class="hv-renew-desc">Dừng phát hành hóa đơn khi đạt giới hạn. Liên hệ hỗ trợ để gia hạn.</div>
+              </div>
+              <label class="hv-switch">
+                <input type="checkbox">
+                <span class="hv-switch-slider"></span>
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ====== TAB 2: LỊCH SỬ DỊCH VỤ ====== -->
+      <div id="tab-service-history" class="hv-tab-panel" style="display:none">
+        <div class="hv-card hv-card-flush">
+          <div class="hv-card-header" style="padding:16px 20px">
+            <span class="hv-card-title">Lịch sử dịch vụ</span>
+            <div style="display:flex;gap:8px">
+              <select class="hv-select" style="height:32px;font-size:13px;width:auto;min-width:140px;padding:0 28px 0 10px">
+                <option value="">Tất cả sự kiện</option>
+                <option>Nâng cấp gói</option>
+                <option>Gia hạn</option>
+                <option>Thay đổi quota</option>
+              </select>
+            </div>
+          </div>
+          <table class="hv-table">
+            <thead>
+              <tr>
+                <th>Thời gian</th>
+                <th>Sự kiện</th>
+                <th>Gói dịch vụ</th>
+                <th>Chi tiết</th>
+                <th>Trạng thái</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <div style="font-weight:500">15/05/2026</div>
+                  <div style="font-size:12px;color:var(--hv-text-muted)">09:00</div>
+                </td>
+                <td><span class="hv-badge hv-badge-info hv-badge-solid"><i class="ti ti-refresh" style="font-size:11px"></i> Gia hạn</span></td>
+                <td>Pro</td>
+                <td>Gia hạn tự động chu kỳ tháng 05/2026 — 50.000 hóa đơn</td>
+                <td><span class="hv-badge hv-badge-success"><i class="ti ti-circle-check" style="font-size:12px"></i> Thành công</span></td>
+              </tr>
+              <tr>
+                <td>
+                  <div style="font-weight:500">01/03/2026</div>
+                  <div style="font-size:12px;color:var(--hv-text-muted)">14:32</div>
+                </td>
+                <td><span class="hv-badge hv-badge-primary hv-badge-solid"><i class="ti ti-arrow-up" style="font-size:11px"></i> Nâng cấp</span></td>
+                <td>Basic → Pro</td>
+                <td>Nâng cấp từ gói Basic (20.000 HĐ) lên Pro (50.000 HĐ). Phụ phí: 300.000đ/tháng</td>
+                <td><span class="hv-badge hv-badge-success"><i class="ti ti-circle-check" style="font-size:12px"></i> Thành công</span></td>
+              </tr>
+              <tr>
+                <td>
+                  <div style="font-weight:500">15/02/2026</div>
+                  <div style="font-size:12px;color:var(--hv-text-muted)">09:00</div>
+                </td>
+                <td><span class="hv-badge hv-badge-info hv-badge-solid"><i class="ti ti-refresh" style="font-size:11px"></i> Gia hạn</span></td>
+                <td>Basic</td>
+                <td>Gia hạn tự động chu kỳ tháng 02/2026 — 20.000 hóa đơn</td>
+                <td><span class="hv-badge hv-badge-success"><i class="ti ti-circle-check" style="font-size:12px"></i> Thành công</span></td>
+              </tr>
+              <tr>
+                <td>
+                  <div style="font-weight:500">15/01/2026</div>
+                  <div style="font-size:12px;color:var(--hv-text-muted)">09:00</div>
+                </td>
+                <td><span class="hv-badge hv-badge-info hv-badge-solid"><i class="ti ti-refresh" style="font-size:11px"></i> Gia hạn</span></td>
+                <td>Basic</td>
+                <td>Gia hạn tự động chu kỳ tháng 01/2026 — 20.000 hóa đơn</td>
+                <td><span class="hv-badge hv-badge-success"><i class="ti ti-circle-check" style="font-size:12px"></i> Thành công</span></td>
+              </tr>
+              <tr>
+                <td>
+                  <div style="font-weight:500">15/12/2025</div>
+                  <div style="font-size:12px;color:var(--hv-text-muted)">10:15</div>
+                </td>
+                <td><span class="hv-badge hv-badge-warning hv-badge-solid"><i class="ti ti-settings" style="font-size:11px"></i> Thay đổi</span></td>
+                <td>Basic</td>
+                <td>Tăng quota mẫu 01GTKT0/001 từ 10.000 lên 12.000 (điều chỉnh phân bổ)</td>
+                <td><span class="hv-badge hv-badge-success"><i class="ti ti-circle-check" style="font-size:12px"></i> Thành công</span></td>
+              </tr>
+              <tr>
+                <td>
+                  <div style="font-weight:500">15/11/2025</div>
+                  <div style="font-size:12px;color:var(--hv-text-muted)">09:00</div>
+                </td>
+                <td><span class="hv-badge hv-badge-neutral hv-badge-solid"><i class="ti ti-plus" style="font-size:11px"></i> Kích hoạt</span></td>
+                <td>Basic</td>
+                <td>Kích hoạt gói Basic — 20.000 hóa đơn/tháng. Bắt đầu chu kỳ đầu tiên.</td>
+                <td><span class="hv-badge hv-badge-success"><i class="ti ti-circle-check" style="font-size:12px"></i> Thành công</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ====== TAB 3: LỊCH SỬ THANH TOÁN ====== -->
+      <div id="tab-payment-history" class="hv-tab-panel" style="display:none">
+
+        <!-- Summary -->
+        <div class="hv-grid-4" style="margin-bottom:16px">
+          <div class="hv-kpi hv-card">
+            <div class="hv-kpi-icon hv-kpi-icon-blue"><i class="ti ti-wallet"></i></div>
+            <div class="hv-kpi-label">Tổng đã thanh toán</div>
+            <div class="hv-kpi-value">2.194.000đ</div>
+            <div class="hv-kpi-sub">6 giao dịch</div>
+          </div>
+          <div class="hv-kpi hv-card">
+            <div class="hv-kpi-icon hv-kpi-icon-green"><i class="ti ti-circle-check"></i></div>
+            <div class="hv-kpi-label">Thanh toán thành công</div>
+            <div class="hv-kpi-value">6</div>
+            <div class="hv-kpi-sub">Tỷ lệ 100%</div>
+          </div>
+          <div class="hv-kpi hv-card">
+            <div class="hv-kpi-icon hv-kpi-icon-purple"><i class="ti ti-calendar"></i></div>
+            <div class="hv-kpi-label">Thanh toán gần nhất</div>
+            <div class="hv-kpi-value" style="font-size:18px">15/05/2026</div>
+            <div class="hv-kpi-sub">499.000đ qua Visa</div>
+          </div>
+          <div class="hv-kpi hv-card">
+            <div class="hv-kpi-icon hv-kpi-icon-orange"><i class="ti ti-clock"></i></div>
+            <div class="hv-kpi-label">Thanh toán tiếp theo</div>
+            <div class="hv-kpi-value" style="font-size:18px">15/06/2026</div>
+            <div class="hv-kpi-sub">Tự động gia hạn</div>
+          </div>
+        </div>
+
+        <!-- Payment Table -->
+        <div class="hv-card hv-card-flush">
+          <div class="hv-card-header" style="padding:16px 20px">
+            <span class="hv-card-title">Lịch sử thanh toán</span>
+            <button class="hv-btn hv-btn-secondary hv-btn-sm"><i class="ti ti-download"></i> Xuất Excel</button>
+          </div>
+          <table class="hv-table">
+            <thead>
+              <tr>
+                <th>Mã giao dịch</th>
+                <th>Ngày</th>
+                <th>Gói dịch vụ</th>
+                <th style="text-align:right">Số tiền</th>
+                <th>Phương thức</th>
+                <th>Trạng thái</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="hv-mono" style="font-weight:500">PAY-2026-005</td>
+                <td>15/05/2026</td>
+                <td><span class="hv-badge hv-badge-primary hv-badge-solid">Pro</span></td>
+                <td style="text-align:right;font-weight:600">499.000đ</td>
+                <td><i class="ti ti-credit-card" style="font-size:14px;color:var(--hv-text-muted);margin-right:4px"></i>Visa ****1234</td>
+                <td><span class="hv-badge hv-badge-success"><i class="ti ti-circle-check" style="font-size:12px"></i> Thành công</span></td>
+                <td>
+                  <button class="hv-btn hv-btn-sm hv-btn-tertiary" onclick="HV.toast('Đang tải hóa đơn...','info')"><i class="ti ti-download" style="font-size:14px"></i></button>
+                </td>
+              </tr>
+              <tr>
+                <td class="hv-mono" style="font-weight:500">PAY-2026-004</td>
+                <td>15/04/2026</td>
+                <td><span class="hv-badge hv-badge-primary hv-badge-solid">Pro</span></td>
+                <td style="text-align:right;font-weight:600">499.000đ</td>
+                <td><i class="ti ti-credit-card" style="font-size:14px;color:var(--hv-text-muted);margin-right:4px"></i>Visa ****1234</td>
+                <td><span class="hv-badge hv-badge-success"><i class="ti ti-circle-check" style="font-size:12px"></i> Thành công</span></td>
+                <td>
+                  <button class="hv-btn hv-btn-sm hv-btn-tertiary" onclick="HV.toast('Đang tải hóa đơn...','info')"><i class="ti ti-download" style="font-size:14px"></i></button>
+                </td>
+              </tr>
+              <tr>
+                <td class="hv-mono" style="font-weight:500">PAY-2026-003</td>
+                <td>01/03/2026</td>
+                <td><span class="hv-badge hv-badge-primary hv-badge-solid">Pro</span></td>
+                <td style="text-align:right;font-weight:600">499.000đ</td>
+                <td><i class="ti ti-building-bank" style="font-size:14px;color:var(--hv-text-muted);margin-right:4px"></i>Chuyển khoản</td>
+                <td><span class="hv-badge hv-badge-success"><i class="ti ti-circle-check" style="font-size:12px"></i> Thành công</span></td>
+                <td>
+                  <button class="hv-btn hv-btn-sm hv-btn-tertiary" onclick="HV.toast('Đang tải hóa đơn...','info')"><i class="ti ti-download" style="font-size:14px"></i></button>
+                </td>
+              </tr>
+              <tr>
+                <td class="hv-mono" style="font-weight:500">PAY-2026-002</td>
+                <td>15/02/2026</td>
+                <td><span class="hv-badge hv-badge-neutral hv-badge-solid">Basic</span></td>
+                <td style="text-align:right;font-weight:600">199.000đ</td>
+                <td><i class="ti ti-credit-card" style="font-size:14px;color:var(--hv-text-muted);margin-right:4px"></i>Visa ****1234</td>
+                <td><span class="hv-badge hv-badge-success"><i class="ti ti-circle-check" style="font-size:12px"></i> Thành công</span></td>
+                <td>
+                  <button class="hv-btn hv-btn-sm hv-btn-tertiary" onclick="HV.toast('Đang tải hóa đơn...','info')"><i class="ti ti-download" style="font-size:14px"></i></button>
+                </td>
+              </tr>
+              <tr>
+                <td class="hv-mono" style="font-weight:500">PAY-2026-001</td>
+                <td>15/01/2026</td>
+                <td><span class="hv-badge hv-badge-neutral hv-badge-solid">Basic</span></td>
+                <td style="text-align:right;font-weight:600">199.000đ</td>
+                <td><i class="ti ti-credit-card" style="font-size:14px;color:var(--hv-text-muted);margin-right:4px"></i>Visa ****1234</td>
+                <td><span class="hv-badge hv-badge-success"><i class="ti ti-circle-check" style="font-size:12px"></i> Thành công</span></td>
+                <td>
+                  <button class="hv-btn hv-btn-sm hv-btn-tertiary" onclick="HV.toast('Đang tải hóa đơn...','info')"><i class="ti ti-download" style="font-size:14px"></i></button>
+                </td>
+              </tr>
+              <tr>
+                <td class="hv-mono" style="font-weight:500">PAY-2025-012</td>
+                <td>15/12/2025</td>
+                <td><span class="hv-badge hv-badge-neutral hv-badge-solid">Basic</span></td>
+                <td style="text-align:right;font-weight:600">199.000đ</td>
+                <td><i class="ti ti-credit-card" style="font-size:14px;color:var(--hv-text-muted);margin-right:4px"></i>Visa ****1234</td>
+                <td><span class="hv-badge hv-badge-success"><i class="ti ti-circle-check" style="font-size:12px"></i> Thành công</span></td>
+                <td>
+                  <button class="hv-btn hv-btn-sm hv-btn-tertiary" onclick="HV.toast('Đang tải hóa đơn...','info')"><i class="ti ti-download" style="font-size:14px"></i></button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <script src="assets/js/app-shell.js"></script>
+  <script>
+    /* === Tab Switching === */
+    function switchTab(btn, tabId) {
+      document.querySelectorAll('.hv-tab').forEach(function(t) { t.classList.remove('hv-tab-active'); });
+      btn.classList.add('hv-tab-active');
+      document.querySelectorAll('.hv-tab-panel').forEach(function(p) { p.style.display = 'none'; });
+      document.getElementById('tab-' + tabId).style.display = '';
+    }
+
+    /* === Upgrade Modal === */
+    function showUpgradeModal() {
+      HV.modal({
+        title: 'Nâng cấp gói dịch vụ',
+        body: '<div style="display:flex;flex-direction:column;gap:16px">'
+          + '<div style="background:var(--hv-bg-soft);border-radius:var(--hv-radius-md);padding:14px">'
+          + '  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">'
+          + '    <span style="font-weight:600">Gói hiện tại: Pro</span>'
+          + '    <span class="hv-badge hv-badge-primary hv-badge-solid">499.000đ/tháng</span>'
+          + '  </div>'
+          + '  <div style="font-size:13px;color:var(--hv-text-secondary)">50.000 hóa đơn/tháng · Còn 17.544 hóa đơn</div>'
+          + '</div>'
+          + '<div style="border:2px solid var(--hv-primary);border-radius:var(--hv-radius-md);padding:14px;position:relative">'
+          + '  <span class="hv-badge hv-badge-primary" style="position:absolute;top:-10px;right:12px;font-size:10px">Đề xuất</span>'
+          + '  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">'
+          + '    <span style="font-weight:600">Gói Business</span>'
+          + '    <span style="font-weight:700;color:var(--hv-primary)">899.000đ/tháng</span>'
+          + '  </div>'
+          + '  <div style="font-size:13px;color:var(--hv-text-secondary)">200.000 hóa đơn/tháng · API không giới hạn · Hỗ trợ ưu tiên</div>'
+          + '</div>'
+          + '<div style="border:1px solid var(--hv-border);border-radius:var(--hv-radius-md);padding:14px">'
+          + '  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">'
+          + '    <span style="font-weight:600">Gói Enterprise</span>'
+          + '    <span style="font-weight:700">Liên hệ</span>'
+          + '  </div>'
+          + '  <div style="font-size:13px;color:var(--hv-text-secondary)">Không giới hạn hóa đơn · SLA 99.9% · Account Manager riêng</div>'
+          + '</div>'
+          + '</div>',
+        actions: [
+          { id: 'cancel', label: 'Để sau' },
+          { id: 'upgrade', label: 'Nâng cấp lên Business', primary: true, onClick: function(bd) { HV.closeModal(bd); HV.toast('Yêu cầu nâng cấp đã được gửi. Chúng tôi sẽ liên hệ trong 24h.', 'success'); } }
+        ],
+        size: 'lg'
+      });
+    }
+
+    /* === Renew Modal === */
+    function showRenewModal() {
+      HV.modal({
+        title: 'Gia hạn gói dịch vụ',
+        body: '<div style="display:flex;flex-direction:column;gap:12px">'
+          + '<div style="text-align:center;padding:12px 0">'
+          + '  <div style="width:56px;height:56px;border-radius:50%;background:var(--hv-primary-soft);display:inline-flex;align-items:center;justify-content:center;margin-bottom:12px">'
+          + '    <i class="ti ti-refresh" style="font-size:24px;color:var(--hv-primary)"></i>'
+          + '  </div>'
+          + '  <h3 style="margin-bottom:6px">Gia hạn gói Pro</h3>'
+          + '  <p style="color:var(--hv-text-secondary);font-size:14px">Gia hạn thêm 1 tháng với 50.000 hóa đơn</p>'
+          + '</div>'
+          + '<div style="background:var(--hv-bg-soft);border-radius:var(--hv-radius-md);padding:14px">'
+          + '  <div style="display:flex;justify-content:space-between;margin-bottom:6px">'
+          + '    <span style="color:var(--hv-text-secondary)">Gói Pro — 1 tháng</span>'
+          + '    <span style="font-weight:600">499.000đ</span>'
+          + '  </div>'
+          + '  <div style="display:flex;justify-content:space-between">'
+          + '    <span style="color:var(--hv-text-secondary)">Thanh toán qua</span>'
+            + '    <span>Visa ****1234</span>'
+          + '  </div>'
+          + '</div>'
+          + '</div>',
+        actions: [
+          { id: 'cancel', label: 'Hủy' },
+          { id: 'renew', label: 'Xác nhận gia hạn', primary: true, onClick: function(bd) { HV.closeModal(bd); HV.toast('Gia hạn thành công! Gói Pro đã được gia hạn đến 15/07/2026.', 'success'); } }
+        ]
+      });
+    }
+  </script>
+</body>
+</html>

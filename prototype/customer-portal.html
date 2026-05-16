@@ -1,0 +1,1072 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Cổng khách hàng — Haravan Invoice</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <link rel="stylesheet" href="assets/css/design-system.css">
+  <script>window.HV_PAGE = { id: 'customer', title: 'Cổng khách hàng' };</script>
+  <style>
+    /* === Customer Portal — Mobile-First Overrides === */
+
+    /* Remove sidebar references — customer portal has no sidebar */
+    .hv-sidebar { display: none !important; }
+
+    /* Topbar: full-width, simplified */
+    .hv-topbar {
+      left: 0 !important;
+      padding: 0 16px !important;
+      height: 52px;
+    }
+    .hv-topbar-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .hv-topbar-left .cp-logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--hv-text-primary);
+    }
+    .hv-topbar-left .cp-logo i {
+      font-size: 22px;
+      color: var(--hv-primary);
+    }
+    .hv-topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .cp-avatar {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: var(--hv-primary-soft);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--hv-primary);
+    }
+
+    /* Content area */
+    .cp-content {
+      padding: 16px;
+      padding-bottom: 88px;
+      margin-top: 52px;
+    }
+
+    /* === Bottom Navigation === */
+    .cp-bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 64px;
+      background: var(--hv-bg-surface);
+      border-top: 1px solid var(--hv-border);
+      display: flex;
+      align-items: stretch;
+      z-index: 100;
+      box-shadow: 0 -2px 8px rgba(15, 23, 42, 0.06);
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+    }
+    .cp-nav-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--hv-text-muted);
+      cursor: pointer;
+      transition: color 150ms ease;
+      border: none;
+      background: none;
+      font-family: inherit;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .cp-nav-item i {
+      font-size: 22px;
+      line-height: 1;
+    }
+    .cp-nav-item.cp-nav-active {
+      color: var(--hv-primary);
+    }
+    .cp-nav-item:active {
+      background: var(--hv-bg-soft);
+    }
+
+    /* === Section panels === */
+    .cp-section {
+      display: none;
+    }
+    .cp-section.cp-section-active {
+      display: block;
+    }
+
+    /* === Section Title === */
+    .cp-section-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--hv-text-primary);
+      margin-bottom: 16px;
+    }
+
+    /* === Form fields (mobile-optimized) === */
+    .cp-field {
+      margin-bottom: 16px;
+    }
+    .cp-field .hv-label {
+      font-size: 13px;
+      margin-bottom: 6px;
+      color: var(--hv-text-primary);
+      font-weight: 500;
+    }
+    .cp-field .hv-input {
+      height: 44px;
+      font-size: 15px;
+      padding: 0 14px;
+    }
+
+    /* Full-width large button */
+    .cp-btn-block {
+      width: 100%;
+      height: 48px;
+      font-size: 16px;
+      font-weight: 600;
+      border-radius: var(--hv-radius-lg);
+    }
+
+    /* === Invoice result card === */
+    .cp-result-card {
+      background: var(--hv-bg-surface);
+      border: 1px solid var(--hv-border);
+      border-radius: var(--hv-radius-lg);
+      padding: 16px;
+      margin-top: 16px;
+    }
+    .cp-result-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--hv-border-table);
+    }
+    .cp-result-row:last-child {
+      border-bottom: none;
+    }
+    .cp-result-label {
+      font-size: 13px;
+      color: var(--hv-text-secondary);
+      flex-shrink: 0;
+    }
+    .cp-result-value {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--hv-text-primary);
+      text-align: right;
+      max-width: 60%;
+    }
+    .cp-result-value.cp-mono {
+      font-family: var(--hv-font-mono);
+      font-size: 13px;
+    }
+    .cp-result-amount {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--hv-text-primary);
+    }
+
+    /* Action buttons row */
+    .cp-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 16px;
+    }
+    .cp-actions .hv-btn {
+      flex: 1;
+      height: 44px;
+      font-size: 13px;
+    }
+
+    /* === Invoice list cards === */
+    .cp-invoice-card {
+      background: var(--hv-bg-surface);
+      border: 1px solid var(--hv-border);
+      border-radius: var(--hv-radius-lg);
+      padding: 14px 16px;
+      margin-bottom: 10px;
+      cursor: pointer;
+      transition: border-color 150ms ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .cp-invoice-card:active {
+      border-color: var(--hv-primary);
+    }
+    .cp-invoice-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    .cp-invoice-no {
+      font-family: var(--hv-font-mono);
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--hv-text-primary);
+    }
+    .cp-invoice-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .cp-invoice-date {
+      font-size: 13px;
+      color: var(--hv-text-secondary);
+    }
+    .cp-invoice-amount {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--hv-text-primary);
+    }
+
+    /* Expandable detail */
+    .cp-invoice-detail {
+      display: none;
+      padding-top: 12px;
+      margin-top: 12px;
+      border-top: 1px solid var(--hv-border-table);
+    }
+    .cp-invoice-card.cp-expanded .cp-invoice-detail {
+      display: block;
+    }
+    .cp-invoice-card.cp-expanded .cp-expand-icon {
+      transform: rotate(180deg);
+    }
+    .cp-expand-icon {
+      font-size: 16px;
+      color: var(--hv-text-muted);
+      transition: transform 200ms ease;
+    }
+
+    /* === OTP Input === */
+    .cp-otp-group {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      margin: 20px 0;
+    }
+    .cp-otp-input {
+      width: 44px;
+      height: 52px;
+      text-align: center;
+      font-size: 20px;
+      font-weight: 600;
+      font-family: var(--hv-font-mono);
+      color: var(--hv-text-primary);
+      background: var(--hv-bg-surface);
+      border: 2px solid var(--hv-border);
+      border-radius: var(--hv-radius-md);
+      transition: border-color 150ms ease;
+    }
+    .cp-otp-input:focus {
+      outline: none;
+      border-color: var(--hv-primary);
+      box-shadow: var(--hv-shadow-focus);
+    }
+
+    /* === Success state === */
+    .cp-success-box {
+      text-align: center;
+      padding: 24px 16px;
+    }
+    .cp-success-icon {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: var(--hv-success-soft);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 16px;
+    }
+    .cp-success-icon i {
+      font-size: 32px;
+      color: var(--hv-success);
+    }
+    .cp-success-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--hv-text-primary);
+      margin-bottom: 8px;
+    }
+    .cp-success-desc {
+      font-size: 14px;
+      color: var(--hv-text-secondary);
+      margin-bottom: 20px;
+    }
+
+    /* === Empty state === */
+    .cp-empty {
+      text-align: center;
+      padding: 40px 16px;
+    }
+    .cp-empty-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: var(--hv-bg-soft);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 14px;
+    }
+    .cp-empty-icon i {
+      font-size: 28px;
+      color: var(--hv-text-muted);
+    }
+    .cp-empty-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--hv-text-primary);
+      margin-bottom: 6px;
+    }
+    .cp-empty-desc {
+      font-size: 13px;
+      color: var(--hv-text-secondary);
+    }
+
+    /* === FAQ Accordion === */
+    .cp-faq-item {
+      background: var(--hv-bg-surface);
+      border: 1px solid var(--hv-border);
+      border-radius: var(--hv-radius-lg);
+      margin-bottom: 10px;
+      overflow: hidden;
+    }
+    .cp-faq-question {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 16px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--hv-text-primary);
+      cursor: pointer;
+      border: none;
+      background: none;
+      width: 100%;
+      text-align: left;
+      font-family: inherit;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .cp-faq-question i {
+      font-size: 18px;
+      color: var(--hv-text-muted);
+      transition: transform 200ms ease;
+      flex-shrink: 0;
+      margin-left: 12px;
+    }
+    .cp-faq-item.cp-faq-open .cp-faq-question i {
+      transform: rotate(180deg);
+    }
+    .cp-faq-answer {
+      display: none;
+      padding: 0 16px 14px;
+      font-size: 13px;
+      line-height: 20px;
+      color: var(--hv-text-secondary);
+    }
+    .cp-faq-item.cp-faq-open .cp-faq-answer {
+      display: block;
+    }
+
+    /* === Support contact === */
+    .cp-support-card {
+      background: var(--hv-bg-primary-soft);
+      border: 1px solid var(--hv-primary);
+      border-radius: var(--hv-radius-lg);
+      padding: 16px;
+      margin-top: 20px;
+    }
+    .cp-support-card .cp-support-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--hv-primary-text);
+      margin-bottom: 10px;
+    }
+    .cp-support-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 0;
+      font-size: 14px;
+      color: var(--hv-text-primary);
+      text-decoration: none;
+    }
+    .cp-support-item i {
+      font-size: 20px;
+      color: var(--hv-primary);
+    }
+
+    /* === Signing preview === */
+    .cp-sign-preview {
+      background: var(--hv-bg-soft);
+      border: 1px dashed var(--hv-border-strong);
+      border-radius: var(--hv-radius-md);
+      padding: 16px;
+      margin-bottom: 16px;
+      text-align: center;
+    }
+    .cp-sign-preview i {
+      font-size: 40px;
+      color: var(--hv-text-muted);
+      margin-bottom: 8px;
+    }
+    .cp-sign-preview p {
+      font-size: 13px;
+      color: var(--hv-text-secondary);
+    }
+    .cp-sign-info {
+      background: var(--hv-info-soft);
+      border-radius: var(--hv-radius-md);
+      padding: 12px 14px;
+      font-size: 13px;
+      color: var(--hv-info);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+    .cp-sign-info i {
+      font-size: 18px;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    /* Divider */
+    .cp-divider {
+      height: 1px;
+      background: var(--hv-border-table);
+      margin: 16px 0;
+    }
+
+    /* Link style */
+    .cp-link {
+      color: var(--hv-primary);
+      font-weight: 500;
+      text-decoration: none;
+      font-size: 14px;
+    }
+    .cp-link:hover {
+      text-decoration: underline;
+    }
+
+    /* Responsive — small phones */
+    @media (max-width: 480px) {
+      .cp-content { padding: 12px; padding-bottom: 80px; }
+      .cp-otp-input { width: 40px; height: 48px; font-size: 18px; }
+      .cp-btn-block { height: 52px; font-size: 15px; }
+      .cp-field .hv-input { height: 48px; font-size: 16px; }
+      .cp-actions .hv-btn { height: 48px; }
+      .cp-section-title { font-size: 16px; }
+    }
+
+    /* Responsive — tablet+ */
+    @media (min-width: 768px) {
+      .cp-content {
+        max-width: 480px;
+        margin-left: auto;
+        margin-right: auto;
+        padding: 24px;
+        padding-bottom: 88px;
+      }
+    }
+
+    /* Dark mode adjustments */
+    [data-theme="dark"] .cp-bottom-nav {
+      background: var(--hv-bg-surface);
+      border-top-color: var(--hv-border);
+    }
+    [data-theme="dark"] .cp-otp-input {
+      background: var(--hv-bg-soft);
+      border-color: var(--hv-border-strong);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===== TOPBAR (simplified, no sidebar) ===== -->
+  <div class="hv-topbar">
+    <div class="hv-topbar-left">
+      <div class="cp-logo">
+        <i class="ti ti-receipt-2"></i>
+        <span>Haravan Invoice</span>
+      </div>
+    </div>
+    <div class="hv-topbar-right">
+      <button class="hv-btn hv-btn-icon hv-btn-secondary" aria-label="Thông báo" style="width:36px;height:36px">
+        <i class="ti ti-bell" style="font-size:18px"></i>
+      </button>
+      <div class="cp-avatar">KH</div>
+    </div>
+  </div>
+
+  <!-- ===== MAIN CONTENT ===== -->
+  <div class="cp-content">
+
+    <!-- ========================================
+         SECTION 1: Tra cứu hóa đơn (Lookup)
+         ======================================== -->
+    <div id="section-lookup" class="cp-section cp-section-active">
+      <div class="cp-section-title">Tra cứu hóa đơn</div>
+
+      <!-- Lookup form -->
+      <div class="hv-card" id="lookup-form">
+        <div class="cp-field">
+          <label class="hv-label" for="invoice-no">Số hóa đơn</label>
+          <input type="text" id="invoice-no" class="hv-input" placeholder="Nhập số hóa đơn, ví dụ: 2025/00001234">
+        </div>
+        <div class="cp-field">
+          <label class="hv-label" for="tax-code">Mã số thuế</label>
+          <input type="text" id="tax-code" class="hv-input" placeholder="Nhập MST hoặc CCCD">
+        </div>
+        <button class="hv-btn hv-btn-primary cp-btn-block" id="btn-lookup">
+          <i class="ti ti-search"></i>
+          Tra cứu
+        </button>
+      </div>
+
+      <!-- Search result -->
+      <div id="lookup-result" class="hv-hidden">
+        <div class="cp-result-card">
+          <div class="cp-result-row">
+            <span class="cp-result-label">Số hóa đơn</span>
+            <span class="cp-result-value cp-mono">2025/00001234</span>
+          </div>
+          <div class="cp-result-row">
+            <span class="cp-result-label">Người bán</span>
+            <span class="cp-result-value">Công ty TNHH Thương mại ABC</span>
+          </div>
+          <div class="cp-result-row">
+            <span class="cp-result-label">MST</span>
+            <span class="cp-result-value cp-mono">0312345678</span>
+          </div>
+          <div class="cp-result-row">
+            <span class="cp-result-label">Ngày phát hành</span>
+            <span class="cp-result-value">15/05/2026</span>
+          </div>
+          <div class="cp-result-row">
+            <span class="cp-result-label">Tổng tiền</span>
+            <span class="cp-result-value cp-result-amount">1.100.000đ</span>
+          </div>
+          <div class="cp-result-row">
+            <span class="cp-result-label">Trạng thái</span>
+            <span class="cp-result-value"><span class="hv-badge hv-badge-success">Đã phát hành</span></span>
+          </div>
+        </div>
+        <div class="cp-actions">
+          <button class="hv-btn hv-btn-primary">
+            <i class="ti ti-eye"></i>
+            Xem chi tiết
+          </button>
+          <button class="hv-btn hv-btn-secondary">
+            <i class="ti ti-download"></i>
+            Tải PDF
+          </button>
+          <button class="hv-btn hv-btn-secondary" onclick="switchTab('signing')">
+            <i class="ti ti-signature"></i>
+            Ký xác nhận
+          </button>
+        </div>
+      </div>
+
+      <!-- Empty state -->
+      <div id="lookup-empty" class="hv-hidden">
+        <div class="cp-empty">
+          <div class="cp-empty-icon">
+            <i class="ti ti-file-search"></i>
+          </div>
+          <div class="cp-empty-title">Không tìm thấy hóa đơn</div>
+          <div class="cp-empty-desc">Không tìm thấy hóa đơn với thông tin đã nhập. Vui lòng kiểm tra lại số hóa đơn hoặc mã số thuế.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================
+         SECTION 2: Hóa đơn (Invoice List)
+         ======================================== -->
+    <div id="section-invoices" class="cp-section">
+      <div class="cp-section-title">Hóa đơn của bạn</div>
+
+      <!-- Invoice Card 1 -->
+      <div class="cp-invoice-card" onclick="toggleInvoiceDetail(this)">
+        <div class="cp-invoice-card-header">
+          <span class="cp-invoice-no">2025/00001234</span>
+          <span class="hv-badge hv-badge-success">Đã phát hành</span>
+        </div>
+        <div class="cp-invoice-meta">
+          <span class="cp-invoice-date">15/05/2026</span>
+          <span class="cp-invoice-amount">1.100.000đ</span>
+        </div>
+        <div class="cp-invoice-detail">
+          <div class="cp-result-row">
+            <span class="cp-result-label">Người bán</span>
+            <span class="cp-result-value">Công ty TNHH Thương mại ABC</span>
+          </div>
+          <div class="cp-result-row">
+            <span class="cp-result-label">MST</span>
+            <span class="cp-result-value cp-mono">0312345678</span>
+          </div>
+          <div class="cp-result-row">
+            <span class="cp-result-label">Mẫu số</span>
+            <span class="cp-result-value cp-mono">01GTKT0/001</span>
+          </div>
+          <div class="cp-actions" style="margin-top:12px">
+            <button class="hv-btn hv-btn-primary hv-btn-sm" style="flex:1;height:40px">
+              <i class="ti ti-eye"></i> Chi tiết
+            </button>
+            <button class="hv-btn hv-btn-secondary hv-btn-sm" style="flex:1;height:40px">
+              <i class="ti ti-download"></i> Tải PDF
+            </button>
+            <button class="hv-btn hv-btn-secondary hv-btn-sm" style="flex:1;height:40px" onclick="event.stopPropagation();switchTab('signing')">
+              <i class="ti ti-signature"></i> Ký
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Invoice Card 2 -->
+      <div class="cp-invoice-card" onclick="toggleInvoiceDetail(this)">
+        <div class="cp-invoice-card-header">
+          <span class="cp-invoice-no">2025/00001200</span>
+          <span class="hv-badge hv-badge-success">Đã phát hành</span>
+        </div>
+        <div class="cp-invoice-meta">
+          <span class="cp-invoice-date">01/05/2026</span>
+          <span class="cp-invoice-amount">850.000đ</span>
+        </div>
+        <div class="cp-invoice-detail">
+          <div class="cp-result-row">
+            <span class="cp-result-label">Người bán</span>
+            <span class="cp-result-value">Công ty TNHH Thương mại ABC</span>
+          </div>
+          <div class="cp-result-row">
+            <span class="cp-result-label">MST</span>
+            <span class="cp-result-value cp-mono">0312345678</span>
+          </div>
+          <div class="cp-result-row">
+            <span class="cp-result-label">Mẫu số</span>
+            <span class="cp-result-value cp-mono">01GTKT0/001</span>
+          </div>
+          <div class="cp-actions" style="margin-top:12px">
+            <button class="hv-btn hv-btn-primary hv-btn-sm" style="flex:1;height:40px">
+              <i class="ti ti-eye"></i> Chi tiết
+            </button>
+            <button class="hv-btn hv-btn-secondary hv-btn-sm" style="flex:1;height:40px">
+              <i class="ti ti-download"></i> Tải PDF
+            </button>
+            <button class="hv-btn hv-btn-secondary hv-btn-sm" style="flex:1;height:40px" onclick="event.stopPropagation();switchTab('signing')">
+              <i class="ti ti-signature"></i> Ký
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Invoice Card 3 -->
+      <div class="cp-invoice-card" onclick="toggleInvoiceDetail(this)">
+        <div class="cp-invoice-card-header">
+          <span class="cp-invoice-no">2025/00001180</span>
+          <span class="hv-badge hv-badge-warning">Đã điều chỉnh</span>
+        </div>
+        <div class="cp-invoice-meta">
+          <span class="cp-invoice-date">15/04/2026</span>
+          <span class="cp-invoice-amount">2.300.000đ</span>
+        </div>
+        <div class="cp-invoice-detail">
+          <div class="cp-result-row">
+            <span class="cp-result-label">Người bán</span>
+            <span class="cp-result-value">Công ty TNHH Thương mại ABC</span>
+          </div>
+          <div class="cp-result-row">
+            <span class="cp-result-label">MST</span>
+            <span class="cp-result-value cp-mono">0312345678</span>
+          </div>
+          <div class="cp-result-row">
+            <span class="cp-result-label">Mẫu số</span>
+            <span class="cp-result-value cp-mono">01GTKT0/001</span>
+          </div>
+          <div class="cp-actions" style="margin-top:12px">
+            <button class="hv-btn hv-btn-primary hv-btn-sm" style="flex:1;height:40px">
+              <i class="ti ti-eye"></i> Chi tiết
+            </button>
+            <button class="hv-btn hv-btn-secondary hv-btn-sm" style="flex:1;height:40px">
+              <i class="ti ti-download"></i> Tải PDF
+            </button>
+            <button class="hv-btn hv-btn-secondary hv-btn-sm" style="flex:1;height:40px" onclick="event.stopPropagation();switchTab('signing')">
+              <i class="ti ti-signature"></i> Ký
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================
+         SECTION 3: Ký xác nhận (Signing)
+         ======================================== -->
+    <div id="section-signing" class="cp-section">
+
+      <!-- Step 1: Request OTP -->
+      <div id="sign-step1">
+        <div class="cp-section-title">Yêu cầu ký xác nhận</div>
+        <div class="hv-card">
+          <div class="cp-sign-preview">
+            <i class="ti ti-file-description" style="display:block"></i>
+            <p>Biên bản điều chỉnh điện tử</p>
+            <p style="font-weight:500;color:var(--hv-text-primary)">Hóa đơn 2025/00001234</p>
+          </div>
+          <div class="cp-sign-info">
+            <i class="ti ti-info-circle"></i>
+            <span>Hóa đơn <strong>2025/00001234</strong> cần bạn ký xác nhận để hoàn tất biên bản điều chỉnh.</span>
+          </div>
+          <div class="cp-field">
+            <label class="hv-label" for="sign-contact">Email hoặc Số điện thoại</label>
+            <input type="text" id="sign-contact" class="hv-input" placeholder="Nhập email hoặc SĐT đã đăng ký">
+          </div>
+          <button class="hv-btn hv-btn-primary cp-btn-block" id="btn-send-otp">
+            <i class="ti ti-send"></i>
+            Gửi mã OTP
+          </button>
+        </div>
+      </div>
+
+      <!-- Step 2: Enter OTP -->
+      <div id="sign-step2" class="hv-hidden">
+        <div class="cp-section-title">Nhập mã xác nhận</div>
+        <div class="hv-card">
+          <p style="font-size:14px;color:var(--hv-text-secondary);text-align:center;margin-bottom:4px">
+            Mã OTP đã gửi đến
+          </p>
+          <p style="font-size:15px;font-weight:600;color:var(--hv-text-primary);text-align:center;margin-bottom:16px">
+            090xxxxx678
+          </p>
+          <div class="cp-otp-group">
+            <input type="text" maxlength="1" class="cp-otp-input" data-otp="1" inputmode="numeric" aria-label="OTP digit 1">
+            <input type="text" maxlength="1" class="cp-otp-input" data-otp="2" inputmode="numeric" aria-label="OTP digit 2">
+            <input type="text" maxlength="1" class="cp-otp-input" data-otp="3" inputmode="numeric" aria-label="OTP digit 3">
+            <input type="text" maxlength="1" class="cp-otp-input" data-otp="4" inputmode="numeric" aria-label="OTP digit 4">
+            <input type="text" maxlength="1" class="cp-otp-input" data-otp="5" inputmode="numeric" aria-label="OTP digit 5">
+            <input type="text" maxlength="1" class="cp-otp-input" data-otp="6" inputmode="numeric" aria-label="OTP digit 6">
+          </div>
+          <p style="font-size:13px;color:var(--hv-text-muted);text-align:center;margin-bottom:16px">
+            Không nhận được mã? <a href="#" class="cp-link" id="btn-resend-otp">Gửi lại</a> (<span id="otp-countdown">60</span>s)
+          </p>
+          <button class="hv-btn hv-btn-primary cp-btn-block" id="btn-confirm-sign">
+            <i class="ti ti-check"></i>
+            Xác nhận
+          </button>
+          <button class="hv-btn hv-btn-tertiary cp-btn-block" id="btn-back-otp" style="margin-top:8px;height:40px">
+            Quay lại
+          </button>
+        </div>
+      </div>
+
+      <!-- Step 3: Success -->
+      <div id="sign-step3" class="hv-hidden">
+        <div class="hv-card">
+          <div class="cp-success-box">
+            <div class="cp-success-icon">
+              <i class="ti ti-check"></i>
+            </div>
+            <div class="cp-success-title">Đã ký xác nhận thành công</div>
+            <div class="cp-success-desc">Biên bản điều chỉnh hóa đơn 2025/00001234 đã được ký xác nhận điện tử. Cảm ơn bạn!</div>
+            <button class="hv-btn hv-btn-primary cp-btn-block">
+              <i class="ti ti-download"></i>
+              Tải biên bản đã ký
+            </button>
+            <button class="hv-btn hv-btn-tertiary cp-btn-block" onclick="switchTab('lookup')" style="margin-top:8px;height:40px">
+              Về trang tra cứu
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================
+         SECTION 4: Hỗ trợ (Support)
+         ======================================== -->
+    <div id="section-support" class="cp-section">
+      <div class="cp-section-title">Hỗ trợ</div>
+
+      <!-- FAQ Accordion -->
+      <div class="cp-faq-item" onclick="toggleFaq(this)">
+        <button class="cp-faq-question">
+          <span>Làm sao để tra cứu hóa đơn?</span>
+          <i class="ti ti-chevron-down"></i>
+        </button>
+        <div class="cp-faq-answer">
+          Bạn có thể tra cứu hóa đơn bằng cách vào tab <strong>"Tra cứu"</strong>, nhập số hóa đơn và mã số thuế (hoặc CCCD) vào form, sau đó nhấn nút <strong>"Tra cứu"</strong>. Hệ thống sẽ hiển thông tin hóa đơn nếu tìm thấy.
+        </div>
+      </div>
+
+      <div class="cp-faq-item" onclick="toggleFaq(this)">
+        <button class="cp-faq-question">
+          <span>Hóa đơn bị sai thông tin?</span>
+          <i class="ti ti-chevron-down"></i>
+        </button>
+        <div class="cp-faq-answer">
+          Nếu hóa đơn có thông tin sai sót, vui lòng liên hệ trực tiếp với người bán (đơn vị phát hành hóa đơn) để yêu cầu điều chỉnh. Theo <strong>NĐ 123/2020</strong> và <strong>NĐ 70/2025</strong>, việc điều chỉnh hóa đơn phải được thực hiện thông qua biên bản điều chỉnh và hóa đơn điều chỉnh.
+        </div>
+      </div>
+
+      <div class="cp-faq-item" onclick="toggleFaq(this)">
+        <button class="cp-faq-question">
+          <span>Tôi không nhận được hóa đơn?</span>
+          <i class="ti ti-chevron-down"></i>
+        </button>
+        <div class="cp-faq-answer">
+          Vui lòng kiểm tra: <br>
+          <strong>1.</strong> Zalo OA của người bán — hóa đơn thường được gửi qua Zalo OA.<br>
+          <strong>2.</strong> Email đăng ký — kiểm tra hộp thư spam/thư rác.<br>
+          <strong>3.</strong> Liên hệ người bán để xác nhận lại thông tin nhận hóa đơn.
+        </div>
+      </div>
+
+      <!-- Support contact -->
+      <div class="cp-support-card">
+        <div class="cp-support-title">Liên hệ hỗ trợ</div>
+        <a href="https://zalo.me/haravan" class="cp-support-item" target="_blank" rel="noopener">
+          <i class="ti ti-brand-zalo"></i>
+          <span>Chat Zalo OA — Haravan Invoice</span>
+        </a>
+        <a href="tel:19001234" class="cp-support-item">
+          <i class="ti ti-phone"></i>
+          <span>Tổng đài: 1900 xxxx</span>
+        </a>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ===== BOTTOM NAVIGATION ===== -->
+  <nav class="cp-bottom-nav" aria-label="Điều hướng chính">
+    <button class="cp-nav-item cp-nav-active" data-tab="lookup" onclick="switchTab('lookup')">
+      <i class="ti ti-search"></i>
+      <span>Tra cứu</span>
+    </button>
+    <button class="cp-nav-item" data-tab="invoices" onclick="switchTab('invoices')">
+      <i class="ti ti-receipt"></i>
+      <span>Hóa đơn</span>
+    </button>
+    <button class="cp-nav-item" data-tab="signing" onclick="switchTab('signing')">
+      <i class="ti ti-signature"></i>
+      <span>Ký xác nhận</span>
+    </button>
+    <button class="cp-nav-item" data-tab="support" onclick="switchTab('support')">
+      <i class="ti ti-headset"></i>
+      <span>Hỗ trợ</span>
+    </button>
+  </nav>
+
+  <!-- ===== TOAST (hidden by default) ===== -->
+  <div id="cp-toast" class="hv-toast" style="display:none;top:auto;bottom:80px;left:16px;right:16px;width:auto;max-width:none">
+    <i class="ti ti-check-circle" style="font-size:20px;color:var(--hv-success)"></i>
+    <span id="cp-toast-msg">Thành công</span>
+  </div>
+
+  <!-- App Shell (for state toggle demo) -->
+  <script src="assets/js/app-shell.js"></script>
+  <script>
+    // --- Tab switching ---
+    function switchTab(tabId) {
+      // Update nav items
+      document.querySelectorAll('.cp-nav-item').forEach(item => {
+        item.classList.toggle('cp-nav-active', item.dataset.tab === tabId);
+      });
+      // Update sections
+      document.querySelectorAll('.cp-section').forEach(sec => {
+        sec.classList.toggle('cp-section-active', sec.id === 'section-' + tabId);
+      });
+    }
+
+    // --- Invoice card expand/collapse ---
+    function toggleInvoiceDetail(card) {
+      card.classList.toggle('cp-expanded');
+    }
+
+    // --- FAQ accordion ---
+    function toggleFaq(item) {
+      const wasOpen = item.classList.contains('cp-faq-open');
+      // Close all
+      document.querySelectorAll('.cp-faq-item').forEach(f => f.classList.remove('cp-faq-open'));
+      // Toggle current
+      if (!wasOpen) item.classList.add('cp-faq-open');
+    }
+
+    // --- Lookup flow ---
+    document.getElementById('btn-lookup').addEventListener('click', function() {
+      const invoiceNo = document.getElementById('invoice-no').value.trim();
+      const taxCode = document.getElementById('tax-code').value.trim();
+
+      // Hide previous results
+      document.getElementById('lookup-result').classList.add('hv-hidden');
+      document.getElementById('lookup-empty').classList.add('hv-hidden');
+
+      if (!invoiceNo && !taxCode) {
+        showToast('Vui lòng nhập số hóa đơn hoặc mã số thuế', 'warning');
+        return;
+      }
+
+      // Demo: show result for 2025/00001234, empty for others
+      if (invoiceNo === '2025/00001234' || (!invoiceNo && taxCode === '0312345678')) {
+        document.getElementById('lookup-result').classList.remove('hv-hidden');
+      } else {
+        document.getElementById('lookup-empty').classList.remove('hv-hidden');
+      }
+    });
+
+    // --- OTP flow ---
+    document.getElementById('btn-send-otp').addEventListener('click', function() {
+      const contact = document.getElementById('sign-contact').value.trim();
+      if (!contact) {
+        showToast('Vui lòng nhập email hoặc số điện thoại', 'warning');
+        return;
+      }
+      document.getElementById('sign-step1').classList.add('hv-hidden');
+      document.getElementById('sign-step2').classList.remove('hv-hidden');
+      startOtpCountdown();
+      // Focus first OTP input
+      document.querySelector('.cp-otp-input[data-otp="1"]').focus();
+    });
+
+    document.getElementById('btn-back-otp').addEventListener('click', function() {
+      document.getElementById('sign-step2').classList.add('hv-hidden');
+      document.getElementById('sign-step1').classList.remove('hv-hidden');
+    });
+
+    document.getElementById('btn-confirm-sign').addEventListener('click', function() {
+      // Check OTP filled
+      const inputs = document.querySelectorAll('.cp-otp-input');
+      let otp = '';
+      inputs.forEach(i => otp += i.value);
+      if (otp.length < 6) {
+        showToast('Vui lòng nhập đầy đủ 6 số OTP', 'warning');
+        return;
+      }
+      document.getElementById('sign-step2').classList.add('hv-hidden');
+      document.getElementById('sign-step3').classList.remove('hv-hidden');
+    });
+
+    // OTP input auto-advance
+    document.querySelectorAll('.cp-otp-input').forEach(input => {
+      input.addEventListener('input', function() {
+        if (this.value.length === 1) {
+          const next = document.querySelector(`.cp-otp-input[data-otp="${parseInt(this.dataset.otp) + 1}"]`);
+          if (next) next.focus();
+        }
+      });
+      input.addEventListener('keydown', function(e) {
+        if (e.key === 'Backspace' && !this.value) {
+          const prev = document.querySelector(`.cp-otp-input[data-otp="${parseInt(this.dataset.otp) - 1}"]`);
+          if (prev) { prev.focus(); prev.value = ''; }
+        }
+      });
+    });
+
+    // OTP countdown
+    let countdownTimer;
+    function startOtpCountdown() {
+      let sec = 60;
+      const el = document.getElementById('otp-countdown');
+      const resend = document.getElementById('btn-resend-otp');
+      resend.style.pointerEvents = 'none';
+      resend.style.opacity = '0.5';
+      clearInterval(countdownTimer);
+      countdownTimer = setInterval(() => {
+        sec--;
+        el.textContent = sec;
+        if (sec <= 0) {
+          clearInterval(countdownTimer);
+          resend.style.pointerEvents = 'auto';
+          resend.style.opacity = '1';
+        }
+      }, 1000);
+    }
+
+    document.getElementById('btn-resend-otp').addEventListener('click', function(e) {
+      e.preventDefault();
+      showToast('Đã gửi lại mã OTP', 'success');
+      startOtpCountdown();
+    });
+
+    // --- Toast ---
+    function showToast(msg, type) {
+      const toast = document.getElementById('cp-toast');
+      const icon = toast.querySelector('i');
+      document.getElementById('cp-toast-msg').textContent = msg;
+      if (type === 'warning') {
+        icon.className = 'ti ti-alert-circle';
+        icon.style.color = 'var(--hv-warning)';
+      } else {
+        icon.className = 'ti ti-check-circle';
+        icon.style.color = 'var(--hv-success)';
+      }
+      toast.style.display = 'flex';
+      clearTimeout(window._toastTimer);
+      window._toastTimer = setTimeout(() => { toast.style.display = 'none'; }, 3000);
+    }
+
+    // --- State demo (override app-shell) ---
+    (function() {
+      const params = new URLSearchParams(window.location.search);
+      const state = params.get('state');
+      if (state === 'empty') {
+        switchTab('lookup');
+        document.getElementById('lookup-form').classList.add('hv-hidden');
+        document.getElementById('lookup-empty').classList.remove('hv-hidden');
+      } else if (state === 'loading') {
+        // Show a simulated loading state on the lookup button
+        const btn = document.getElementById('btn-lookup');
+        btn.innerHTML = '<i class="ti ti-loader-2" style="animation:spin 1s linear infinite"></i> Đang tìm kiếm...';
+        btn.disabled = true;
+        btn.style.opacity = '0.7';
+      }
+
+      // Download PDF buttons
+      document.querySelectorAll('.hv-btn').forEach(btn => {
+        if (btn.textContent.includes('Tải PDF') || btn.textContent.includes('Tải xuống')) {
+          btn.addEventListener('click', () => {
+            HV.toast('Đang tải hóa đơn PDF...', 'info');
+          });
+        }
+      });
+
+      // Print buttons
+      document.querySelectorAll('.hv-btn').forEach(btn => {
+        if (btn.textContent.includes('In')) {
+          btn.addEventListener('click', () => {
+            HV.toast('Đang chuẩn bị in...', 'info');
+          });
+        }
+      });
+    })();
+  </script>
+  <style>
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</body>
+</html>

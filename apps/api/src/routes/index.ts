@@ -1,0 +1,16 @@
+export { default as authRoutes } from './auth';
+export { default as configRoutes } from './config';
+export { default as healthRoutes } from './health';
+export { default as invoiceRoutes } from './invoices';
+export { default as pdfRoutes } from './pdf';
+export { default as reportRoutes } from './reports';
+export { default as auditRoutes } from './audit';
+export { default as customerRoutes } from './customers';
+export { default as customerAnalyticsRoutes } from './customer-analytics';
+export { default as mstLookupRoutes } from './mst-lookup';
+export { default as oneClickRoutes } from './one-click';
+export { default as analyticsRoutes } from './analytics';
+export { default as productRoutes } from './products';
+export { default as aggregateRoutes } from './aggregate';
+export { default as settingsRoutes } from './settings';
+export { default as notificationRoutes } from './notifications';

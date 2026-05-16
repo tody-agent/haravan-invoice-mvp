@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bảng kê hóa đơn hàng tháng — Haravan Invoice</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <link rel="stylesheet" href="assets/css/design-system.css">
+  <script>window.HV_PAGE = { id: 'report-ledger', title: 'Bảng kê hàng tháng', breadcrumb: [{ label: 'Báo cáo', href: 'reports.html' }, { label: 'Bảng kê hàng tháng' }] };</script>
+  <style>
+    .hv-content-max > * + * { margin-top: 20px; }
+    .report-filters {
+      display: flex;
+      align-items: flex-end;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+    .report-filter-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .report-filter-group .hv-label { margin-bottom: 0; }
+    .report-preview {
+      background: var(--hv-bg-surface);
+      border: 1px solid var(--hv-border);
+      border-radius: var(--hv-radius-md);
+      overflow: hidden;
+    }
+    .report-preview-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--hv-border);
+    }
+    .report-preview-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--hv-text-primary);
+    }
+    .report-preview-actions {
+      display: flex;
+      gap: 6px;
+    }
+    .report-summary {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .report-summary-item {
+      background: var(--hv-bg-surface);
+      border: 1px solid var(--hv-border);
+      border-radius: var(--hv-radius-md);
+      padding: 14px 18px;
+      flex: 1;
+      min-width: 140px;
+    }
+    .report-summary-label {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--hv-text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 4px;
+    }
+    .report-summary-value {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--hv-text-primary);
+    }
+  </style>
+</head>
+<body>
+  <a href="#main-content" class="hv-skip-link">Chuyển đến nội dung chính</a>
+
+  <aside class="hv-sidebar" aria-label="Điều hướng chính"></aside>
+  <header class="hv-topbar"></header>
+
+  <main id="main-content" class="hv-content">
+    <div class="hv-content-max">
+
+      <div class="hv-content-header">
+        <h1><i class="ti ti-list" style="color:var(--hv-success);margin-right:8px"></i>Bảng kê hóa đơn hàng tháng</h1>
+        <a href="reports.html" class="hv-btn hv-btn-secondary hv-btn-sm"><i class="ti ti-arrow-left"></i> Quay lại</a>
+      </div>
+
+      <div class="report-filters">
+        <div class="report-filter-group">
+          <label class="hv-label" for="rl-month">Tháng</label>
+          <select class="hv-select" id="rl-month" style="width:120px">
+            <option>Tháng 1</option>
+            <option>Tháng 2</option>
+            <option>Tháng 3</option>
+            <option>Tháng 4</option>
+            <option selected>Tháng 5</option>
+            <option>Tháng 6</option>
+            <option>Tháng 7</option>
+            <option>Tháng 8</option>
+            <option>Tháng 9</option>
+            <option>Tháng 10</option>
+            <option>Tháng 11</option>
+            <option>Tháng 12</option>
+          </select>
+        </div>
+        <div class="report-filter-group">
+          <label class="hv-label" for="rl-year">Năm</label>
+          <select class="hv-select" id="rl-year" style="width:100px">
+            <option>2025</option>
+            <option selected>2026</option>
+          </select>
+        </div>
+        <button class="hv-btn hv-btn-primary hv-btn-sm">
+          <i class="ti ti-search"></i> Xem báo cáo
+        </button>
+      </div>
+
+      <div class="report-summary">
+        <div class="report-summary-item">
+          <div class="report-summary-label">Tổng hóa đơn</div>
+          <div class="report-summary-value">248</div>
+        </div>
+        <div class="report-summary-item">
+          <div class="report-summary-label">Doanh thu trước thuế</div>
+          <div class="report-summary-value">125,480,000</div>
+        </div>
+        <div class="report-summary-item">
+          <div class="report-summary-label">Tổng thuế GTGT</div>
+          <div class="report-summary-value">12,548,000</div>
+        </div>
+        <div class="report-summary-item">
+          <div class="report-summary-label">Tổng cộng</div>
+          <div class="report-summary-value" style="color:var(--hv-primary)">138,028,000</div>
+        </div>
+      </div>
+
+      <div class="report-preview">
+        <div class="report-preview-header">
+          <span class="report-preview-title">Bảng kê — Tháng 05/2026</span>
+          <div class="report-preview-actions">
+            <button class="hv-btn hv-btn-secondary hv-btn-sm"><i class="ti ti-printer"></i></button>
+            <button class="hv-btn hv-btn-secondary hv-btn-sm"><i class="ti ti-file-spreadsheet"></i></button>
+            <button class="hv-btn hv-btn-secondary hv-btn-sm"><i class="ti ti-file-code-2"></i></button>
+          </div>
+        </div>
+        <div class="hv-table-wrap">
+          <table class="hv-table">
+            <thead>
+              <tr>
+                <th>Ký hiệu</th>
+                <th>Số HĐ</th>
+                <th>Ngày lập</th>
+                <th>Khách hàng</th>
+                <th>MST</th>
+                <th class="num">Doanh thu trước thuế</th>
+                <th class="num">Thuế GTGT</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="hv-mono">AA/200E</td>
+                <td class="hv-mono">00000123</td>
+                <td>15/05/2026</td>
+                <td>Cty TNHH ABC</td>
+                <td class="hv-mono">0312345678</td>
+                <td class="num">4,250,000</td>
+                <td class="num">425,000</td>
+              </tr>
+              <tr>
+                <td class="hv-mono">AA/200E</td>
+                <td class="hv-mono">00000122</td>
+                <td>15/05/2026</td>
+                <td>Khách lẻ</td>
+                <td class="hv-mono" style="color:var(--hv-text-muted)">—</td>
+                <td class="num">85,000</td>
+                <td class="num">8,500</td>
+              </tr>
+              <tr>
+                <td class="hv-mono">AA/200E</td>
+                <td class="hv-mono">00000121</td>
+                <td>14/05/2026</td>
+                <td>CTCP Vàng bạc Đá quý DOJI</td>
+                <td class="hv-mono">0100123456</td>
+                <td class="num">3,409,091</td>
+                <td class="num">340,909</td>
+              </tr>
+              <tr>
+                <td class="hv-mono">AA/200E</td>
+                <td class="hv-mono">00000120</td>
+                <td>14/05/2026</td>
+                <td>Hộ kinh doanh Nguyễn Văn An</td>
+                <td class="hv-mono">8765432109</td>
+                <td class="num">428,571</td>
+                <td class="num">21,429</td>
+              </tr>
+              <tr>
+                <td class="hv-mono">AA/200E</td>
+                <td class="hv-mono">00000119</td>
+                <td>13/05/2026</td>
+                <td>Cty TNHH Thời trang Ivy Moda</td>
+                <td class="hv-mono">0102345678</td>
+                <td class="num">1,145,455</td>
+                <td class="num">114,545</td>
+              </tr>
+              <tr>
+                <td class="hv-mono">AA/200E</td>
+                <td class="hv-mono">00000118</td>
+                <td>13/05/2026</td>
+                <td>CTCP FPT Digital Retail</td>
+                <td class="hv-mono">0106284650</td>
+                <td class="num">4,727,273</td>
+                <td class="num">472,727</td>
+              </tr>
+              <tr>
+                <td class="hv-mono">AA/200E</td>
+                <td class="hv-mono">00000117</td>
+                <td>12/05/2026</td>
+                <td>Khách lẻ</td>
+                <td class="hv-mono" style="color:var(--hv-text-muted)">—</td>
+                <td class="num">109,091</td>
+                <td class="num">10,909</td>
+              </tr>
+              <tr>
+                <td class="hv-mono">AA/200E</td>
+                <td class="hv-mono">00000116</td>
+                <td>12/05/2026</td>
+                <td>Công ty TNHH Samsung Electronics</td>
+                <td class="hv-mono">0101234567</td>
+                <td class="num">29,090,909</td>
+                <td class="num">2,909,091</td>
+              </tr>
+              <tr>
+                <td class="hv-mono">AA/200E</td>
+                <td class="hv-mono">00000115</td>
+                <td>11/05/2026</td>
+                <td>Cty TNHH Grab Việt Nam</td>
+                <td class="hv-mono">0312398745</td>
+                <td class="num">2,227,273</td>
+                <td class="num">222,727</td>
+              </tr>
+              <tr>
+                <td class="hv-mono">AA/200E</td>
+                <td class="hv-mono">00000114</td>
+                <td>10/05/2026</td>
+                <td>CTCP Sách Việt Nam (FAHASA)</td>
+                <td class="hv-mono">0301312749</td>
+                <td class="num">723,810</td>
+                <td class="num">36,190</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <script src="assets/js/app-shell.js"></script>
+</body>
+</html>

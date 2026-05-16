@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Báo cáo — Haravan Invoice</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <link rel="stylesheet" href="assets/css/design-system.css">
+  <script>window.HV_PAGE = { id: 'reports', title: 'Báo cáo' };</script>
+  <style>
+    .hv-content-max > * + * { margin-top: 20px; }
+
+    .reports-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+    @media (max-width: 1023px) { .reports-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 640px) { .reports-grid { grid-template-columns: 1fr; } }
+
+    .report-card {
+      background: var(--hv-bg-surface);
+      border: 1px solid var(--hv-border);
+      border-radius: var(--hv-radius-lg);
+      box-shadow: var(--hv-shadow-xs);
+      cursor: pointer;
+      transition: border-color 150ms ease, box-shadow 150ms ease, transform 150ms ease;
+      overflow: hidden;
+      text-decoration: none;
+      color: inherit;
+      display: block;
+    }
+    .report-card:hover {
+      border-color: var(--hv-primary);
+      box-shadow: var(--hv-shadow-sm);
+      transform: translateY(-2px);
+      text-decoration: none;
+      color: inherit;
+    }
+    .report-card-head {
+      padding: 20px;
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+    }
+    .report-card-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: var(--hv-radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 22px;
+    }
+    .report-card-body { flex: 1; min-width: 0; }
+    .report-card-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--hv-text-primary);
+      margin-bottom: 4px;
+    }
+    .report-card-desc {
+      font-size: 13px;
+      color: var(--hv-text-secondary);
+      line-height: 1.5;
+      margin-bottom: 10px;
+    }
+    .report-card-badges {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .export-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      height: 22px;
+      padding: 0 8px;
+      font-size: 11px;
+      font-weight: 600;
+      border-radius: var(--hv-radius-sm);
+      background: var(--hv-bg-soft);
+      color: var(--hv-text-secondary);
+      border: 1px solid var(--hv-border);
+    }
+    .export-badge i { font-size: 12px; }
+    .report-card-arrow {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      border-radius: var(--hv-radius-sm);
+      background: var(--hv-bg-soft);
+      color: var(--hv-text-muted);
+      flex-shrink: 0;
+      align-self: center;
+      transition: background 150ms ease, color 150ms ease;
+    }
+    .report-card:hover .report-card-arrow {
+      background: var(--hv-primary-soft);
+      color: var(--hv-primary);
+    }
+  </style>
+</head>
+<body>
+  <a href="#main-content" class="hv-skip-link">Chuyển đến nội dung chính</a>
+
+  <aside class="hv-sidebar" aria-label="Điều hướng chính"></aside>
+
+  <header class="hv-topbar"></header>
+
+  <main id="main-content" class="hv-content">
+    <div class="hv-content-max">
+
+      <div class="hv-content-header">
+        <h1>Báo cáo thống kê</h1>
+      </div>
+
+      <div class="reports-grid" id="reports-grid">
+
+        <a href="report-quarterly.html" class="report-card">
+          <div class="report-card-head">
+            <div class="report-card-icon" style="background:var(--hv-primary-soft);color:var(--hv-primary)">
+              <i class="ti ti-chart-bar"></i>
+            </div>
+            <div class="report-card-body">
+              <div class="report-card-title">Báo cáo sử dụng HĐĐT theo quý</div>
+              <div class="report-card-desc">Tổng hợp số lượng hóa đơn đã sử dụng, xóa, thay thế, điều chỉnh theo mẫu/ký hiệu trong quý.</div>
+              <div class="report-card-badges">
+                <span class="export-badge"><i class="ti ti-printer"></i> Print</span>
+                <span class="export-badge"><i class="ti ti-file-spreadsheet"></i> XLS</span>
+                <span class="export-badge"><i class="ti ti-file-code-2"></i> XML</span>
+              </div>
+            </div>
+            <div class="report-card-arrow"><i class="ti ti-chevron-right"></i></div>
+          </div>
+        </a>
+
+        <a href="report-ledger.html" class="report-card">
+          <div class="report-card-head">
+            <div class="report-card-icon" style="background:var(--hv-success-soft);color:var(--hv-success)">
+              <i class="ti ti-list"></i>
+            </div>
+            <div class="report-card-body">
+              <div class="report-card-title">Bảng kê hóa đơn hàng tháng</div>
+              <div class="report-card-desc">Chi tiết từng hóa đơn: ký hiệu, số, ngày lập, khách hàng, MST, doanh thu trước thuế, thuế GTGT.</div>
+              <div class="report-card-badges">
+                <span class="export-badge"><i class="ti ti-printer"></i> Print</span>
+                <span class="export-badge"><i class="ti ti-file-spreadsheet"></i> XLS</span>
+                <span class="export-badge"><i class="ti ti-file-code-2"></i> XML</span>
+              </div>
+            </div>
+            <div class="report-card-arrow"><i class="ti ti-chevron-right"></i></div>
+          </div>
+        </a>
+
+        <a href="report-sales.html" class="report-card">
+          <div class="report-card-head">
+            <div class="report-card-icon" style="background:var(--hv-warning-soft);color:var(--hv-warning-hover)">
+              <i class="ti ti-shopping-cart"></i>
+            </div>
+            <div class="report-card-body">
+              <div class="report-card-title">Báo cáo chi tiết bán hàng</div>
+              <div class="report-card-desc">Chi tiết theo dòng sản phẩm: tên SP, đơn vị, số lượng, đơn giá, thành tiền, thuế suất, tiền thuế, tổng.</div>
+              <div class="report-card-badges">
+                <span class="export-badge"><i class="ti ti-printer"></i> Print</span>
+                <span class="export-badge"><i class="ti ti-file-spreadsheet"></i> XLS</span>
+              </div>
+            </div>
+            <div class="report-card-arrow"><i class="ti ti-chevron-right"></i></div>
+          </div>
+        </a>
+
+        <a href="report-deleted.html" class="report-card">
+          <div class="report-card-head">
+            <div class="report-card-icon" style="background:var(--hv-danger-soft);color:var(--hv-danger)">
+              <i class="ti ti-trash"></i>
+            </div>
+            <div class="report-card-body">
+              <div class="report-card-title">Báo cáo hóa đơn xóa bỏ</div>
+              <div class="report-card-desc">Danh sách hóa đơn đã xóa bỏ kèm thông tin người thực hiện và thời gian xóa. Tối đa 30 ngày.</div>
+              <div class="report-card-badges">
+                <span class="export-badge"><i class="ti ti-file-spreadsheet"></i> XLS</span>
+              </div>
+            </div>
+            <div class="report-card-arrow"><i class="ti ti-chevron-right"></i></div>
+          </div>
+        </a>
+
+        <a href="report-modified.html" class="report-card">
+          <div class="report-card-head">
+            <div class="report-card-icon" style="background:var(--hv-purple-soft);color:var(--hv-purple)">
+              <i class="ti ti-edit"></i>
+            </div>
+            <div class="report-card-body">
+              <div class="report-card-title">Báo cáo hóa đơn sửa đổi</div>
+              <div class="report-card-desc">So sánh song song dữ liệu cũ và mới của hóa đơn đã điều chỉnh. Tối đa 30 ngày.</div>
+              <div class="report-card-badges">
+                <span class="export-badge"><i class="ti ti-file-spreadsheet"></i> XLS</span>
+              </div>
+            </div>
+            <div class="report-card-arrow"><i class="ti ti-chevron-right"></i></div>
+          </div>
+        </a>
+
+        <a href="report-replaced.html" class="report-card">
+          <div class="report-card-head">
+            <div class="report-card-icon" style="background:var(--hv-indigo-soft);color:#6366f1">
+              <i class="ti ti-repeat"></i>
+            </div>
+            <div class="report-card-body">
+              <div class="report-card-title">Báo cáo hóa đơn thay thế</div>
+              <div class="report-card-desc">So sánh song song hóa đơn cũ và hóa đơn thay thế mới. Tối đa 30 ngày.</div>
+              <div class="report-card-badges">
+                <span class="export-badge"><i class="ti ti-file-spreadsheet"></i> XLS</span>
+              </div>
+            </div>
+            <div class="report-card-arrow"><i class="ti ti-chevron-right"></i></div>
+          </div>
+        </a>
+
+      </div>
+
+    </div>
+  </main>
+
+  <script src="assets/js/app-shell.js"></script>
+</body>
+</html>

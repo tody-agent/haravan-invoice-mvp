@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kết nối T-VAN — Haravan Invoice</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <link rel="stylesheet" href="assets/css/design-system.css">
+  <script>window.HV_PAGE = { id: 'tvan', title: 'Kết nối T-VAN' };</script>
+  <style>
+    /* Provider Cards */
+    .tvan-provider-card {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .tvan-provider-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .tvan-provider-logo {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: 700;
+      color: #fff;
+      flex-shrink: 0;
+    }
+    .tvan-provider-info { flex: 1; min-width: 0; }
+    .tvan-provider-name {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--hv-text-primary);
+    }
+    .tvan-provider-type {
+      font-size: 12px;
+      color: var(--hv-text-secondary);
+      margin-top: 2px;
+    }
+    .tvan-provider-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      font-size: 13px;
+      color: var(--hv-text-secondary);
+    }
+    .tvan-provider-meta-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .tvan-provider-meta-label { color: var(--hv-text-muted); }
+    .tvan-provider-meta-value { font-weight: 500; color: var(--hv-text-primary); }
+    .tvan-provider-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: auto;
+      padding-top: 12px;
+      border-top: 1px solid var(--hv-border);
+    }
+    .tvan-provider-actions .hv-btn { flex: 1; }
+
+    .tvan-phase-badge {
+      display: inline-flex;
+      align-items: center;
+      height: 20px;
+      padding: 0 6px;
+      font-size: 11px;
+      font-weight: 600;
+      border-radius: var(--hv-radius-xs);
+      background: var(--hv-bg-soft);
+      color: var(--hv-text-muted);
+      margin-left: 8px;
+    }
+
+    /* Form Section */
+    .tvan-form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    .tvan-form-grid .tvan-form-full {
+      grid-column: 1 / -1;
+    }
+    .tvan-form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .tvan-input-with-action {
+      display: flex;
+      gap: 8px;
+    }
+    .tvan-input-with-action .hv-input { flex: 1; }
+
+    /* Toggle Switch */
+    .tvan-toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--hv-border-table);
+    }
+    .tvan-toggle-row:last-child { border-bottom: none; }
+    .tvan-toggle-label {
+      font-size: 14px;
+      font-weight: 400;
+      color: var(--hv-text-primary);
+    }
+    .tvan-toggle {
+      position: relative;
+      width: 44px;
+      height: 24px;
+      flex-shrink: 0;
+    }
+    .tvan-toggle input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+      position: absolute;
+    }
+    .tvan-toggle-track {
+      position: absolute;
+      inset: 0;
+      background: var(--hv-border-strong);
+      border-radius: 12px;
+      cursor: pointer;
+      transition: background 200ms ease;
+    }
+    .tvan-toggle-track::after {
+      content: '';
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 20px;
+      height: 20px;
+      background: #fff;
+      border-radius: 50%;
+      transition: transform 200ms ease;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+    }
+    .tvan-toggle input:checked + .tvan-toggle-track {
+      background: var(--hv-primary);
+    }
+    .tvan-toggle input:checked + .tvan-toggle-track::after {
+      transform: translateX(20px);
+    }
+    .tvan-toggle input:focus-visible + .tvan-toggle-track {
+      outline: 2px solid var(--hv-border-focus);
+      outline-offset: 2px;
+    }
+
+    /* Status List */
+    .tvan-status-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .tvan-status-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      background: var(--hv-bg-soft);
+      border-radius: var(--hv-radius-md);
+      font-size: 13px;
+    }
+    .tvan-status-icon {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      flex-shrink: 0;
+    }
+    .tvan-status-icon-ok {
+      background: var(--hv-success-soft);
+      color: var(--hv-success);
+    }
+    .tvan-status-label {
+      font-weight: 500;
+      color: var(--hv-text-primary);
+      min-width: 110px;
+    }
+    .tvan-status-value {
+      flex: 1;
+      color: var(--hv-text-secondary);
+    }
+    .tvan-status-extra {
+      font-size: 12px;
+      color: var(--hv-text-muted);
+      white-space: nowrap;
+    }
+
+    /* Stats Grid */
+    .tvan-stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+
+    /* Error State */
+    .tvan-error-banner {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      background: var(--hv-danger-soft);
+      border: 1px solid var(--hv-danger);
+      border-radius: var(--hv-radius-md);
+      font-size: 14px;
+      color: var(--hv-danger);
+      margin-bottom: 16px;
+    }
+    .tvan-error-banner i { font-size: 20px; flex-shrink: 0; }
+
+    /* Loading State */
+    .tvan-loading-overlay {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      padding: 48px;
+      color: var(--hv-text-secondary);
+    }
+    .tvan-spinner {
+      width: 36px;
+      height: 36px;
+      border: 3px solid var(--hv-border);
+      border-top-color: var(--hv-primary);
+      border-radius: 50%;
+      animation: tvan-spin 700ms linear infinite;
+    }
+    @keyframes tvan-spin { to { transform: rotate(360deg); } }
+
+    /* Password toggle */
+    .tvan-password-wrapper {
+      position: relative;
+    }
+    .tvan-password-wrapper .hv-input {
+      padding-right: 40px;
+    }
+    .tvan-password-toggle {
+      position: absolute;
+      right: 4px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: none;
+      border: none;
+      color: var(--hv-text-muted);
+      cursor: pointer;
+      border-radius: var(--hv-radius-sm);
+      transition: color 150ms ease;
+    }
+    .tvan-password-toggle:hover {
+      color: var(--hv-text-primary);
+    }
+
+    /* Responsive */
+    @media (max-width: 1023px) {
+      .tvan-form-grid { grid-template-columns: 1fr; }
+      .tvan-stats-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 767px) {
+      .tvan-stats-grid { grid-template-columns: 1fr; }
+      .hv-grid-3 { grid-template-columns: 1fr; }
+      .hv-content { padding: 12px; }
+      .hv-content-header { flex-direction: column; align-items: flex-start; gap: 12px; }
+      .tvan-provider-actions { flex-direction: column; }
+      .tvan-provider-actions .hv-btn { width: 100%; }
+      .tvan-toggle-row { flex-direction: column; align-items: flex-start; gap: 8px; }
+      .tvan-status-list { gap: 8px; }
+      .tvan-status-item { flex-wrap: wrap; }
+    }
+    @media (max-width: 480px) {
+      .hv-content { padding: 10px; }
+      .hv-grid-2 { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <aside class="hv-sidebar" aria-label="Điều hướng chính"></aside>
+  <div class="hv-topbar" aria-label="Thanh công cụ"></div>
+
+  <div class="hv-content">
+    <div class="hv-content-max">
+
+      <!-- Header -->
+      <div class="hv-content-header">
+        <div>
+          <h1 style="font-size:24px;font-weight:600;color:var(--hv-text-primary);margin:0">Kết nối T-VAN</h1>
+          <p style="font-size:14px;color:var(--hv-text-secondary);margin:4px 0 0">Quản lý kết nối với các tổ chức truyền nhận hóa đơn điện tử</p>
+        </div>
+        <button class="hv-btn hv-btn-secondary" aria-label="Thêm nhà cung cấp T-VAN">
+          <i class="ti ti-plus"></i>
+          <span>Thêm nhà cung cấp</span>
+        </button>
+      </div>
+
+      <!-- Error State (shown when state=error) -->
+      <div class="tvan-error-banner hv-hidden" id="tvanError">
+        <i class="ti ti-alert-triangle"></i>
+        <span>Không thể kết nối. Kiểm tra lại Client ID/Secret.</span>
+        <button class="hv-btn hv-btn-sm hv-btn-secondary" style="margin-left:auto">Thử lại</button>
+      </div>
+
+      <!-- Provider Cards Grid -->
+      <div class="hv-grid-3" style="margin-bottom:24px" id="tvanProviders">
+
+        <!-- Hilo (ACTIVE) -->
+        <div class="hv-card tvan-provider-card">
+          <div class="tvan-provider-header">
+            <div class="tvan-provider-logo" style="background:#2563eb">H</div>
+            <div class="tvan-provider-info">
+              <div class="tvan-provider-name">Hilo E-Invoice</div>
+              <div class="tvan-provider-type">T-VAN chính thức</div>
+            </div>
+            <span class="hv-badge hv-badge-success">Hoạt động</span>
+          </div>
+          <div class="tvan-provider-meta">
+            <div class="tvan-provider-meta-row">
+              <span class="tvan-provider-meta-label">MST</span>
+              <span class="tvan-provider-meta-value text-mono" style="font-size:13px">0312345678</span>
+            </div>
+            <div class="tvan-provider-meta-row">
+              <span class="tvan-provider-meta-label">Hạn hợp đồng</span>
+              <span class="tvan-provider-meta-value">31/12/2026</span>
+            </div>
+          </div>
+          <div class="tvan-provider-actions">
+            <button class="hv-btn hv-btn-primary hv-btn-sm" onclick="scrollToConfig()">
+              <i class="ti ti-settings"></i> Cấu hình
+            </button>
+            <button class="hv-btn hv-btn-danger hv-btn-sm">Ngắt kết nối</button>
+          </div>
+        </div>
+
+        <!-- Viettel (COMING SOON) -->
+        <div class="hv-card tvan-provider-card" style="opacity:0.7">
+          <div class="tvan-provider-header">
+            <div class="tvan-provider-logo" style="background:#dc2626">V</div>
+            <div class="tvan-provider-info">
+              <div class="tvan-provider-name">Viettel eInvoice <span class="tvan-phase-badge">Phase 4</span></div>
+              <div class="tvan-provider-type">T-VAN</div>
+            </div>
+            <span class="hv-badge hv-badge-info">Sẵn sàng</span>
+          </div>
+          <div class="tvan-provider-meta">
+            <div class="tvan-provider-meta-row">
+              <span class="tvan-provider-meta-label">Trạng thái</span>
+              <span class="tvan-provider-meta-value" style="color:var(--hv-text-muted)">Chờ kết nối</span>
+            </div>
+          </div>
+          <div class="tvan-provider-actions">
+            <button class="hv-btn hv-btn-secondary hv-btn-sm" disabled>
+              <i class="ti ti-plug-connected"></i> Kết nối
+            </button>
+          </div>
+        </div>
+
+        <!-- MISA (COMING SOON) -->
+        <div class="hv-card tvan-provider-card" style="opacity:0.7">
+          <div class="tvan-provider-header">
+            <div class="tvan-provider-logo" style="background:#16a34a">M</div>
+            <div class="tvan-provider-info">
+              <div class="tvan-provider-name">MISA meInvoice <span class="tvan-phase-badge">Phase 4</span></div>
+              <div class="tvan-provider-type">T-VAN</div>
+            </div>
+            <span class="hv-badge hv-badge-info">Sẵn sàng</span>
+          </div>
+          <div class="tvan-provider-meta">
+            <div class="tvan-provider-meta-row">
+              <span class="tvan-provider-meta-label">Trạng thái</span>
+              <span class="tvan-provider-meta-value" style="color:var(--hv-text-muted)">Chờ kết nối</span>
+            </div>
+          </div>
+          <div class="tvan-provider-actions">
+            <button class="hv-btn hv-btn-secondary hv-btn-sm" disabled>
+              <i class="ti ti-plug-connected"></i> Kết nối
+            </button>
+          </div>
+        </div>
+
+        <!-- VNPT (COMING SOON) -->
+        <div class="hv-card tvan-provider-card" style="opacity:0.7">
+          <div class="tvan-provider-header">
+            <div class="tvan-provider-logo" style="background:#7c3aed">N</div>
+            <div class="tvan-provider-info">
+              <div class="tvan-provider-name">VNPT Invoice <span class="tvan-phase-badge">Phase 4</span></div>
+              <div class="tvan-provider-type">T-VAN</div>
+            </div>
+            <span class="hv-badge hv-badge-info">Sẵn sàng</span>
+          </div>
+          <div class="tvan-provider-meta">
+            <div class="tvan-provider-meta-row">
+              <span class="tvan-provider-meta-label">Trạng thái</span>
+              <span class="tvan-provider-meta-value" style="color:var(--hv-text-muted)">Chờ kết nối</span>
+            </div>
+          </div>
+          <div class="tvan-provider-actions">
+            <button class="hv-btn hv-btn-secondary hv-btn-sm" disabled>
+              <i class="ti ti-plug-connected"></i> Kết nối
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Active Provider Configuration (Hilo) -->
+      <div class="hv-card" style="margin-bottom:24px" id="tvanConfig">
+        <div class="hv-card-header">
+          <div class="hv-flex hv-items-center hv-gap-3">
+            <div class="tvan-provider-logo" style="background:#2563eb;width:32px;height:32px;font-size:14px">H</div>
+            <span class="hv-card-title">Cấu hình Hilo E-Invoice</span>
+          </div>
+        </div>
+
+        <!-- Loading State (shown when state=connecting) -->
+        <div class="tvan-loading-overlay hv-hidden" id="tvanConnecting">
+          <div class="tvan-spinner"></div>
+          <span>Đang kết nối với Hilo T-VAN...</span>
+        </div>
+
+        <!-- Config Form -->
+        <div id="tvanConfigForm">
+          <div class="tvan-form-grid">
+            <div class="tvan-form-group">
+              <label class="hv-label" for="tvanClientId">OAuth Client ID</label>
+              <input type="text" id="tvanClientId" class="hv-input" value="hil-xxxx-xxxx-xxxx" readonly aria-describedby="tvanClientIdHelp">
+              <span id="tvanClientIdHelp" class="text-caption" style="color:var(--hv-text-muted)">Được cấp bởi Hilo khi đăng ký T-VAN</span>
+            </div>
+            <div class="tvan-form-group">
+              <label class="hv-label" for="tvanClientSecret">OAuth Client Secret</label>
+              <div class="tvan-password-wrapper">
+                <input type="password" id="tvanClientSecret" class="hv-input" value="sk_live_xxxxxxxxxxxxxxxxxxxx" aria-describedby="tvanSecretHelp">
+                <button class="tvan-password-toggle" type="button" aria-label="Hiện/ẩn Client Secret" onclick="toggleSecret()">
+                  <i class="ti ti-eye" id="tvanSecretIcon"></i>
+                </button>
+              </div>
+              <span id="tvanSecretHelp" class="text-caption" style="color:var(--hv-text-muted)">Giữ bí mật, không chia sẻ</span>
+            </div>
+            <div class="tvan-form-group">
+              <label class="hv-label" for="tvanEndpoint">API Endpoint</label>
+              <input type="url" id="tvanEndpoint" class="hv-input text-mono" value="https://api.hilo.vn/v2">
+            </div>
+            <div class="tvan-form-group">
+              <label class="hv-label" for="tvanWebhook">Webhook URL</label>
+              <div class="tvan-input-with-action">
+                <input type="url" id="tvanWebhook" class="hv-input text-mono" value="https://invoice.haravan.com/webhooks/hilo" readonly>
+                <button class="hv-btn hv-btn-secondary hv-btn-icon" aria-label="Copy webhook URL" onclick="copyWebhook()" title="Sao chép">
+                  <i class="ti ti-copy"></i>
+                </button>
+              </div>
+            </div>
+            <div class="tvan-form-group tvan-form-full">
+              <label class="hv-label" for="tvanDesc">Mô tả</label>
+              <textarea id="tvanDesc" class="hv-input" rows="3" style="height:auto;padding:8px 12px;resize:vertical">Kết nối chính thức với Hilo T-VAN theo hợp đồng số HD-2024-001</textarea>
+            </div>
+          </div>
+
+          <!-- Toggle Switches -->
+          <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--hv-border)">
+            <div class="tvan-toggle-row">
+              <span class="tvan-toggle-label">Tự động phát hành khi thanh toán</span>
+              <label class="tvan-toggle">
+                <input type="checkbox" checked aria-label="Tự động phát hành khi thanh toán">
+                <span class="tvan-toggle-track"></span>
+              </label>
+            </div>
+            <div class="tvan-toggle-row">
+              <span class="tvan-toggle-label">Đồng bộ hóa đơn đến</span>
+              <label class="tvan-toggle">
+                <input type="checkbox" checked aria-label="Đồng bộ hóa đơn đến">
+                <span class="tvan-toggle-track"></span>
+              </label>
+            </div>
+            <div class="tvan-toggle-row">
+              <span class="tvan-toggle-label">Thông báo lỗi qua email</span>
+              <label class="tvan-toggle">
+                <input type="checkbox" checked aria-label="Thông báo lỗi qua email">
+                <span class="tvan-toggle-track"></span>
+              </label>
+            </div>
+          </div>
+
+          <div style="margin-top:20px;display:flex;justify-content:flex-end">
+            <button class="hv-btn hv-btn-primary" onclick="saveConfig()">
+              <i class="ti ti-device-floppy"></i> Lưu cấu hình
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom Row: Connection Status + Stats -->
+      <div class="hv-grid-2">
+
+        <!-- Connection Status -->
+        <div class="hv-card">
+          <div class="hv-card-header">
+            <span class="hv-card-title">Trạng thái kết nối</span>
+          </div>
+          <div class="tvan-status-list">
+            <div class="tvan-status-item">
+              <div class="tvan-status-icon tvan-status-icon-ok">
+                <i class="ti ti-check" style="font-size:12px"></i>
+              </div>
+              <span class="tvan-status-label">OAuth Token</span>
+              <span class="tvan-status-value">Còn hiệu lực</span>
+              <span class="tvan-status-extra">Hết hạn sau 23h</span>
+            </div>
+            <div class="tvan-status-item">
+              <div class="tvan-status-icon tvan-status-icon-ok">
+                <i class="ti ti-check" style="font-size:12px"></i>
+              </div>
+              <span class="tvan-status-label">API Health</span>
+              <span class="tvan-status-value">Hoạt động bình thường</span>
+            </div>
+            <div class="tvan-status-item">
+              <div class="tvan-status-icon tvan-status-icon-ok">
+                <i class="ti ti-check" style="font-size:12px"></i>
+              </div>
+              <span class="tvan-status-label">Webhook</span>
+              <span class="tvan-status-value">Đã xác nhận</span>
+            </div>
+            <div class="tvan-status-item">
+              <div class="tvan-status-icon tvan-status-icon-ok">
+                <i class="ti ti-check" style="font-size:12px"></i>
+              </div>
+              <span class="tvan-status-label">Last sync</span>
+              <span class="tvan-status-value">15/05/2026 09:30</span>
+              <span class="tvan-status-extra">2 phút trước</span>
+            </div>
+          </div>
+          <div style="margin-top:16px;display:flex;justify-content:flex-end">
+            <button class="hv-btn hv-btn-secondary" onclick="testConnection()">
+              <i class="ti ti-refresh"></i> Kiểm tra kết nối
+            </button>
+          </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="hv-card">
+          <div class="hv-card-header">
+            <span class="hv-card-title">Thống kê sử dụng (Tháng này)</span>
+          </div>
+          <div class="tvan-stats-grid">
+            <div class="hv-kpi">
+              <div class="hv-kpi-label">Hóa đơn đã phát hành</div>
+              <div class="hv-kpi-value">1.284</div>
+            </div>
+            <div class="hv-kpi">
+              <div class="hv-kpi-label">Tỷ lệ thành công</div>
+              <div class="hv-kpi-value" style="color:var(--hv-success)">99,2%</div>
+            </div>
+            <div class="hv-kpi">
+              <div class="hv-kpi-label">Thời gian phản hồi TB</div>
+              <div class="hv-kpi-value">1,2s</div>
+            </div>
+            <div class="hv-kpi">
+              <div class="hv-kpi-label">Lỗi</div>
+              <div class="hv-kpi-value" style="color:var(--hv-danger)">10</div>
+              <div class="hv-kpi-change hv-kpi-change-down">0,8%</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+  <script src="assets/js/app-shell.js"></script>
+  <script>
+    // State handling
+    const params = new URLSearchParams(window.location.search);
+    const state = params.get('state') || 'default';
+
+    function applyState() {
+      const error = document.getElementById('tvanError');
+      const connecting = document.getElementById('tvanConnecting');
+      const form = document.getElementById('tvanConfigForm');
+
+      // Reset
+      error.classList.add('hv-hidden');
+      connecting.classList.add('hv-hidden');
+      form.classList.remove('hv-hidden');
+
+      if (state === 'error') {
+        error.classList.remove('hv-hidden');
+      } else if (state === 'connecting') {
+        connecting.classList.remove('hv-hidden');
+        form.classList.add('hv-hidden');
+      }
+    }
+
+    applyState();
+
+    // Toggle password visibility
+    function toggleSecret() {
+      const input = document.getElementById('tvanClientSecret');
+      const icon = document.getElementById('tvanSecretIcon');
+      if (input.type === 'password') {
+        input.type = 'text';
+        icon.className = 'ti ti-eye-off';
+      } else {
+        input.type = 'password';
+        icon.className = 'ti ti-eye';
+      }
+    }
+
+    // Copy webhook
+    function copyWebhook() {
+      const input = document.getElementById('tvanWebhook');
+      navigator.clipboard.writeText(input.value).then(() => {
+        showToast('Đã sao chép Webhook URL');
+      });
+    }
+
+    // Scroll to config
+    function scrollToConfig() {
+      document.getElementById('tvanConfig').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    // Save config
+    function saveConfig() {
+      showToast('Đã lưu cấu hình thành công');
+    }
+
+    // Test connection
+    function testConnection() {
+      showToast('Kết nối hoạt động bình thường');
+    }
+
+    // Toast helper - use HV.toast if available, fallback to local
+    function showToast(msg, type) {
+      if (typeof HV !== 'undefined' && HV.toast) {
+        HV.toast(msg, type || 'success');
+      } else {
+        const existing = document.querySelector('.hv-toast');
+        if (existing) existing.remove();
+        const toast = document.createElement('div');
+        toast.className = 'hv-toast';
+        toast.innerHTML = `<i class="ti ti-check" style="color:var(--hv-success);font-size:18px"></i><span>${msg}</span>`;
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 3000);
+      }
+    }
+
+    // Connect/disconnect toggle buttons
+    document.querySelectorAll('.tvan-provider-card .hv-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const label = btn.textContent.trim();
+        if (label.includes('Kết nối') || label.includes('Kích hoạt')) {
+          HV.confirm('Bạn có chắc muốn kết nối nhà cung cấp T-VAN này?', {
+            title: 'Kết nối T-VAN',
+            confirmLabel: 'Kết nối',
+            type: 'info'
+          }).then(ok => {
+            if (ok) showToast('Đã kết nối thành công', 'success');
+          });
+        } else if (label.includes('Ngắt') || label.includes('Vô hiệu')) {
+          HV.confirm('Bạn có chắc muốn ngắt kết nối? Hóa đơn sẽ không thể phát hành qua T-VAN này.', {
+            title: 'Ngắt kết nối',
+            confirmLabel: 'Ngắt kết nối',
+            type: 'danger'
+          }).then(ok => {
+            if (ok) showToast('Đã ngắt kết nối', 'warning');
+          });
+        } else if (label.includes('Kiểm tra')) {
+          HV.toast('Đang kiểm tra trạng thái kết nối...', 'info');
+          setTimeout(() => showToast('Kết nối hoạt động bình thường', 'success'), 1500);
+        }
+      });
+    });
+  </script>
+
+</body>
+</html>

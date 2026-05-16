@@ -1,0 +1,23 @@
+# Implementation Checklist
+
+- [x] 1.1 Ghi spec delta cho capability `prototype` để phản ánh hướng Layered JTBD Prototype System và fullscreen Haravan-like shell.
+- [x] 1.2 Chốt bộ token màu, border, radius, shadow theo benchmark Haravan screenshot; đánh dấu rõ token nào là inferred.
+- [x] 1.3 Refactor layout contract của `prototype/haravan_invoice_admin_mockup.html` sang fullscreen app shell (`topbar`, `sidebar`, `main stage`, `content scroll`).
+- [x] 1.4 Bỏ `page-head` centered wrapper và cập nhật body/app canvas để prototype mở ra full viewport.
+- [x] 1.5 Thiết kế lại sidebar, search, topbar, workspace pill, avatar, và nav active state cho gần Haravan Admin hơn.
+- [x] 1.6 Áp dụng visual refresh cho buttons, cards, tables, badges, chips, search field, và floating copilot để đồng bộ token mới.
+- [x] 1.7 Thêm persona switcher và demo scenario launcher trong master prototype.
+- [x] 1.8 Thêm state scaffolding cho loading, empty, error, pending, partial-success, success ở các màn hình trọng yếu.
+- [x] 2.1 Mở rộng `Danh sách hóa đơn` với bulk actions, progress/status affordance, và entry point sang daily aggregation.
+- [x] 2.2 Mở rộng `Phát hành mới` với 3 trigger context: Web, POS, Admin.
+- [x] 2.3 Bổ sung module inbound AI workbench preview trong master shell hoặc section linked.
+- [x] 2.4 Bổ sung notification/regulation center và customer delivery/signing preview.
+- [x] 3.1 Tạo `prototype/pos_tablet_mockup.html` cho cashier JTBD.
+- [x] 3.2 Tạo `prototype/inbound_ai_mockup.html` cho accountant JTBD.
+- [x] 3.3 Tạo `prototype/automation_builder_mockup.html` cho owner/operator JTBD.
+- [x] 3.4 Tạo `prototype/customer_portal_mockup.html` cho delivery/signing/lookup JTBD.
+- [x] 3.5 Tạo `prototype/mobile_owner_mockup.html` cho owner snapshot JTBD.
+- [x] 3.6 Thêm cross-links từ master shell sang companion mockups và ngược lại.
+- [x] 4.1 Chạy visual QA thủ công so với screenshot Haravan benchmark.
+- [x] 4.2 Chạy walkthrough 5 scenario demo chính và chỉnh lại điểm gãy của narrative.
+- [ ] Verification testing: mở trực tiếp từng file HTML trong browser, xác nhận fullscreen shell, navigation, color palette, state demo, và cross-links hoạt động như kế hoạch.

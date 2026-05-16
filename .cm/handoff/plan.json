@@ -1,0 +1,19 @@
+{
+  "schema": "plan@1",
+  "goal": "Build working MVP: Mock all Hilo APIs, build everything else REAL on Cloudflare free tier (Workers + D1 + R2 + KV + Pages). 4 weeks, 68 tasks.",
+  "decisions": [
+    "HiloAdapter = MockAdapter (canned responses, swap later)",
+    "Stack: Hono (Workers-native) + D1 + Drizzle ORM + R2 + KV",
+    "Frontend: React 18 + Vite → Cloudflare Pages",
+    "Auth: Mock JWT (swap Haravan SSO later)",
+    "PDF: Real render from invoice data, cache R2",
+    "Validation: Real engine (MST, tax, NĐ 70/2025 rules)",
+    "12 REST endpoints, 7 Portal UI screens, 5 DB tables"
+  ],
+  "first_tasks": [
+    "1.1.1 — Init monorepo (pnpm workspace, apps/api + apps/portal + packages/shared)",
+    "1.1.2 — Hono + Wrangler setup with D1/R2/KV bindings",
+    "1.1.4 — D1 migration: 5 tables (invoices, audit_logs, merchant_config, idempotency_keys, customers)"
+  ],
+  "openspec_path": "openspec/changes/mvp-mock-hilo/"
+}

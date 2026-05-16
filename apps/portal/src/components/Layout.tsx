@@ -13,7 +13,7 @@ const mainNav = [
       { id: 'invoices', label: 'Danh sách hóa đơn', href: '/invoices' },
     ]
   },
-  { id: 'customers', label: 'Khách hàng', icon: 'ti ti-users-group', href: '/customers' },
+  { id: 'customers', label: 'Khách hàng', icon: 'ti ti-users', href: '/customers' },
   { id: 'products', label: 'Sản phẩm', icon: 'ti ti-package', href: '/products' },
   { id: 'analytics', label: 'Phân tích', icon: 'ti ti-chart-dots-2', href: '/analytics' },
   {
